@@ -48,8 +48,8 @@ export function parseLintResult(lintOutput: string): LintResult {
             valid: parsed.valid,
             errors: parsed.errors || []
         };
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (_error) {
+    } catch (error) {
+        console.error('Failed to parse lint result:', error instanceof Error ? error.message : String(error));
         return {
             raw: lintOutput,
             health: null,
@@ -83,8 +83,8 @@ export function parseMetaschemaResult(output: string, exitCode: number | null): 
                     instancePosition: error.instancePosition
                 }));
             }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (_error) {
+        } catch (error) {
+            console.error('Failed to parse metaschema result:', error instanceof Error ? error.message : String(error));
             // If parsing fails, just keep the raw output
         }
     }

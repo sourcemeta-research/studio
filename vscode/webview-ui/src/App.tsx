@@ -52,11 +52,13 @@ function App() {
   return (
     <div className="flex flex-col h-screen p-5">
       <FileInfo fileInfo={state.fileInfo} />
-      <HealthBar lintResult={state.lintResult} />
+      <HealthBar lintResult={state.lintResult} isLoading={state.isLoading} />
       <Tabs activeTab={activeTab} onTabChange={handleTabChange} state={state} />
       
       <div className="flex-1 overflow-y-auto">
         {state.isLoading ? (
+          <LoadingSpinner />
+        ) : state.formatLoading && activeTab === 'format' ? (
           <LoadingSpinner />
         ) : (
           <>

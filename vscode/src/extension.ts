@@ -10,6 +10,7 @@ let commandExecutor: CommandExecutor;
 let diagnosticManager: DiagnosticManager;
 let lastActiveTextEditor: vscode.TextEditor | undefined;
 let cachedVersion = 'Loading...';
+let currentPanelState: PanelState | null = null;
 
 /**
  * Extension activation
@@ -76,13 +77,47 @@ function handleWebviewMessage(message: WebviewMessage): void {
             editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
         });
     } else if (message.command === 'formatSchema' && lastActiveTextEditor) {
-        commandExecutor.format(lastActiveTextEditor.document.uri.fsPath).then(() => {
+        const filePath = lastActiveTextEditor.document.uri.fsPath;
+        const fileInfo = getFileInfo(filePath);
+        
+        if (!fileInfo || !panelManager.exists() || !currentPanelState) {
+            return;
+        }
+
+        // Send format loading state only, preserve existing lint/metaschema state
+        panelManager.updateContent({
+            ...currentPanelState,
+            formatLoading: true
+        });
+
+        commandExecutor.format(filePath).then(async () => {
             if (lastActiveTextEditor) {
-                vscode.window.showTextDocument(lastActiveTextEditor.document, lastActiveTextEditor.viewColumn);
+                await vscode.window.showTextDocument(lastActiveTextEditor.document, lastActiveTextEditor.viewColumn);
             }
-            updatePanelContent();
+            
+            // Only check format status, don't re-run everything
+            const formatResult = await commandExecutor.formatCheck(filePath);
+            
+            if (currentPanelState) {
+                const updatedState = {
+                    ...currentPanelState,
+                    formatResult,
+                    formatLoading: false
+                };
+                currentPanelState = updatedState;
+                panelManager.updateContent(updatedState);
+            }
         }).catch((error) => {
             vscode.window.showErrorMessage(`Format failed: ${error.message}`);
+            if (currentPanelState) {
+                const updatedState = {
+                    ...currentPanelState,
+                    formatResult: { output: `Error: ${error.message}`, exitCode: null },
+                    formatLoading: false
+                };
+                currentPanelState = updatedState;
+                panelManager.updateContent(updatedState);
+            }
         });
     }
 }
@@ -106,17 +141,25 @@ function handleActiveEditorChange(editor: vscode.TextEditor | undefined): void {
                     preview: false
                 }).then(() => {
                     lastActiveTextEditor = vscode.window.activeTextEditor;
+                    // Only update if the file actually changed
+                    updatePanelContent();
                 });
             });
         } else {
+            const previousFile = lastActiveTextEditor?.document.uri.fsPath;
             lastActiveTextEditor = editor;
+
+            if (previousFile !== editor.document.uri.fsPath) {
+                updatePanelContent();
+            }
         }
     } else if (editor && editor.document.uri.scheme === 'file') {
+        const previousFile = lastActiveTextEditor?.document.uri.fsPath;
         lastActiveTextEditor = editor;
-    }
 
-    if (panelManager.exists()) {
-        updatePanelContent();
+        if (panelManager.exists() && previousFile !== editor.document.uri.fsPath) {
+            updatePanelContent();
+        }
     }
 }
 
@@ -181,6 +224,7 @@ async function updatePanelContent(): Promise<void> {
             metaschemaResult,
             isLoading: false
         };
+        currentPanelState = finalState;
         panelManager.updateContent(finalState);
 
         // Update lint diagnostics (these have position information)
@@ -209,6 +253,7 @@ async function updatePanelContent(): Promise<void> {
             metaschemaResult: { output: `Error: ${(error as Error).message}`, exitCode: null },
             isLoading: false
         };
+        currentPanelState = errorState;
         panelManager.updateContent(errorState);
     }
 }

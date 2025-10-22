@@ -51,6 +51,7 @@ export interface PanelState {
     formatResult: FormatResult;
     metaschemaResult: MetaschemaResult;
     isLoading?: boolean;
+    formatLoading?: boolean;
 }
 
 export interface WebviewMessage {

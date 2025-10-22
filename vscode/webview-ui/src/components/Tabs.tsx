@@ -8,9 +8,9 @@ export interface TabsProps {
 
 export function Tabs({ activeTab, onTabChange, state }: TabsProps) {
   // Calculate tab statuses
-  const lintStatus = calculateLintStatus(state.lintResult.errors?.length || 0);
-  const formatStatus = calculateFormatStatus(state.formatResult.exitCode);
-  const metaschemaStatus = calculateMetaschemaStatus(state.metaschemaResult.exitCode);
+  const lintStatus = calculateLintStatus(state.lintResult.errors?.length || 0, state.lintResult.health, state.isLoading);
+  const formatStatus = calculateFormatStatus(state.formatResult.exitCode, state.formatLoading);
+  const metaschemaStatus = calculateMetaschemaStatus(state.metaschemaResult.exitCode, state.isLoading);
 
   const Tab = ({ 
     id, 
@@ -52,7 +52,10 @@ export function Tabs({ activeTab, onTabChange, state }: TabsProps) {
   );
 }
 
-function calculateLintStatus(errorCount: number) {
+function calculateLintStatus(errorCount: number, health: number | null, isLoading?: boolean) {
+  if (isLoading || health === null) {
+    return { indicator: '?', color: 'var(--vscode-muted)' };
+  }
   if (errorCount === 0) {
     return { indicator: '✓', color: 'var(--success)' };
   } else {
@@ -60,16 +63,21 @@ function calculateLintStatus(errorCount: number) {
   }
 }
 
-function calculateFormatStatus(exitCode: number | null) {
+function calculateFormatStatus(exitCode: number | null, formatLoading?: boolean) {
+  if (formatLoading || exitCode === null || exitCode === undefined) {
+    return { indicator: '?', color: 'var(--vscode-muted)' };
+  }
   if (exitCode === 0) {
     return { indicator: '✓', color: 'var(--success)' };
-  } else if (exitCode !== null && exitCode !== undefined) {
+  } else {
     return { indicator: '⚠', color: 'var(--warning)' };
   }
-  return { indicator: '', color: '' };
 }
 
-function calculateMetaschemaStatus(exitCode: number | null) {
+function calculateMetaschemaStatus(exitCode: number | null, isLoading?: boolean) {
+  if (isLoading || exitCode === null || exitCode === undefined) {
+    return { indicator: '?', color: 'var(--vscode-muted)' };
+  }
   if (exitCode === 0) {
     return { indicator: '✓', color: 'var(--success)' };
   } else if (exitCode === 2) {
@@ -77,5 +85,5 @@ function calculateMetaschemaStatus(exitCode: number | null) {
   } else if (exitCode === 1) {
     return { indicator: '⚠', color: 'var(--fatal)' };
   }
-  return { indicator: '', color: '' };
+  return { indicator: '?', color: 'var(--vscode-muted)' };
 }
