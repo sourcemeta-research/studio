@@ -10,7 +10,7 @@
     "Other"
   ],
   "activationEvents": [],
-  "main": "./extension.js",
+  "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
@@ -33,15 +33,18 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run package",
-    "package": "webpack --mode production --devtool hidden-source-map",
-    "watch": "webpack --watch"
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "lint": "eslint src --ext ts"
   },
   "dependencies": {
     "@sourcemeta/jsonschema": "v11.x.x"
   },
   "devDependencies": {
     "@types/vscode": "^1.74.0",
-    "@types/node": "18.x"
+    "@types/node": "18.x",
+    "typescript": "^5.3.0"
   }
 }
