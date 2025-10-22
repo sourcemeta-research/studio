@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as fs from 'fs';
 import { WebviewMessage, PanelState } from '../utils/types';
-import { buildHtmlContent } from '../ui/templates/htmlBuilder';
 
 /**
  * Manages the webview panel lifecycle and content
@@ -9,9 +9,11 @@ import { buildHtmlContent } from '../ui/templates/htmlBuilder';
 export class PanelManager {
     private panel: vscode.WebviewPanel | undefined;
     private readonly iconPath: vscode.Uri;
+    private readonly extensionPath: string;
     private messageHandler?: (message: WebviewMessage) => void;
 
     constructor(extensionPath: string) {
+        this.extensionPath = extensionPath;
         this.iconPath = vscode.Uri.file(path.join(extensionPath, '..', 'assets', 'logo.svg'));
     }
 
@@ -44,11 +46,17 @@ export class PanelManager {
             },
             {
                 enableScripts: true,
-                retainContextWhenHidden: true
+                retainContextWhenHidden: true,
+                localResourceRoots: [
+                    vscode.Uri.file(path.join(this.extensionPath, 'webview-ui', 'dist'))
+                ]
             }
         );
 
         this.panel.iconPath = this.iconPath;
+
+        // Set initial HTML content
+        this.panel.webview.html = this.getHtmlContent(this.panel.webview);
 
         // Handle messages from the webview
         this.panel.webview.onDidReceiveMessage(
@@ -74,14 +82,46 @@ export class PanelManager {
     }
 
     /**
-     * Update the panel content
+     * Update the panel content (send state to React)
      */
     updateContent(state: PanelState): void {
         if (!this.panel) {
             return;
         }
+        
+        // Send state update to React webview
+        this.panel.webview.postMessage({
+            type: 'update',
+            state: state
+        });
+    }
 
-        this.panel.webview.html = buildHtmlContent(state);
+    /**
+     * Get HTML content for the webview (load React build)
+     */
+    private getHtmlContent(webview: vscode.Webview): string {
+        const distPath = path.join(this.extensionPath, 'webview-ui', 'dist');
+        const indexPath = path.join(distPath, 'index.html');
+
+        let html = fs.readFileSync(indexPath, 'utf-8');
+
+        const scriptUri = webview.asWebviewUri(
+            vscode.Uri.file(path.join(distPath, 'assets', 'index.js'))
+        );
+        const styleUri = webview.asWebviewUri(
+            vscode.Uri.file(path.join(distPath, 'assets', 'index.css'))
+        );
+
+        html = html.replace(
+            /src="\/assets\/index\.js"/g,
+            `src="${scriptUri}"`
+        );
+        html = html.replace(
+            /href="\/assets\/index\.css"/g,
+            `href="${styleUri}"`
+        );
+
+        return html;
     }
 
     /**
