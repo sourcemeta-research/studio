@@ -7,7 +7,15 @@ export interface HealthBarProps {
 
 export function HealthBar({ lintResult, isLoading }: HealthBarProps) {
   const errorCount = lintResult.errors?.length || 0;
-  const health = lintResult.health !== null ? lintResult.health : (errorCount === 0 ? 100 : Math.max(0, 100 - errorCount * 10));
+  
+  let health: number;
+  if (lintResult.health !== null && lintResult.health !== undefined) {
+    health = lintResult.health;
+  } else if (lintResult.errors !== undefined) {
+    health = errorCount === 0 ? 100 : Math.max(0, 100 - errorCount * 10);
+  } else {
+    health = 0;
+  }
   
   const getHealthColor = (health: number): string => {
     if (health >= 80) return 'var(--success)';
@@ -15,8 +23,8 @@ export function HealthBar({ lintResult, isLoading }: HealthBarProps) {
     return 'var(--error)';
   };
 
-  // Show "?" when loading or when health is null (initial state)
-  const showUnknown = isLoading || lintResult.health === null;
+  // Show "?" when loading or initial state
+  const showUnknown = isLoading || (lintResult.health === null && lintResult.errors === undefined);
 
   return (
     <div className="mb-5">

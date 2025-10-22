@@ -63,13 +63,21 @@ export function parseLintResult(lintOutput: string): LintResult {
  */
 export function parseMetaschemaResult(output: string, exitCode: number | null): MetaschemaResult {
     const result: MetaschemaResult = { output, exitCode };
-    
-    // Exit code 2 means validation failed
+
     if (exitCode === 2) {
         try {
-            const parsed = JSON.parse(output);
-            if (parsed.valid === false && Array.isArray(parsed.errors)) {
-                result.errors = parsed.errors.map((error: { 
+            let jsonStr = output.trim();
+
+            const jsonStart = jsonStr.indexOf('[');
+            const jsonEnd = jsonStr.lastIndexOf(']');
+            
+            if (jsonStart !== -1 && jsonEnd !== -1 && jsonStart < jsonEnd) {
+                jsonStr = jsonStr.substring(jsonStart, jsonEnd + 1);
+            }
+            
+            const parsed = JSON.parse(jsonStr);
+            if (Array.isArray(parsed)) {
+                result.errors = parsed.map((error: { 
                     error?: string; 
                     instanceLocation?: string; 
                     keywordLocation?: string; 
@@ -82,10 +90,14 @@ export function parseMetaschemaResult(output: string, exitCode: number | null): 
                     absoluteKeywordLocation: error.absoluteKeywordLocation,
                     instancePosition: error.instancePosition
                 }));
+                console.log('[Metaschema] Mapped errors count:', result.errors.length);
+            } else {
+                console.error('[Metaschema] Expected array but got:', typeof parsed);
             }
         } catch (error) {
             console.error('Failed to parse metaschema result:', error instanceof Error ? error.message : String(error));
-            // If parsing fails, just keep the raw output
+            console.error('[Metaschema] Raw output:', output);
+            console.error('[Metaschema] Output length:', output.length);
         }
     }
     

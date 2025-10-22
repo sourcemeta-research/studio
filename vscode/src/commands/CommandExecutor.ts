@@ -34,8 +34,9 @@ export class CommandExecutor {
             });
 
             child.on('close', (code) => {
+                const output = stdout || stderr || 'No output';
                 resolve({
-                    output: stdout || stderr || 'No output',
+                    output: output.trim(),
                     exitCode: code
                 });
             });

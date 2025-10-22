@@ -37,9 +37,12 @@ export function MetaschemaTab({ metaschemaResult }: MetaschemaTabProps) {
           {errors.map((error, index) => (
             <div
               key={index}
-              className="bg-[var(--vscode-selection)] border-l-[3px] border-[var(--danger)] rounded p-3 cursor-pointer transition-colors hover:bg-[var(--vscode-hover)]"
+              className="bg-[var(--vscode-selection)] border-l-[3px] rounded p-3 cursor-pointer transition-colors hover:bg-[var(--vscode-hover)]"
+              style={{ 
+                cursor: error.instancePosition ? 'pointer' : 'default',
+                borderLeftColor: 'var(--error)'
+              }}
               onClick={() => error.instancePosition && handleGoToPosition(error.instancePosition)}
-              style={{ cursor: error.instancePosition ? 'pointer' : 'default' }}
             >
               <div className="mb-2">
                 <div className="text-[var(--vscode-fg)] text-[13px] font-semibold">

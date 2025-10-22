@@ -65,15 +65,12 @@ function handleWebviewMessage(message: WebviewMessage): void {
     if (message.command === 'goToPosition' && lastActiveTextEditor && message.position) {
         const range = errorPositionToRange(message.position);
 
-        // Show the document first to ensure it's visible
         vscode.window.showTextDocument(lastActiveTextEditor.document, {
             viewColumn: lastActiveTextEditor.viewColumn,
             preserveFocus: false
         }).then((editor) => {
-            // Set the selection
             editor.selection = new vscode.Selection(range.start, range.end);
             
-            // Reveal the range in the center of the viewport
             editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
         });
     } else if (message.command === 'formatSchema' && lastActiveTextEditor) {
@@ -95,18 +92,10 @@ function handleWebviewMessage(message: WebviewMessage): void {
                 await vscode.window.showTextDocument(lastActiveTextEditor.document, lastActiveTextEditor.viewColumn);
             }
             
-            // Only check format status, don't re-run everything
-            const formatResult = await commandExecutor.formatCheck(filePath);
-            
-            if (currentPanelState) {
-                const updatedState = {
-                    ...currentPanelState,
-                    formatResult,
-                    formatLoading: false
-                };
-                currentPanelState = updatedState;
-                panelManager.updateContent(updatedState);
-            }
+            // Wait for Huge schemas to reload after formatting
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            await updatePanelContent();
         }).catch((error) => {
             vscode.window.showErrorMessage(`Format failed: ${error.message}`);
             if (currentPanelState) {
@@ -227,7 +216,7 @@ async function updatePanelContent(): Promise<void> {
         currentPanelState = finalState;
         panelManager.updateContent(finalState);
 
-        // Update lint diagnostics (these have position information)
+        // Update lint diagnostics
         if (lastActiveTextEditor && lintResult.errors && lintResult.errors.length > 0) {
             diagnosticManager.updateDiagnostics(
                 lastActiveTextEditor.document.uri,
@@ -236,7 +225,7 @@ async function updatePanelContent(): Promise<void> {
             );
         }
 
-        // Update metaschema diagnostics (now with position information in v11.11+)
+        // Update metaschema diagnostics
         if (lastActiveTextEditor && metaschemaResult.errors && metaschemaResult.errors.length > 0) {
             diagnosticManager.updateMetaschemaDiagnostics(
                 lastActiveTextEditor.document.uri,

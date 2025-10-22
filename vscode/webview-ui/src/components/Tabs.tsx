@@ -53,9 +53,20 @@ export function Tabs({ activeTab, onTabChange, state }: TabsProps) {
 }
 
 function calculateLintStatus(errorCount: number, health: number | null, isLoading?: boolean) {
-  if (isLoading || health === null) {
+  if (isLoading) {
     return { indicator: '?', color: 'var(--vscode-muted)' };
   }
+  if (health === null && errorCount !== undefined) {
+    if (errorCount === 0) {
+      return { indicator: '✓', color: 'var(--success)' };
+    } else {
+      return { indicator: '⚠', color: 'var(--warning)' };
+    }
+  }
+  if (health === null) {
+    return { indicator: '?', color: 'var(--vscode-muted)' };
+  }
+  
   if (errorCount === 0) {
     return { indicator: '✓', color: 'var(--success)' };
   } else {
