@@ -1,6 +1,7 @@
 {
   "name": "sourcemeta-studio",
   "displayName": "Sourcemeta Studio",
+  "publisher": "sourcemeta",
   "description": "JSON Schema inspection, formatting, and linting tools",
   "version": "0.0.1",
   "engines": {
@@ -36,15 +37,26 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
+    "build:webview": "cd webview-ui && npm run build",
+    "build": "npm run compile && npm run build:webview",
     "pretest": "npm run compile",
+    "test": "vscode-test",
+    "test:headed": "vscode-test --headless=false",
+    "test:watch": "vscode-test --watch",
     "lint": "eslint src --ext ts"
   },
   "dependencies": {
-    "@sourcemeta/jsonschema": "v11.x.x"
+    "@sourcemeta/jsonschema": "*"
   },
   "devDependencies": {
-    "@types/vscode": "^1.74.0",
+    "@types/chai": "^5.2.3",
+    "@types/mocha": "^10.0.10",
     "@types/node": "18.x",
+    "@types/vscode": "^1.74.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
+    "chai": "^6.2.0",
+    "mocha": "^11.7.4",
     "typescript": "^5.3.0"
   }
 }
