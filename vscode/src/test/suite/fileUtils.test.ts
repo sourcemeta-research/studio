@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { getFileInfo, parseLintResult, errorPositionToRange } from '../../utils/fileUtils';
+import { getFileInfo, parseLintResult, parseMetaschemaResult, errorPositionToRange } from '../../utils/fileUtils';
 
 suite('FileUtils Test Suite', () => {
     suite('getFileInfo', () => {
@@ -135,6 +135,126 @@ suite('FileUtils Test Suite', () => {
             assert.strictEqual(range.start.character, 4);
             assert.strictEqual(range.end.line, 11);
             assert.strictEqual(range.end.character, 15);
+        });
+    });
+
+    suite('parseMetaschemaResult', () => {
+        test('should parse metaschema result with exit code 0', () => {
+            const output = 'Schema is valid';
+            const result = parseMetaschemaResult(output, 0);
+            
+            assert.strictEqual(result.exitCode, 0);
+            assert.strictEqual(result.output, output);
+            assert.strictEqual(result.errors, undefined);
+        });
+
+        test('should parse metaschema errors with exit code 2', () => {
+            const errors = [
+                {
+                    error: 'Property required but missing',
+                    instanceLocation: '/properties/name',
+                    keywordLocation: '/properties/name/required',
+                    instancePosition: [10, 5, 10, 20]
+                }
+            ];
+            const output = JSON.stringify(errors);
+            const result = parseMetaschemaResult(output, 2);
+            
+            assert.strictEqual(result.exitCode, 2);
+            assert.strictEqual(result.errors?.length, 1);
+            assert.strictEqual(result.errors?.[0].error, 'Property required but missing');
+            assert.deepStrictEqual(result.errors?.[0].instancePosition, [10, 5, 10, 20]);
+        });
+
+        test('should handle metaschema errors without position', () => {
+            const errors = [
+                {
+                    error: 'Schema validation failed',
+                    instanceLocation: '/test',
+                    keywordLocation: '/keyword'
+                }
+            ];
+            const output = JSON.stringify(errors);
+            const result = parseMetaschemaResult(output, 2);
+            
+            assert.strictEqual(result.errors?.length, 1);
+            assert.strictEqual(result.errors?.[0].instancePosition, undefined);
+        });
+
+        test('should handle exit code 1', () => {
+            const output = 'Fatal error occurred';
+            const result = parseMetaschemaResult(output, 1);
+            
+            assert.strictEqual(result.exitCode, 1);
+            assert.strictEqual(result.output, output);
+        });
+
+        test('should handle invalid JSON in error output', () => {
+            const output = 'invalid json';
+            const result = parseMetaschemaResult(output, 2);
+            
+            assert.strictEqual(result.exitCode, 2);
+            assert.strictEqual(result.output, output);
+        });
+
+        test('should extract JSON from output with prefix text', () => {
+            const errors = [
+                {
+                    error: 'Test error',
+                    instanceLocation: '/test',
+                    keywordLocation: '/keyword',
+                    instancePosition: [1, 1, 1, 10]
+                }
+            ];
+            const output = `Some text before JSON\n${JSON.stringify(errors)}`;
+            const result = parseMetaschemaResult(output, 2);
+            
+            assert.strictEqual(result.errors?.length, 1);
+            assert.strictEqual(result.errors?.[0].error, 'Test error');
+        });
+
+        test('should extract JSON from output with suffix text', () => {
+            const errors = [
+                {
+                    error: 'Test error',
+                    instanceLocation: '/test',
+                    keywordLocation: '/keyword'
+                }
+            ];
+            const output = `${JSON.stringify(errors)}\nSome text after JSON`;
+            const result = parseMetaschemaResult(output, 2);
+            
+            assert.strictEqual(result.errors?.length, 1);
+            assert.strictEqual(result.errors?.[0].error, 'Test error');
+        });
+
+        test('should handle empty error array', () => {
+            const output = '[]';
+            const result = parseMetaschemaResult(output, 2);
+            
+            assert.strictEqual(result.exitCode, 2);
+            assert.strictEqual(result.errors?.length, 0);
+        });
+
+        test('should preserve all error fields', () => {
+            const errors = [
+                {
+                    error: 'Validation error',
+                    instanceLocation: '/properties/test',
+                    keywordLocation: '/properties',
+                    absoluteKeywordLocation: 'http://example.com/schema#/properties',
+                    instancePosition: [10, 5, 10, 20]
+                }
+            ];
+            const output = JSON.stringify(errors);
+            const result = parseMetaschemaResult(output, 2);
+            
+            assert.strictEqual(result.errors?.length, 1);
+            assert.strictEqual(result.errors?.[0].error, 'Validation error');
+            assert.strictEqual(result.errors?.[0].instanceLocation, '/properties/test');
+            assert.strictEqual(result.errors?.[0].keywordLocation, '/properties');
+            assert.strictEqual(result.errors?.[0].absoluteKeywordLocation, 'http://example.com/schema#/properties');
+            assert.deepStrictEqual(result.errors?.[0].instancePosition, [10, 5, 10, 20]);
         });
     });
 });

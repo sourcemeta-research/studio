@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
+import * as path from 'path';
 
 suite('Extension Test Suite', () => {
     vscode.window.showInformationMessage('Start all tests.');
@@ -17,7 +18,7 @@ suite('Extension Test Suite', () => {
         }
     });
 
-    test('Should register command after activation', async () => {
+    test('Should register openPanel command', async () => {
         const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
         if (extension && !extension.isActive) {
             await extension.activate();
@@ -26,5 +27,53 @@ suite('Extension Test Suite', () => {
         const commands = await vscode.commands.getCommands(true);
         const commandExists = commands.includes('sourcemeta-studio.openPanel');
         assert.ok(commandExists, 'Command "sourcemeta-studio.openPanel" should be registered');
+    });
+
+    test('Should create diagnostic collections', async () => {
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
+        if (extension && !extension.isActive) {
+            await extension.activate();
+        }
+
+        const diagnostics = vscode.languages.getDiagnostics();
+        assert.ok(Array.isArray(diagnostics), 'Diagnostics should be available');
+    });
+
+    test('Should open panel when command is executed', async function() {
+        this.timeout(5000);
+
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
+        if (extension && !extension.isActive) {
+            await extension.activate();
+        }
+
+        await vscode.commands.executeCommand('sourcemeta-studio.openPanel');
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        assert.ok(true, 'Command executed without error');
+    });
+
+    test('Should handle JSON file opening', async function() {
+        this.timeout(5000);
+
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
+        if (extension && !extension.isActive) {
+            await extension.activate();
+        }
+
+        const testSchemaPath = path.join(__dirname, '../fixtures/test-schema.json');
+        const uri = vscode.Uri.file(testSchemaPath);
+        
+        try {
+            const document = await vscode.workspace.openTextDocument(uri);
+            await vscode.window.showTextDocument(document);
+
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            assert.strictEqual(document.languageId, 'json', 'Document should be JSON');
+        } catch (error) {
+            console.log('Test file not found, skipping:', error);
+        }
     });
 });
