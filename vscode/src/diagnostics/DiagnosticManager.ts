@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { LintError, DiagnosticType } from '../utils/types';
+import { LintError, DiagnosticType } from '../../shared/types';
 import { errorPositionToRange } from '../utils/fileUtils';
 
 /**

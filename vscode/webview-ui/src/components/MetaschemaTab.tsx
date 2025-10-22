@@ -1,4 +1,4 @@
-import type { CommandResult } from '../types';
+import type { CommandResult } from '@shared/types';
 import { RawOutput } from './RawOutput';
 
 export interface MetaschemaTabProps {

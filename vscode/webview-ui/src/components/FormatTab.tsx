@@ -1,4 +1,4 @@
-import type { CommandResult } from '../types';
+import type { CommandResult } from '@shared/types';
 import { vscode } from '../vscode-api';
 import { RawOutput } from './RawOutput';
 

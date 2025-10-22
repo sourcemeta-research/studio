@@ -1,4 +1,4 @@
-import type { PanelState } from '../types';
+import type { PanelState } from '@shared/types';
 
 export interface TabsProps {
   activeTab: 'lint' | 'format' | 'metaschema';

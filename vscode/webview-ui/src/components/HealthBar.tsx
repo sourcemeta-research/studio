@@ -1,4 +1,4 @@
-import type { LintResult } from '../types';
+import type { LintResult } from '@shared/types';
 
 export interface HealthBarProps {
   lintResult: LintResult;

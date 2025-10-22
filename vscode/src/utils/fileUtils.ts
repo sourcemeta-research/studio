@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { FileInfo, LintResult } from './types';
+import { FileInfo, LintResult } from '../../shared/types';
 
 /**
  * Get information about a file path

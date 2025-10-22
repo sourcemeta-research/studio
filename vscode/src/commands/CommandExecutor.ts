@@ -1,5 +1,5 @@
 import { spawn } from 'child_process';
-import { CommandResult } from '../utils/types';
+import { CommandResult } from '../../shared/types';
 
 /**
  * Execute a CLI command and return the result

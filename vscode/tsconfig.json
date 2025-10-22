@@ -5,7 +5,7 @@
     "outDir": "out",
     "lib": ["ES2020"],
     "sourceMap": true,
-    "rootDir": "src",
+    "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -15,8 +15,11 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@shared/*": ["./shared/*"]
+    }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", ".vscode-test", "out"]
+  "include": ["src/**/*", "shared/**/*"],
+  "exclude": ["node_modules", ".vscode-test", "out", "webview-ui"]
 }

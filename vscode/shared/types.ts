@@ -1,3 +1,7 @@
+/**
+ * Shared TypeScript interfaces and types
+ */
+
 export interface FileInfo {
     absolutePath: string;
     displayPath: string;
@@ -10,7 +14,7 @@ export interface LintError {
     description?: string;
     path: string;
     schemaLocation: string;
-    position: [number, number, number, number];
+    position: [number, number, number, number]; // [lineStart, colStart, lineEnd, colEnd]
 }
 
 export interface LintResult {
@@ -35,4 +39,27 @@ export interface PanelState {
     lintResult: LintResult;
     formatResult: FormatResult;
     metaschemaResult: MetaschemaResult;
+}
+
+export interface WebviewMessage {
+    command: 'goToPosition' | 'formatSchema';
+    position?: [number, number, number, number];
+}
+
+export const DiagnosticType = {
+    Lint: 'lint',
+    Metaschema: 'metaschema'
+} as const;
+
+export type DiagnosticType = typeof DiagnosticType[keyof typeof DiagnosticType];
+
+export interface TabStatus {
+    indicator: string;
+    cssClass: string;
+}
+
+export interface HealthBarData {
+    health: number | null;
+    color: string;
+    html: string;
 }

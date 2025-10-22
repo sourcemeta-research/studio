@@ -1,4 +1,4 @@
-import type { LintResult } from '../types';
+import type { LintResult } from '@shared/types';
 import { vscode } from '../vscode-api';
 import { RawOutput } from './RawOutput';
 
