@@ -31,6 +31,16 @@
           "when": "editorFocus"
         }
       ]
+    },
+    "configuration": {
+      "title": "Sourcemeta Studio",
+      "properties": {
+        "sourcemeta-studio.disableBuiltInValidation": {
+          "type": "boolean",
+          "default": true,
+          "description": "Disable VS Code's built-in JSON schema validation to prevent conflicts with Sourcemeta Studio"
+        }
+      }
     }
   },
   "scripts": {

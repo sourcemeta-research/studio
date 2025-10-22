@@ -1,11 +1,18 @@
-import type { CommandResult } from '@shared/types';
+import type { MetaschemaResult } from '@shared/types';
+import { vscode } from '../vscode-api';
 import { RawOutput } from './RawOutput';
 
 export interface MetaschemaTabProps {
-  metaschemaResult: CommandResult;
+  metaschemaResult: MetaschemaResult;
 }
 
 export function MetaschemaTab({ metaschemaResult }: MetaschemaTabProps) {
+  const handleGoToPosition = (position: [number, number, number, number]) => {
+    vscode.postMessage({ command: 'goToPosition', position });
+  };
+
+  const errors = metaschemaResult.errors || [];
+
   if (metaschemaResult.exitCode === 0) {
     return (
       <>
@@ -22,6 +29,60 @@ export function MetaschemaTab({ metaschemaResult }: MetaschemaTabProps) {
         </div>
         <RawOutput output={metaschemaResult.output} />
       </>
+    );
+  } else if (metaschemaResult.exitCode === 2 && errors.length > 0) {
+    return (
+      <div>
+        <div className="flex flex-col gap-3 mb-5">
+          {errors.map((error, index) => (
+            <div
+              key={index}
+              className="bg-[var(--vscode-selection)] border-l-[3px] border-[var(--danger)] rounded p-3 cursor-pointer transition-colors hover:bg-[var(--vscode-hover)]"
+              onClick={() => error.instancePosition && handleGoToPosition(error.instancePosition)}
+              style={{ cursor: error.instancePosition ? 'pointer' : 'default' }}
+            >
+              <div className="mb-2">
+                <div className="text-[var(--vscode-fg)] text-[13px] font-semibold">
+                  {error.error}
+                </div>
+              </div>
+              <div className="flex flex-col gap-1 text-[11px]">
+                {error.instancePosition && (
+                  <div className="flex gap-1.5">
+                    <span className="text-[var(--vscode-muted)] font-semibold min-w-[80px]">
+                      Location:
+                    </span>
+                    <span className="text-[var(--vscode-fg)] font-[var(--vscode-editor-font)]">
+                      Line {error.instancePosition[0]}, Col {error.instancePosition[1]}
+                    </span>
+                  </div>
+                )}
+                {error.instanceLocation && (
+                  <div className="flex gap-1.5">
+                    <span className="text-[var(--vscode-muted)] font-semibold min-w-[80px]">
+                      Path:
+                    </span>
+                    <span className="text-[var(--vscode-fg)] font-[var(--vscode-editor-font)] break-all">
+                      {error.instanceLocation || '(root)'}
+                    </span>
+                  </div>
+                )}
+                {error.keywordLocation && (
+                  <div className="flex gap-1.5">
+                    <span className="text-[var(--vscode-muted)] font-semibold min-w-[80px]">
+                      Schema:
+                    </span>
+                    <span className="text-[var(--vscode-fg)] font-[var(--vscode-editor-font)] break-all">
+                      {error.keywordLocation}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+        <RawOutput output={metaschemaResult.output} />
+      </div>
     );
   } else if (metaschemaResult.exitCode === 2) {
     return (

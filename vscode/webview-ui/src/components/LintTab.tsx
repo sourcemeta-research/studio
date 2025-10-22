@@ -51,7 +51,7 @@ export function LintTab({ lintResult }: LintTabProps) {
                     Location:
                   </span>
                   <span className="text-[var(--vscode-fg)] font-[var(--vscode-editor-font)]">
-                    Line {error.position[0] + 1}, Col {error.position[1] + 1}
+                    Line {error.position[0]}, Col {error.position[1]}
                   </span>
                 </div>
                 <div className="flex gap-1.5">

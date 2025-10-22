@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { LintError, DiagnosticType } from '../../shared/types';
+import { LintError, MetaschemaError, DiagnosticType } from '../../shared/types';
 import { errorPositionToRange } from '../utils/fileUtils';
 
 /**
@@ -51,6 +51,37 @@ export class DiagnosticManager {
             : this.metaschemaDiagnostics;
         
         collection.set(documentUri, diagnostics);
+    }
+
+    /**
+     * Update metaschema diagnostics for a document
+     */
+    updateMetaschemaDiagnostics(
+        documentUri: vscode.Uri,
+        errors: MetaschemaError[]
+    ): void {
+        const diagnostics = errors
+            .filter(error => error.instancePosition)
+            .map(error => {
+                const position = error.instancePosition as [number, number, number, number];
+                const range = errorPositionToRange(position);
+
+                const diagnostic = new vscode.Diagnostic(
+                    range,
+                    error.error,
+                    vscode.DiagnosticSeverity.Error
+                );
+
+                diagnostic.source = 'Sourcemeta Studio (Metaschema)';
+
+                if (error.instanceLocation) {
+                    diagnostic.code = error.instanceLocation;
+                }
+
+                return diagnostic;
+            });
+
+        this.metaschemaDiagnostics.set(documentUri, diagnostics);
     }
 
     /**

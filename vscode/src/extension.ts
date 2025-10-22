@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { PanelManager } from './panel/PanelManager';
 import { CommandExecutor } from './commands/CommandExecutor';
 import { DiagnosticManager } from './diagnostics/DiagnosticManager';
-import { getFileInfo, parseLintResult, errorPositionToRange } from './utils/fileUtils';
+import { getFileInfo, parseLintResult, parseMetaschemaResult, errorPositionToRange } from './utils/fileUtils';
 import { WebviewMessage, PanelState, DiagnosticType } from '../shared/types';
 
 let panelManager: PanelManager;
@@ -15,6 +15,12 @@ let cachedVersion = 'Loading...';
  * Extension activation
  */
 export function activate(context: vscode.ExtensionContext): void {
+    // Disable VS Code's built-in JSON validation if configured
+    const config = vscode.workspace.getConfiguration('sourcemeta-studio');
+    if (config.get('disableBuiltInValidation', true)) {
+        vscode.workspace.getConfiguration('json').update('validate.enable', false, vscode.ConfigurationTarget.Workspace);
+    }
+
     panelManager = new PanelManager(context.extensionPath);
     commandExecutor = new CommandExecutor(context.extensionPath);
     diagnosticManager = new DiagnosticManager();
@@ -58,14 +64,22 @@ function handleWebviewMessage(message: WebviewMessage): void {
     if (message.command === 'goToPosition' && lastActiveTextEditor && message.position) {
         const range = errorPositionToRange(message.position);
 
-        lastActiveTextEditor.revealRange(range, vscode.TextEditorRevealType.InCenter);
-
-        lastActiveTextEditor.selection = new vscode.Selection(range.start, range.end);
-
-        vscode.window.showTextDocument(lastActiveTextEditor.document, lastActiveTextEditor.viewColumn);
+        // Show the document first to ensure it's visible
+        vscode.window.showTextDocument(lastActiveTextEditor.document, {
+            viewColumn: lastActiveTextEditor.viewColumn,
+            preserveFocus: false
+        }).then((editor) => {
+            // Set the selection
+            editor.selection = new vscode.Selection(range.start, range.end);
+            
+            // Reveal the range in the center of the viewport
+            editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
+        });
     } else if (message.command === 'formatSchema' && lastActiveTextEditor) {
         commandExecutor.format(lastActiveTextEditor.document.uri.fsPath).then(() => {
-            vscode.window.showTextDocument(lastActiveTextEditor!.document, lastActiveTextEditor!.viewColumn);
+            if (lastActiveTextEditor) {
+                vscode.window.showTextDocument(lastActiveTextEditor.document, lastActiveTextEditor.viewColumn);
+            }
             updatePanelContent();
         }).catch((error) => {
             vscode.window.showErrorMessage(`Format failed: ${error.message}`);
@@ -131,12 +145,14 @@ async function updatePanelContent(): Promise<void> {
     const filePath = lastActiveTextEditor?.document.uri.fsPath;
     const fileInfo = getFileInfo(filePath);
 
+    // Send initial loading state
     const loadingState: PanelState = {
         fileInfo,
         version: cachedVersion,
-        lintResult: { raw: 'Loading...', health: null },
-        formatResult: { output: 'Loading...', exitCode: null },
-        metaschemaResult: { output: 'Loading...', exitCode: null }
+        lintResult: { raw: '', health: null },
+        formatResult: { output: '', exitCode: null },
+        metaschemaResult: { output: '', exitCode: null },
+        isLoading: true
     };
     panelManager.updateContent(loadingState);
 
@@ -146,7 +162,7 @@ async function updatePanelContent(): Promise<void> {
 
     // Run all commands in parallel
     try {
-        const [version, lintOutput, formatResult, metaschemaResult] = await Promise.all([
+        const [version, lintOutput, formatResult, metaschemaRawResult] = await Promise.all([
             commandExecutor.getVersion(),
             fileInfo ? commandExecutor.lint(fileInfo.absolutePath) : Promise.resolve('No file selected'),
             fileInfo ? commandExecutor.formatCheck(fileInfo.absolutePath) : Promise.resolve({ output: 'No file selected', exitCode: null }),
@@ -155,21 +171,32 @@ async function updatePanelContent(): Promise<void> {
 
         cachedVersion = version;
         const lintResult = parseLintResult(lintOutput);
+        const metaschemaResult = parseMetaschemaResult(metaschemaRawResult.output, metaschemaRawResult.exitCode);
 
         const finalState: PanelState = {
             fileInfo,
             version: cachedVersion,
             lintResult,
             formatResult,
-            metaschemaResult
+            metaschemaResult,
+            isLoading: false
         };
         panelManager.updateContent(finalState);
 
+        // Update lint diagnostics (these have position information)
         if (lastActiveTextEditor && lintResult.errors && lintResult.errors.length > 0) {
             diagnosticManager.updateDiagnostics(
                 lastActiveTextEditor.document.uri,
                 lintResult.errors,
                 DiagnosticType.Lint
+            );
+        }
+
+        // Update metaschema diagnostics (now with position information in v11.11+)
+        if (lastActiveTextEditor && metaschemaResult.errors && metaschemaResult.errors.length > 0) {
+            diagnosticManager.updateMetaschemaDiagnostics(
+                lastActiveTextEditor.document.uri,
+                metaschemaResult.errors
             );
         }
     } catch (error) {
@@ -179,7 +206,8 @@ async function updatePanelContent(): Promise<void> {
             version: cachedVersion,
             lintResult: { raw: `Error: ${(error as Error).message}`, health: null, error: true },
             formatResult: { output: `Error: ${(error as Error).message}`, exitCode: null },
-            metaschemaResult: { output: `Error: ${(error as Error).message}`, exitCode: null }
+            metaschemaResult: { output: `Error: ${(error as Error).message}`, exitCode: null },
+            isLoading: false
         };
         panelManager.updateContent(errorState);
     }

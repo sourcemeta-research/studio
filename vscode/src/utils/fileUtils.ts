@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { FileInfo, LintResult } from '../../shared/types';
+import { FileInfo, LintResult, MetaschemaResult } from '../../shared/types';
 
 /**
  * Get information about a file path
@@ -48,13 +48,48 @@ export function parseLintResult(lintOutput: string): LintResult {
             valid: parsed.valid,
             errors: parsed.errors || []
         };
-    } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
         return {
             raw: lintOutput,
             health: null,
             error: true
         };
     }
+}
+
+/**
+ * Parse metaschema command output
+ */
+export function parseMetaschemaResult(output: string, exitCode: number | null): MetaschemaResult {
+    const result: MetaschemaResult = { output, exitCode };
+    
+    // Exit code 2 means validation failed
+    if (exitCode === 2) {
+        try {
+            const parsed = JSON.parse(output);
+            if (parsed.valid === false && Array.isArray(parsed.errors)) {
+                result.errors = parsed.errors.map((error: { 
+                    error?: string; 
+                    instanceLocation?: string; 
+                    keywordLocation?: string; 
+                    absoluteKeywordLocation?: string;
+                    instancePosition?: [number, number, number, number];
+                }) => ({
+                    error: error.error || 'Validation error',
+                    instanceLocation: error.instanceLocation || '',
+                    keywordLocation: error.keywordLocation || '',
+                    absoluteKeywordLocation: error.absoluteKeywordLocation,
+                    instancePosition: error.instancePosition
+                }));
+            }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (_error) {
+            // If parsing fails, just keep the raw output
+        }
+    }
+    
+    return result;
 }
 
 /**
