@@ -55,6 +55,30 @@ export function getFileInfo(filePath: string | undefined): FileInfo | null {
 export function parseLintResult(lintOutput: string): LintResult {
     try {
         const parsed = JSON.parse(lintOutput);
+        
+        // Check for parsing error response
+        if (parsed.error && typeof parsed.error === 'string') {
+            const hasPosition = typeof parsed.line === 'number' && typeof parsed.column === 'number';
+            const description = hasPosition 
+                ? `Failed to parse JSON document at line ${parsed.line}, column ${parsed.column}`
+                : parsed.error;
+            
+            return {
+                raw: lintOutput,
+                health: 0,
+                valid: false,
+                errors: [{
+                    id: 'json-parse-error',
+                    message: parsed.error,
+                    description: description,
+                    path: '/',
+                    schemaLocation: '/',
+                    position: hasPosition ? [parsed.line, parsed.column, parsed.line, parsed.column] : null
+                }]
+            };
+        }
+        
+        // Normal lint response format
         return {
             raw: lintOutput,
             health: parsed.health,

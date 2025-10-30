@@ -156,6 +156,37 @@ suite('FileUtils Test Suite', () => {
             assert.deepStrictEqual(result.errors?.[0].position, [5, 10, 5, 20]);
             assert.strictEqual(result.errors?.[1].position, null);
         });
+
+        test('should handle JSON parsing error response', () => {
+            const output = JSON.stringify({
+                error: 'Failed to parse the JSON document',
+                line: 106,
+                column: 5,
+                filePath: '/home/user/schema.json'
+            });
+            const result = parseLintResult(output);
+            
+            assert.strictEqual(result.health, 0, 'Health should be 0 for parsing errors');
+            assert.strictEqual(result.valid, false, 'Should be marked as invalid');
+            assert.strictEqual(result.errors?.length, 1, 'Should have one error');
+            assert.strictEqual(result.errors?.[0].id, 'json-parse-error');
+            assert.strictEqual(result.errors?.[0].message, 'Failed to parse the JSON document');
+            assert.ok(result.errors?.[0].description?.includes('line 106'), 'Description should mention line number');
+            assert.ok(result.errors?.[0].description?.includes('column 5'), 'Description should mention column number');
+            assert.deepStrictEqual(result.errors?.[0].position, [106, 5, 106, 5]);
+        });
+
+        test('should handle parsing error without line/column info', () => {
+            const output = JSON.stringify({
+                error: 'Failed to parse the JSON document'
+            });
+            const result = parseLintResult(output);
+            
+            assert.strictEqual(result.health, 0);
+            assert.strictEqual(result.valid, false);
+            assert.strictEqual(result.errors?.length, 1);
+            assert.strictEqual(result.errors?.[0].position, null, 'Position should be null when line/column not provided');
+        });
     });
 
     suite('errorPositionToRange', () => {
