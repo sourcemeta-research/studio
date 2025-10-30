@@ -6,15 +6,17 @@ export interface FileInfo {
     absolutePath: string;
     displayPath: string;
     fileName: string;
+    lineCount?: number;
+    isYaml?: boolean;
 }
 
 export interface LintError {
     id: string;
     message: string;
-    description?: string;
+    description?: string | null;
     path: string;
     schemaLocation: string;
-    position: [number, number, number, number]; // [lineStart, colStart, lineEnd, colEnd]
+    position: [number, number, number, number] | null; // [lineStart, colStart, lineEnd, colEnd], null for YAML
 }
 
 export interface LintResult {
@@ -55,8 +57,9 @@ export interface PanelState {
 }
 
 export interface WebviewMessage {
-    command: 'goToPosition' | 'formatSchema';
+    command: 'goToPosition' | 'formatSchema' | 'openExternal';
     position?: [number, number, number, number];
+    url?: string;
 }
 
 export const DiagnosticType = {

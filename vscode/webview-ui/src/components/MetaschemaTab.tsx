@@ -1,6 +1,7 @@
 import type { MetaschemaResult } from '@shared/types';
 import { vscode } from '../vscode-api';
 import { RawOutput } from './RawOutput';
+import { CheckCircle, AlertTriangle } from 'lucide-react';
 
 export interface MetaschemaTabProps {
   metaschemaResult: MetaschemaResult;
@@ -17,8 +18,8 @@ export function MetaschemaTab({ metaschemaResult }: MetaschemaTabProps) {
     return (
       <>
         <div className="text-center py-10 px-5">
-          <div className="text-5xl mb-4" style={{ color: 'var(--success)' }}>
-            ✓
+          <div className="flex justify-center mb-4">
+            <CheckCircle size={48} style={{ color: 'var(--success)' }} strokeWidth={1.5} />
           </div>
           <div className="text-lg font-semibold text-[var(--vscode-fg)] mb-2">
             Schema is valid according to its meta-schema!
@@ -104,8 +105,8 @@ export function MetaschemaTab({ metaschemaResult }: MetaschemaTabProps) {
     return (
       <>
         <div className="text-center py-10 px-5">
-          <div className="text-5xl mb-4" style={{ color: 'var(--fatal)' }}>
-            ⚠
+          <div className="flex justify-center mb-4">
+            <AlertTriangle size={48} style={{ color: 'var(--fatal)' }} strokeWidth={1.5} />
           </div>
           <div className="text-lg font-semibold text-[var(--vscode-fg)] mb-2">
             Fatal Error

@@ -104,6 +104,58 @@ suite('FileUtils Test Suite', () => {
             assert.strictEqual(result.error, true);
             assert.strictEqual(result.health, null);
         });
+
+        test('should parse YAML lint output with null positions', () => {
+            const output = JSON.stringify({
+                health: 95,
+                valid: false,
+                errors: [
+                    {
+                        id: 'yaml-error-1',
+                        message: 'Property missing',
+                        path: '/properties/name',
+                        schemaLocation: '/properties',
+                        position: null
+                    }
+                ]
+            });
+            const result = parseLintResult(output);
+            
+            assert.strictEqual(result.health, 95);
+            assert.strictEqual(result.valid, false);
+            assert.strictEqual(result.errors?.length, 1);
+            assert.strictEqual(result.errors?.[0].message, 'Property missing');
+            assert.strictEqual(result.errors?.[0].position, null);
+        });
+
+        test('should handle mixed null and non-null positions', () => {
+            const output = JSON.stringify({
+                health: 75,
+                valid: false,
+                errors: [
+                    {
+                        id: 'error-1',
+                        message: 'Error with position',
+                        path: '/test1',
+                        schemaLocation: '/schema1',
+                        position: [5, 10, 5, 20]
+                    },
+                    {
+                        id: 'error-2',
+                        message: 'Error without position',
+                        path: '/test2',
+                        schemaLocation: '/schema2',
+                        position: null
+                    }
+                ]
+            });
+            const result = parseLintResult(output);
+            
+            assert.strictEqual(result.health, 75);
+            assert.strictEqual(result.errors?.length, 2);
+            assert.deepStrictEqual(result.errors?.[0].position, [5, 10, 5, 20]);
+            assert.strictEqual(result.errors?.[1].position, null);
+        });
     });
 
     suite('errorPositionToRange', () => {

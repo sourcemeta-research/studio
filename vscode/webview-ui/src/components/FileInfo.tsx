@@ -21,6 +21,12 @@ export function FileInfo({ fileInfo }: FileInfoProps) {
       <p className="text-[var(--vscode-fg)] text-[13px] break-all m-0 font-[var(--vscode-editor-font)]">
         {fileInfo.displayPath}
       </p>
+      {fileInfo.lineCount && (
+        <p className="text-[var(--vscode-muted)] text-[11px] mt-1.5 m-0">
+          {fileInfo.lineCount.toLocaleString()} lines
+          {fileInfo.isYaml && ' • YAML'}
+        </p>
+      )}
     </div>
   );
 }

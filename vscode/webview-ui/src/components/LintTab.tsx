@@ -1,6 +1,7 @@
 import type { LintResult } from '@shared/types';
 import { vscode } from '../vscode-api';
 import { RawOutput } from './RawOutput';
+import { CheckCircle } from 'lucide-react';
 
 export interface LintTabProps {
   lintResult: LintResult;
@@ -17,8 +18,8 @@ export function LintTab({ lintResult }: LintTabProps) {
     <div>
       {errors.length === 0 ? (
         <div className="text-center py-10 px-5">
-          <div className="text-5xl mb-4" style={{ color: 'var(--success)' }}>
-            ✓
+          <div className="flex justify-center mb-4">
+            <CheckCircle size={48} style={{ color: 'var(--success)' }} strokeWidth={1.5} />
           </div>
           <div className="text-lg font-semibold text-[var(--vscode-fg)] mb-2">
             No issues found!
@@ -33,7 +34,8 @@ export function LintTab({ lintResult }: LintTabProps) {
             <div
               key={index}
               className="bg-[var(--vscode-selection)] border-l-[3px] border-[var(--warning)] rounded p-3 cursor-pointer transition-colors hover:bg-[var(--vscode-hover)]"
-              onClick={() => handleGoToPosition(error.position)}
+              style={{ cursor: error.position ? 'pointer' : 'default' }}
+              onClick={() => error.position && handleGoToPosition(error.position)}
             >
               <div className="mb-2">
                 <div className="text-[var(--vscode-fg)] text-[13px] font-semibold">
@@ -46,20 +48,22 @@ export function LintTab({ lintResult }: LintTabProps) {
                 </div>
               )}
               <div className="flex flex-col gap-1 text-[11px]">
+                {error.position && (
+                  <div className="flex gap-1.5">
+                    <span className="text-[var(--vscode-muted)] font-semibold min-w-[60px]">
+                      Location:
+                    </span>
+                    <span className="text-[var(--vscode-fg)] font-[var(--vscode-editor-font)]">
+                      Line {error.position[0]}, Col {error.position[1]}
+                    </span>
+                  </div>
+                )}
                 <div className="flex gap-1.5">
                   <span className="text-[var(--vscode-muted)] font-semibold min-w-[60px]">
-                    Location:
+                    Rule ID:
                   </span>
                   <span className="text-[var(--vscode-fg)] font-[var(--vscode-editor-font)]">
-                    Line {error.position[0]}, Col {error.position[1]}
-                  </span>
-                </div>
-                <div className="flex gap-1.5">
-                  <span className="text-[var(--vscode-muted)] font-semibold min-w-[60px]">
-                    Path:
-                  </span>
-                  <span className="text-[var(--vscode-fg)] font-[var(--vscode-editor-font)]">
-                    {error.path}
+                    {error.id}
                   </span>
                 </div>
                 {error.schemaLocation && (

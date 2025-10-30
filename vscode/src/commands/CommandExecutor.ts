@@ -95,9 +95,14 @@ export class CommandExecutor {
     /**
      * Run metaschema validation on a file
      */
-    async metaschema(filePath: string): Promise<CommandResult> {
+    async metaschema(filePath: string, useHttp: boolean = true): Promise<CommandResult> {
         try {
-            return await this.executeCommand(['jsonschema', 'metaschema', '--json', filePath]);
+            const args = ['jsonschema', 'metaschema', '--json'];
+            if (useHttp) {
+                args.push('--http');
+            }
+            args.push(filePath);
+            return await this.executeCommand(args);
         } catch (error) {
             throw error;
         }

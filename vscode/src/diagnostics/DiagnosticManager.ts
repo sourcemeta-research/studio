@@ -22,7 +22,10 @@ export class DiagnosticManager {
         errors: LintError[],
         type: DiagnosticType
     ): void {
-        const diagnostics = errors.map(error => {
+        const diagnostics = errors
+            .filter((error): error is LintError & { position: [number, number, number, number] } => 
+                error.position !== null) // Skip errors without positions for YAML files
+            .map(error => {
             const range = errorPositionToRange(error.position);
 
             const diagnostic = new vscode.Diagnostic(

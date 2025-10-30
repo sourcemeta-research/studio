@@ -73,6 +73,8 @@ function handleWebviewMessage(message: WebviewMessage): void {
             
             editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
         });
+    } else if (message.command === 'openExternal' && message.url) {
+        vscode.env.openExternal(vscode.Uri.parse(message.url));
     } else if (message.command === 'formatSchema' && lastActiveTextEditor) {
         const filePath = lastActiveTextEditor.document.uri.fsPath;
         const fileInfo = getFileInfo(filePath);

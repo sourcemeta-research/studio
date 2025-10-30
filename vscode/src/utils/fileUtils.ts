@@ -1,5 +1,6 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
+import * as fs from 'fs';
 import { FileInfo, LintResult, MetaschemaResult } from '../../shared/types';
 
 /**
@@ -29,10 +30,22 @@ export function getFileInfo(filePath: string | undefined): FileInfo | null {
         }
     }
 
+    let lineCount = 0;
+    try {
+        const content = fs.readFileSync(filePath, 'utf-8');
+        lineCount = content.split('\n').length;
+    } catch (error) {
+        console.error('Failed to read file for line count:', error);
+    }
+
+    const isYaml = extension === '.yaml' || extension === '.yml';
+
     return {
         absolutePath: filePath,
         displayPath: displayPath,
-        fileName: path.basename(filePath)
+        fileName: path.basename(filePath),
+        lineCount,
+        isYaml
     };
 }
 

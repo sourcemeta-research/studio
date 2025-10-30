@@ -57,13 +57,13 @@ function App() {
       
       <div className="flex-1 overflow-y-auto">
         {state.isLoading ? (
-          <LoadingSpinner />
+          <LoadingSpinner fileInfo={state.fileInfo} />
         ) : state.formatLoading && activeTab === 'format' ? (
-          <LoadingSpinner />
+          <LoadingSpinner fileInfo={state.fileInfo} />
         ) : (
           <>
             {activeTab === 'lint' && <LintTab lintResult={state.lintResult} />}
-            {activeTab === 'format' && <FormatTab formatResult={state.formatResult} />}
+            {activeTab === 'format' && <FormatTab formatResult={state.formatResult} fileInfo={state.fileInfo} />}
             {activeTab === 'metaschema' && <MetaschemaTab metaschemaResult={state.metaschemaResult} />}
           </>
         )}

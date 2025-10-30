@@ -1,4 +1,6 @@
 import type { PanelState } from '@shared/types';
+import { CheckCircle, AlertTriangle, X, HelpCircle, Info } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 export interface TabsProps {
   activeTab: 'lint' | 'format' | 'metaschema';
@@ -9,18 +11,18 @@ export interface TabsProps {
 export function Tabs({ activeTab, onTabChange, state }: TabsProps) {
   // Calculate tab statuses
   const lintStatus = calculateLintStatus(state.lintResult.errors?.length || 0, state.lintResult.health, state.isLoading);
-  const formatStatus = calculateFormatStatus(state.formatResult.exitCode, state.formatLoading);
+  const formatStatus = calculateFormatStatus(state.formatResult.exitCode, state.formatLoading, state.fileInfo?.isYaml);
   const metaschemaStatus = calculateMetaschemaStatus(state.metaschemaResult.exitCode, state.isLoading);
 
   const Tab = ({ 
     id, 
     label, 
-    indicator, 
+    Icon, 
     color 
   }: { 
     id: 'lint' | 'format' | 'metaschema'; 
     label: string; 
-    indicator: string; 
+    Icon: LucideIcon | null; 
     color: string; 
   }) => (
     <button
@@ -34,10 +36,8 @@ export function Tabs({ activeTab, onTabChange, state }: TabsProps) {
       `}
       onClick={() => onTabChange(id)}
     >
-      {indicator && (
-        <span className="text-sm font-bold" style={{ color }}>
-          {indicator}
-        </span>
+      {Icon && (
+        <Icon size={14} strokeWidth={2} style={{ color }} />
       )}
       <span>{label}</span>
     </button>
@@ -45,56 +45,59 @@ export function Tabs({ activeTab, onTabChange, state }: TabsProps) {
 
   return (
     <div className="flex border-b border-[var(--vscode-border)] mb-5">
-      <Tab id="lint" label="Lint" indicator={lintStatus.indicator} color={lintStatus.color} />
-      <Tab id="format" label="Format" indicator={formatStatus.indicator} color={formatStatus.color} />
-      <Tab id="metaschema" label="Metaschema" indicator={metaschemaStatus.indicator} color={metaschemaStatus.color} />
+      <Tab id="lint" label="Lint" Icon={lintStatus.Icon} color={lintStatus.color} />
+      <Tab id="format" label="Format" Icon={formatStatus.Icon} color={formatStatus.color} />
+      <Tab id="metaschema" label="Metaschema" Icon={metaschemaStatus.Icon} color={metaschemaStatus.color} />
     </div>
   );
 }
 
 function calculateLintStatus(errorCount: number, health: number | null, isLoading?: boolean) {
   if (isLoading) {
-    return { indicator: '?', color: 'var(--vscode-muted)' };
+    return { Icon: HelpCircle, color: 'var(--vscode-muted)' };
   }
   if (health === null && errorCount !== undefined) {
     if (errorCount === 0) {
-      return { indicator: '✓', color: 'var(--success)' };
+      return { Icon: CheckCircle, color: 'var(--success)' };
     } else {
-      return { indicator: '⚠', color: 'var(--warning)' };
+      return { Icon: AlertTriangle, color: 'var(--warning)' };
     }
   }
   if (health === null) {
-    return { indicator: '?', color: 'var(--vscode-muted)' };
+    return { Icon: HelpCircle, color: 'var(--vscode-muted)' };
   }
   
   if (errorCount === 0) {
-    return { indicator: '✓', color: 'var(--success)' };
+    return { Icon: CheckCircle, color: 'var(--success)' };
   } else {
-    return { indicator: '⚠', color: 'var(--warning)' };
+    return { Icon: AlertTriangle, color: 'var(--warning)' };
   }
 }
 
-function calculateFormatStatus(exitCode: number | null, formatLoading?: boolean) {
+function calculateFormatStatus(exitCode: number | null, formatLoading?: boolean, isYaml?: boolean) {
   if (formatLoading || exitCode === null || exitCode === undefined) {
-    return { indicator: '?', color: 'var(--vscode-muted)' };
+    return { Icon: HelpCircle, color: 'var(--vscode-muted)' };
+  }
+  if (isYaml) {
+    return { Icon: Info, color: 'var(--vscode-muted)' };
   }
   if (exitCode === 0) {
-    return { indicator: '✓', color: 'var(--success)' };
+    return { Icon: CheckCircle, color: 'var(--success)' };
   } else {
-    return { indicator: '⚠', color: 'var(--warning)' };
+    return { Icon: AlertTriangle, color: 'var(--warning)' };
   }
 }
 
 function calculateMetaschemaStatus(exitCode: number | null, isLoading?: boolean) {
   if (isLoading || exitCode === null || exitCode === undefined) {
-    return { indicator: '?', color: 'var(--vscode-muted)' };
+    return { Icon: HelpCircle, color: 'var(--vscode-muted)' };
   }
   if (exitCode === 0) {
-    return { indicator: '✓', color: 'var(--success)' };
+    return { Icon: CheckCircle, color: 'var(--success)' };
   } else if (exitCode === 2) {
-    return { indicator: '✗', color: 'var(--error)' };
+    return { Icon: X, color: 'var(--error)' };
   } else if (exitCode === 1) {
-    return { indicator: '⚠', color: 'var(--fatal)' };
+    return { Icon: AlertTriangle, color: 'var(--fatal)' };
   }
-  return { indicator: '?', color: 'var(--vscode-muted)' };
+  return { Icon: HelpCircle, color: 'var(--vscode-muted)' };
 }

@@ -1,4 +1,13 @@
-export function LoadingSpinner() {
+import type { FileInfo } from '@shared/types';
+import { AlertTriangle } from 'lucide-react';
+
+export interface LoadingSpinnerProps {
+  fileInfo?: FileInfo | null;
+}
+
+export function LoadingSpinner({ fileInfo }: LoadingSpinnerProps) {
+  const isLargeSchema = fileInfo?.lineCount && fileInfo.lineCount > 500;
+
   return (
     <div className="flex items-center justify-center py-20">
       <div className="flex flex-col items-center gap-4">
@@ -9,6 +18,21 @@ export function LoadingSpinner() {
         <div className="text-[var(--vscode-muted)] text-sm">
           Analyzing schema...
         </div>
+        {isLargeSchema && (
+          <div className="mt-2 px-4 py-2 bg-[var(--vscode-selection)] rounded border-l-[3px] border-[var(--warning)] max-w-md">
+            <div className="flex items-start gap-2">
+              <AlertTriangle size={16} style={{ color: 'var(--warning)', flexShrink: 0 }} strokeWidth={2} />
+              <div>
+                <p className="text-[var(--vscode-fg)] text-xs font-semibold m-0 mb-1">
+                  Large Schema ({fileInfo.lineCount?.toLocaleString()} lines)
+                </p>
+                <p className="text-[var(--vscode-muted)] text-[11px] m-0">
+                  This operation may take some time to complete.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

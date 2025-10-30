@@ -251,4 +251,65 @@ suite('DiagnosticManager Test Suite', () => {
         const diagnostics = vscode.languages.getDiagnostics(testUri);
         assert.strictEqual(diagnostics.length, 1, 'Should create diagnostic even without description');
     });
+
+    test('should filter out lint errors with null positions (YAML files)', () => {
+        const lintErrors: LintError[] = [
+            {
+                id: 'error-with-position',
+                message: 'Error with position',
+                path: '/test1',
+                schemaLocation: '/schema1',
+                position: [1, 1, 1, 10]
+            },
+            {
+                id: 'error-without-position',
+                message: 'Error without position (YAML)',
+                path: '/test2',
+                schemaLocation: '/schema2',
+                position: null
+            }
+        ];
+
+        diagnosticManager.updateDiagnostics(testUri, lintErrors, DiagnosticType.Lint);
+        
+        const diagnostics = vscode.languages.getDiagnostics(testUri);
+        assert.strictEqual(
+            diagnostics.length,
+            1,
+            'Should only create diagnostics for errors with non-null position'
+        );
+        assert.strictEqual(
+            diagnostics[0].message,
+            'Error with position',
+            'Should only include error with position'
+        );
+    });
+
+    test('should handle all null positions (YAML lint errors)', () => {
+        const lintErrors: LintError[] = [
+            {
+                id: 'yaml-error-1',
+                message: 'YAML error 1',
+                path: '/test1',
+                schemaLocation: '/schema1',
+                position: null
+            },
+            {
+                id: 'yaml-error-2',
+                message: 'YAML error 2',
+                path: '/test2',
+                schemaLocation: '/schema2',
+                position: null
+            }
+        ];
+
+        diagnosticManager.updateDiagnostics(testUri, lintErrors, DiagnosticType.Lint);
+        
+        const diagnostics = vscode.languages.getDiagnostics(testUri);
+        assert.strictEqual(
+            diagnostics.length,
+            0,
+            'Should not create any diagnostics when all positions are null'
+        );
+    });
 });
