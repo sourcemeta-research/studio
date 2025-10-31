@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { PanelManager } from './panel/PanelManager';
 import { CommandExecutor } from './commands/CommandExecutor';
 import { DiagnosticManager } from './diagnostics/DiagnosticManager';
-import { getFileInfo, parseLintResult, parseMetaschemaResult, errorPositionToRange } from './utils/fileUtils';
+import { getFileInfo, parseLintResult, parseMetaschemaResult, errorPositionToRange, parseCliError } from './utils/fileUtils';
 import { WebviewMessage, PanelState, DiagnosticType } from '../shared/types';
 
 let panelManager: PanelManager;
@@ -99,11 +99,25 @@ function handleWebviewMessage(message: WebviewMessage): void {
 
             await updatePanelContent();
         }).catch((error) => {
-            vscode.window.showErrorMessage(`Format failed: ${error.message}`);
+            let errorMessage = error.message;
+            
+            // Try to parse JSON error from CLI
+            const cliError = parseCliError(error.message);
+            if (cliError) {
+                errorMessage = cliError.error;
+                if (cliError.line) {
+                    errorMessage += ` at line ${cliError.line}`;
+                    if (cliError.column) {
+                        errorMessage += `, column ${cliError.column}`;
+                    }
+                }
+            }
+            
+            vscode.window.showErrorMessage(`Format failed: ${errorMessage}`);
             if (currentPanelState) {
                 const updatedState = {
                     ...currentPanelState,
-                    formatResult: { output: `Error: ${error.message}`, exitCode: null },
+                    formatResult: { output: `Error: ${errorMessage}`, exitCode: null },
                     formatLoading: false
                 };
                 currentPanelState = updatedState;

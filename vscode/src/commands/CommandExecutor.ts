@@ -76,7 +76,7 @@ export class CommandExecutor {
      */
     async formatCheck(filePath: string): Promise<CommandResult> {
         try {
-            return await this.executeCommand(['jsonschema', 'fmt', '--check', filePath]);
+            return await this.executeCommand(['jsonschema', 'fmt', '--check', '--json', filePath]);
         } catch (error) {
             throw error;
         }
@@ -86,8 +86,16 @@ export class CommandExecutor {
      * Run format command on a file
      */
     async format(filePath: string): Promise<void> {
-        const result = await this.executeCommand(['jsonschema', 'fmt', filePath]);
+        const result = await this.executeCommand(['jsonschema', 'fmt', '--json', filePath]);
         if (result.exitCode !== 0) {
+            try {
+                const errorObj = JSON.parse(result.output);
+                if (errorObj.error) {
+                    throw new Error(errorObj.error);
+                }
+            } catch {
+                // If JSON parsing fails, use the raw output
+            }
             throw new Error(result.output || `Process exited with code ${result.exitCode}`);
         }
     }

@@ -1,7 +1,34 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { FileInfo, LintResult, MetaschemaResult } from '../../shared/types';
+import { FileInfo, LintResult, MetaschemaResult, CliError } from '../../shared/types';
+
+/**
+ * Parse generic CLI error response from JSON output
+ */
+export function parseCliError(output: string): CliError | null {
+    try {
+        const parsed = JSON.parse(output);
+        if (parsed.error && typeof parsed.error === 'string') {
+            return {
+                error: parsed.error,
+                line: parsed.line,
+                column: parsed.column,
+                filePath: parsed.filePath,
+                identifier: parsed.identifier,
+                location: parsed.location,
+                rule: parsed.rule,
+                testNumber: parsed.testNumber,
+                uri: parsed.uri,
+                command: parsed.command,
+                option: parsed.option
+            };
+        }
+    } catch {
+        // Not JSON or doesn't have error field
+    }
+    return null;
+}
 
 /**
  * Get information about a file path
@@ -56,12 +83,11 @@ export function parseLintResult(lintOutput: string): LintResult {
     try {
         const parsed = JSON.parse(lintOutput);
         
-        // Check for parsing error response
-        if (parsed.error && typeof parsed.error === 'string') {
-            const hasPosition = typeof parsed.line === 'number' && typeof parsed.column === 'number';
-            const description = hasPosition 
-                ? `Failed to parse JSON document at line ${parsed.line}, column ${parsed.column}`
-                : parsed.error;
+        if (parsed.error && typeof parsed.error === 'string' && 
+            typeof parsed.line === 'number' && typeof parsed.column === 'number' &&
+            parsed.filePath && !parsed.identifier) {
+            
+            const description = `Failed to parse JSON document at line ${parsed.line}, column ${parsed.column}`;
             
             return {
                 raw: lintOutput,
@@ -73,6 +99,32 @@ export function parseLintResult(lintOutput: string): LintResult {
                     description: description,
                     path: '/',
                     schemaLocation: '/',
+                    position: [parsed.line, parsed.column, parsed.line, parsed.column]
+                }]
+            };
+        }
+
+        if (parsed.error && !parsed.health && !Array.isArray(parsed.errors)) {
+            const hasPosition = typeof parsed.line === 'number' && typeof parsed.column === 'number';
+            let description = parsed.error;
+            
+            if (parsed.filePath) {
+                description = `Error in ${parsed.filePath}`;
+                if (hasPosition) {
+                    description += ` at line ${parsed.line}, column ${parsed.column}`;
+                }
+            }
+            
+            return {
+                raw: lintOutput,
+                health: 0,
+                valid: false,
+                errors: [{
+                    id: parsed.identifier ? 'cli-error-with-id' : 'cli-error',
+                    message: parsed.error,
+                    description: description,
+                    path: parsed.location || '/',
+                    schemaLocation: parsed.identifier || '/',
                     position: hasPosition ? [parsed.line, parsed.column, parsed.line, parsed.column] : null
                 }]
             };
@@ -100,6 +152,22 @@ export function parseLintResult(lintOutput: string): LintResult {
  */
 export function parseMetaschemaResult(output: string, exitCode: number | null): MetaschemaResult {
     const result: MetaschemaResult = { output, exitCode };
+
+    if (exitCode === 1) {
+        const cliError = parseCliError(output);
+        if (cliError) {
+            result.errors = [{
+                error: cliError.error,
+                instanceLocation: cliError.location || '/',
+                keywordLocation: '/',
+                absoluteKeywordLocation: cliError.identifier,
+                instancePosition: cliError.line && cliError.column 
+                    ? [cliError.line, cliError.column, cliError.line, cliError.column] 
+                    : undefined
+            }];
+            return result;
+        }
+    }
 
     if (exitCode === 2) {
         try {

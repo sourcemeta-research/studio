@@ -62,6 +62,20 @@ export interface WebviewMessage {
     url?: string;
 }
 
+export interface CliError {
+    error: string;
+    line?: number;
+    column?: number;
+    filePath?: string;
+    identifier?: string;
+    location?: string;
+    rule?: string;
+    testNumber?: number;
+    uri?: string;
+    command?: string;
+    option?: string;
+}
+
 export const DiagnosticType = {
     Lint: 'lint',
     Metaschema: 'metaschema'

@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { getFileInfo, parseLintResult, parseMetaschemaResult, errorPositionToRange } from '../../utils/fileUtils';
+import { getFileInfo, parseLintResult, parseMetaschemaResult, errorPositionToRange, parseCliError } from '../../utils/fileUtils';
 
 suite('FileUtils Test Suite', () => {
     suite('getFileInfo', () => {
@@ -187,6 +187,123 @@ suite('FileUtils Test Suite', () => {
             assert.strictEqual(result.errors?.length, 1);
             assert.strictEqual(result.errors?.[0].position, null, 'Position should be null when line/column not provided');
         });
+
+        test('should handle CLI error format from --json flag', () => {
+            const output = JSON.stringify({
+                error: 'Could not resolve the metaschema of the schema',
+                identifier: 'https://example.com/unknown',
+                filePath: '/path/to/schema.json'
+            });
+            const result = parseLintResult(output);
+            
+            assert.strictEqual(result.health, 0);
+            assert.strictEqual(result.valid, false);
+            assert.strictEqual(result.errors?.length, 1);
+            assert.strictEqual(result.errors?.[0].message, 'Could not resolve the metaschema of the schema');
+            assert.ok(result.errors?.[0].description?.includes('/path/to/schema.json'));
+            assert.strictEqual(result.errors?.[0].schemaLocation, 'https://example.com/unknown');
+        });
+
+        test('should handle CLI error with location', () => {
+            const output = JSON.stringify({
+                error: 'Could not resolve schema reference',
+                identifier: 'https://example.com/missing',
+                location: '/properties/foo/$ref',
+                line: 10,
+                column: 15
+            });
+            const result = parseLintResult(output);
+            
+            assert.strictEqual(result.errors?.length, 1);
+            assert.strictEqual(result.errors?.[0].path, '/properties/foo/$ref');
+            assert.deepStrictEqual(result.errors?.[0].position, [10, 15, 10, 15]);
+        });
+    });
+
+    suite('parseCliError', () => {
+        test('should parse valid CLI error', () => {
+            const output = JSON.stringify({
+                error: 'No such file or directory',
+                filePath: '/path/to/missing.json'
+            });
+            const result = parseCliError(output);
+            
+            assert.notStrictEqual(result, null);
+            assert.strictEqual(result?.error, 'No such file or directory');
+            assert.strictEqual(result?.filePath, '/path/to/missing.json');
+        });
+
+        test('should parse CLI error with line and column', () => {
+            const output = JSON.stringify({
+                error: 'Failed to parse the JSON document',
+                line: 5,
+                column: 23,
+                filePath: '/path/to/schema.json'
+            });
+            const result = parseCliError(output);
+            
+            assert.notStrictEqual(result, null);
+            assert.strictEqual(result?.line, 5);
+            assert.strictEqual(result?.column, 23);
+        });
+
+        test('should parse CLI error with identifier', () => {
+            const output = JSON.stringify({
+                error: 'Could not resolve the metaschema of the schema',
+                identifier: 'https://example.com/unknown'
+            });
+            const result = parseCliError(output);
+            
+            assert.notStrictEqual(result, null);
+            assert.strictEqual(result?.identifier, 'https://example.com/unknown');
+        });
+
+        test('should return null for non-error JSON', () => {
+            const output = JSON.stringify({
+                health: 100,
+                valid: true
+            });
+            const result = parseCliError(output);
+            
+            assert.strictEqual(result, null);
+        });
+
+        test('should return null for invalid JSON', () => {
+            const output = 'not valid json';
+            const result = parseCliError(output);
+            
+            assert.strictEqual(result, null);
+        });
+
+        test('should parse all CLI error fields', () => {
+            const output = JSON.stringify({
+                error: 'Test error',
+                line: 10,
+                column: 5,
+                filePath: '/test/path.json',
+                identifier: 'https://test.com',
+                location: '/properties/test',
+                rule: 'test-rule',
+                testNumber: 5,
+                uri: 'https://uri.com',
+                command: 'lint',
+                option: '--strict'
+            });
+            const result = parseCliError(output);
+            
+            assert.notStrictEqual(result, null);
+            assert.strictEqual(result?.error, 'Test error');
+            assert.strictEqual(result?.line, 10);
+            assert.strictEqual(result?.column, 5);
+            assert.strictEqual(result?.filePath, '/test/path.json');
+            assert.strictEqual(result?.identifier, 'https://test.com');
+            assert.strictEqual(result?.location, '/properties/test');
+            assert.strictEqual(result?.rule, 'test-rule');
+            assert.strictEqual(result?.testNumber, 5);
+            assert.strictEqual(result?.uri, 'https://uri.com');
+            assert.strictEqual(result?.command, 'lint');
+            assert.strictEqual(result?.option, '--strict');
+        });
     });
 
     suite('errorPositionToRange', () => {
@@ -339,5 +456,57 @@ suite('FileUtils Test Suite', () => {
             assert.strictEqual(result.errors?.[0].absoluteKeywordLocation, 'http://example.com/schema#/properties');
             assert.deepStrictEqual(result.errors?.[0].instancePosition, [10, 5, 10, 20]);
         });
+
+        test('should handle CLI error with exit code 1', () => {
+            const output = JSON.stringify({
+                error: 'Could not resolve the metaschema of the schema',
+                identifier: 'https://example.com/unknown',
+                filePath: '/path/to/schema.json'
+            });
+            const result = parseMetaschemaResult(output, 1);
+            
+            assert.strictEqual(result.exitCode, 1);
+            assert.strictEqual(result.errors?.length, 1);
+            assert.strictEqual(result.errors?.[0].error, 'Could not resolve the metaschema of the schema');
+            assert.strictEqual(result.errors?.[0].absoluteKeywordLocation, 'https://example.com/unknown');
+        });
+
+        test('should handle CLI error with position', () => {
+            const output = JSON.stringify({
+                error: 'Failed to parse the JSON document',
+                line: 5,
+                column: 23,
+                filePath: '/path/to/schema.json'
+            });
+            const result = parseMetaschemaResult(output, 1);
+            
+            assert.strictEqual(result.errors?.length, 1);
+            assert.deepStrictEqual(result.errors?.[0].instancePosition, [5, 23, 5, 23]);
+        });
+
+        test('should handle CLI error without position', () => {
+            const output = JSON.stringify({
+                error: 'The schema file you provided does not represent a valid JSON Schema',
+                filePath: '/path/to/document.json'
+            });
+            const result = parseMetaschemaResult(output, 1);
+            
+            assert.strictEqual(result.errors?.length, 1);
+            assert.strictEqual(result.errors?.[0].error, 'The schema file you provided does not represent a valid JSON Schema');
+            assert.strictEqual(result.errors?.[0].instancePosition, undefined);
+        });
+
+        test('should handle CLI error with location', () => {
+            const output = JSON.stringify({
+                error: 'Schema reference error',
+                location: '/properties/test/$ref',
+                identifier: 'https://example.com/missing'
+            });
+            const result = parseMetaschemaResult(output, 1);
+            
+            assert.strictEqual(result.errors?.length, 1);
+            assert.strictEqual(result.errors?.[0].instanceLocation, '/properties/test/$ref');
+        });
     });
 });
+
