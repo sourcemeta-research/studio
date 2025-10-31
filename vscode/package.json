@@ -1,5 +1,5 @@
 {
-  "name": "sourcemeta-studio",
+  "name": "studio",
   "displayName": "Sourcemeta Studio",
   "publisher": "sourcemeta",
   "description": "JSON Schema inspection, formatting, and linting tools",

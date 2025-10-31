@@ -6,12 +6,12 @@ suite('Extension Test Suite', () => {
     vscode.window.showInformationMessage('Start all tests.');
 
     test('Extension should be present', () => {
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.studio');
         assert.ok(extension, 'Extension should be installed');
     });
 
     test('Should activate extension', async () => {
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.studio');
         if (extension) {
             await extension.activate();
             assert.ok(extension.isActive, 'Extension should be active');
@@ -19,7 +19,7 @@ suite('Extension Test Suite', () => {
     });
 
     test('Should register openPanel command', async () => {
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.studio');
         if (extension && !extension.isActive) {
             await extension.activate();
         }
@@ -30,7 +30,7 @@ suite('Extension Test Suite', () => {
     });
 
     test('Should create diagnostic collections', async () => {
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.studio');
         if (extension && !extension.isActive) {
             await extension.activate();
         }
@@ -42,7 +42,7 @@ suite('Extension Test Suite', () => {
     test('Should open panel when command is executed', async function() {
         this.timeout(5000);
 
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.studio');
         if (extension && !extension.isActive) {
             await extension.activate();
         }
@@ -57,7 +57,7 @@ suite('Extension Test Suite', () => {
     test('Should handle JSON file opening', async function() {
         this.timeout(5000);
 
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.studio');
         if (extension && !extension.isActive) {
             await extension.activate();
         }
@@ -75,5 +75,16 @@ suite('Extension Test Suite', () => {
         } catch (error) {
             console.log('Test file not found, skipping:', error);
         }
+    });
+
+    test('Should read extension version from package.json', async () => {
+        const extension = vscode.extensions.getExtension('sourcemeta.studio');
+        if (extension && !extension.isActive) {
+            await extension.activate();
+        }
+
+        assert.ok(extension, 'Extension should be present');
+        assert.ok(extension?.packageJSON.version, 'Extension should have a version in package.json');
+        assert.match(extension?.packageJSON.version, /^\d+\.\d+\.\d+$/, 'Version should follow semver format');
     });
 });
