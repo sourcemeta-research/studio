@@ -3,13 +3,17 @@ import type { LintResult } from '@shared/types';
 export interface HealthBarProps {
   lintResult: LintResult;
   isLoading?: boolean;
+  blockedByMetaschema?: boolean;
 }
 
-export function HealthBar({ lintResult, isLoading }: HealthBarProps) {
+export function HealthBar({ lintResult, isLoading, blockedByMetaschema }: HealthBarProps) {
   const errorCount = lintResult.errors?.length || 0;
   
   let health: number;
-  if (lintResult.health !== null && lintResult.health !== undefined) {
+
+  if (blockedByMetaschema) {
+    health = 0;
+  } else if (lintResult.health !== null && lintResult.health !== undefined) {
     health = lintResult.health;
   } else if (lintResult.errors !== undefined) {
     health = errorCount === 0 ? 100 : Math.max(0, 100 - errorCount * 10);
@@ -23,8 +27,7 @@ export function HealthBar({ lintResult, isLoading }: HealthBarProps) {
     return 'var(--error)';
   };
 
-  // Show "?" when loading or initial state
-  const showUnknown = isLoading || (lintResult.health === null && lintResult.errors === undefined);
+  const showUnknown = !blockedByMetaschema && (isLoading || (lintResult.health === null && lintResult.errors === undefined));
 
   return (
     <div className="mb-5">

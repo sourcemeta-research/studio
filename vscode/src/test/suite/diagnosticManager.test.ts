@@ -312,4 +312,91 @@ suite('DiagnosticManager Test Suite', () => {
             'Should not create any diagnostics when all positions are null'
         );
     });
+
+    suite('Union Type Handling (MetaschemaError | CliError)', () => {
+        test('should handle union type with MetaschemaError', () => {
+            const errors: (MetaschemaError)[] = [
+                {
+                    error: 'Validation error',
+                    instanceLocation: '/properties/test',
+                    keywordLocation: '/required',
+                    instancePosition: [10, 5, 10, 20]
+                }
+            ];
+
+            diagnosticManager.updateMetaschemaDiagnostics(testUri, errors);
+            
+            const diagnostics = vscode.languages.getDiagnostics(testUri);
+            assert.strictEqual(diagnostics.length, 1, 'Should create diagnostic for MetaschemaError');
+            assert.strictEqual(diagnostics[0].message, 'Validation error');
+        });
+
+        test('should filter out CliError without instancePosition', () => {
+            const errors = [
+                {
+                    error: 'CLI error without position',
+                    line: 5,
+                    column: 10,
+                    filePath: '/test.json'
+                }
+            ];
+
+            diagnosticManager.updateMetaschemaDiagnostics(testUri, errors);
+            
+            const diagnostics = vscode.languages.getDiagnostics(testUri);
+            assert.strictEqual(diagnostics.length, 0, 'Should not create diagnostic for CliError without instancePosition');
+        });
+
+        test('should handle converted CLI error with instancePosition', () => {
+            const errors = [
+                {
+                    error: 'Converted CLI error',
+                    instanceLocation: '/$schema',
+                    keywordLocation: '/',
+                    instancePosition: [5, 10, 5, 10] as [number, number, number, number]
+                }
+            ];
+
+            diagnosticManager.updateMetaschemaDiagnostics(testUri, errors);
+            
+            const diagnostics = vscode.languages.getDiagnostics(testUri);
+            assert.strictEqual(diagnostics.length, 1, 'Should create diagnostic for converted CLI error');
+        });
+
+        test('should handle mixed MetaschemaError and converted CliError', () => {
+            const errors = [
+                {
+                    error: 'Metaschema validation error',
+                    instanceLocation: '/properties/name',
+                    keywordLocation: '/required',
+                    instancePosition: [10, 5, 10, 15] as [number, number, number, number]
+                },
+                {
+                    error: 'Converted CLI error',
+                    instanceLocation: '/$schema',
+                    keywordLocation: '/',
+                    instancePosition: [1, 1, 1, 30] as [number, number, number, number]
+                }
+            ];
+
+            diagnosticManager.updateMetaschemaDiagnostics(testUri, errors);
+            
+            const diagnostics = vscode.languages.getDiagnostics(testUri);
+            assert.strictEqual(diagnostics.length, 2, 'Should create diagnostics for both errors');
+        });
+
+        test('should handle undefined errors array', () => {
+            diagnosticManager.updateMetaschemaDiagnostics(testUri, undefined);
+            
+            const diagnostics = vscode.languages.getDiagnostics(testUri);
+            assert.strictEqual(diagnostics.length, 0, 'Should handle undefined errors gracefully');
+        });
+
+        test('should handle empty errors array', () => {
+            diagnosticManager.updateMetaschemaDiagnostics(testUri, []);
+            
+            const diagnostics = vscode.languages.getDiagnostics(testUri);
+            assert.strictEqual(diagnostics.length, 0, 'Should handle empty array gracefully');
+        });
+    });
 });

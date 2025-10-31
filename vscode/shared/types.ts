@@ -41,7 +41,7 @@ export interface MetaschemaError {
 }
 
 export interface MetaschemaResult extends CommandResult {
-    errors?: MetaschemaError[];
+    errors?: (MetaschemaError | CliError)[];
 }
 
 export type FormatResult = CommandResult;
@@ -54,6 +54,8 @@ export interface PanelState {
     metaschemaResult: MetaschemaResult;
     isLoading?: boolean;
     formatLoading?: boolean;
+    hasParseErrors?: boolean;
+    blockedByMetaschema?: boolean;
 }
 
 export interface WebviewMessage {

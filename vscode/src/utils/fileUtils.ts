@@ -31,6 +31,32 @@ export function parseCliError(output: string): CliError | null {
 }
 
 /**
+ * Check if there are JSON parse errors in lint or metaschema results
+ */
+export function hasJsonParseErrors(lintResult: LintResult, metaschemaResult: MetaschemaResult): boolean {
+    if (lintResult.errors && lintResult.errors.length > 0) {
+        const hasLintParseError = lintResult.errors.some(error => 
+            error.id === 'json-parse-error' || 
+            error.message.toLowerCase().includes('failed to parse')
+        );
+        if (hasLintParseError) {
+            return true;
+        }
+    }
+
+    if (metaschemaResult.errors && metaschemaResult.errors.length > 0) {
+        const hasMetaschemaParseError = metaschemaResult.errors.some(error =>
+            error.error.toLowerCase().includes('failed to parse')
+        );
+        if (hasMetaschemaParseError) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
  * Get information about a file path
  */
 export function getFileInfo(filePath: string | undefined): FileInfo | null {

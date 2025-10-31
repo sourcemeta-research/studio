@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { LintError, MetaschemaError, DiagnosticType } from '../../shared/types';
+import { LintError, MetaschemaError, CliError, DiagnosticType } from '../../shared/types';
 import { errorPositionToRange } from '../utils/fileUtils';
 
 /**
@@ -45,7 +45,7 @@ export class DiagnosticManager {
                 diagnostic.code = {
                     value: error.id,
                     // TODO: link to JSON Schema linting rules markdown repo
-                    target: vscode.Uri.parse(`https://github.com/sourcemeta/jsonschema/blob/main/docs/lint/${error.id}.md`)
+                    target: vscode.Uri.parse(`https://github.com/Karan-Palan/json-schema-lint-rules/tree/main/docs/${error.id}.md`)
                 };
             }
 
@@ -94,10 +94,17 @@ export class DiagnosticManager {
 
     updateMetaschemaDiagnostics(
         documentUri: vscode.Uri,
-        errors: MetaschemaError[]
+        errors: (MetaschemaError | CliError)[] | undefined
     ): void {
+        if (!errors) {
+            this.metaschemaDiagnostics.set(documentUri, []);
+            return;
+        }
+
         const diagnostics = errors
-            .filter(error => error.instancePosition)
+            .filter((error): error is MetaschemaError => {
+                return 'instancePosition' in error && error.instancePosition !== undefined;
+            })
             .map(error => {
                 const position = error.instancePosition as [number, number, number, number];
                 const range = errorPositionToRange(position);

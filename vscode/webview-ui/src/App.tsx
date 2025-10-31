@@ -52,7 +52,11 @@ function App() {
   return (
     <div className="flex flex-col h-screen p-5">
       <FileInfo fileInfo={state.fileInfo} />
-      <HealthBar lintResult={state.lintResult} isLoading={state.isLoading} />
+      <HealthBar 
+        lintResult={state.lintResult} 
+        isLoading={state.isLoading} 
+        blockedByMetaschema={state.blockedByMetaschema}
+      />
       <Tabs activeTab={activeTab} onTabChange={handleTabChange} state={state} />
       
       <div className="flex-1 overflow-y-auto">
@@ -62,8 +66,8 @@ function App() {
           <LoadingSpinner fileInfo={state.fileInfo} />
         ) : (
           <>
-            {activeTab === 'lint' && <LintTab lintResult={state.lintResult} />}
-            {activeTab === 'format' && <FormatTab formatResult={state.formatResult} fileInfo={state.fileInfo} />}
+            {activeTab === 'lint' && <LintTab lintResult={state.lintResult} blocked={!!state.blockedByMetaschema} />}
+            {activeTab === 'format' && <FormatTab formatResult={state.formatResult} fileInfo={state.fileInfo} hasParseErrors={state.hasParseErrors} blocked={!!state.blockedByMetaschema} />}
             {activeTab === 'metaschema' && <MetaschemaTab metaschemaResult={state.metaschemaResult} />}
           </>
         )}

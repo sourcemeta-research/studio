@@ -1,18 +1,34 @@
 import type { LintResult } from '@shared/types';
 import { vscode } from '../vscode-api';
 import { RawOutput } from './RawOutput';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, AlertCircle } from 'lucide-react';
 
 export interface LintTabProps {
   lintResult: LintResult;
+  blocked?: boolean;
 }
 
-export function LintTab({ lintResult }: LintTabProps) {
+export function LintTab({ lintResult, blocked }: LintTabProps) {
   const handleGoToPosition = (position: [number, number, number, number]) => {
     vscode.postMessage({ command: 'goToPosition', position });
   };
 
   const errors = lintResult.errors || [];
+
+  if (blocked) {
+    return (
+      <div className="text-center py-10 px-5">
+        <div className="flex justify-center mb-4">
+          <AlertCircle size={48} className="text-(--error)" strokeWidth={1.5} />
+        </div>
+        <div className="text-lg font-semibold text-(--vscode-fg) mb-2">Cannot Lint Schema</div>
+        <div className="text-[13px] text-(--vscode-muted) max-w-md mx-auto">
+          Metaschema validation failed. Fix the metaschema errors first before running lint.
+          Check the Metaschema tab for more details.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>

@@ -1,7 +1,122 @@
 import * as assert from 'assert';
-import { getFileInfo, parseLintResult, parseMetaschemaResult, errorPositionToRange, parseCliError } from '../../utils/fileUtils';
+import { getFileInfo, parseLintResult, parseMetaschemaResult, errorPositionToRange, parseCliError, hasJsonParseErrors } from '../../utils/fileUtils';
+import type { LintResult, MetaschemaResult, MetaschemaError } from '../../../shared/types';
+
+function isMetaschemaError(error: unknown): error is MetaschemaError {
+    return typeof error === 'object' && error !== null && 'instanceLocation' in error;
+}
 
 suite('FileUtils Test Suite', () => {
+    suite('hasJsonParseErrors', () => {
+        const validMetaschema: MetaschemaResult = {
+            output: '',
+            exitCode: 0
+        };
+
+        const failedMetaschema: MetaschemaResult = {
+            output: '',
+            exitCode: 1,
+            errors: [{
+                error: 'Validation failed',
+                instanceLocation: '/',
+                keywordLocation: '/'
+            }]
+        };
+
+        test('should detect parse errors in lint result', () => {
+            const lintResult: LintResult = {
+                raw: '{}',
+                health: 0,
+                valid: false,
+                errors: [{
+                    id: 'json-parse-error',
+                    message: 'Failed to parse JSON',
+                    path: '/',
+                    schemaLocation: '/',
+                    position: [1, 1, 1, 1]
+                }]
+            };
+            assert.strictEqual(hasJsonParseErrors(lintResult, validMetaschema), true);
+        });
+
+        test('should not detect parse errors in normal lint errors', () => {
+            const lintResult: LintResult = {
+                raw: '{}',
+                health: 50,
+                valid: false,
+                errors: [{
+                    id: 'some-lint-rule',
+                    message: 'Some lint error',
+                    path: '/',
+                    schemaLocation: '/',
+                    position: [1, 1, 1, 1]
+                }]
+            };
+            assert.strictEqual(hasJsonParseErrors(lintResult, validMetaschema), false);
+        });
+
+        test('should handle empty errors array', () => {
+            const lintResult: LintResult = {
+                raw: '{}',
+                health: 100,
+                valid: true,
+                errors: []
+            };
+            assert.strictEqual(hasJsonParseErrors(lintResult, validMetaschema), false);
+        });
+
+        test('should handle undefined errors', () => {
+            const lintResult: LintResult = {
+                raw: '{}',
+                health: null
+            };
+            assert.strictEqual(hasJsonParseErrors(lintResult, validMetaschema), false);
+        });
+
+        test('should detect CLI parse errors', () => {
+            const lintResult: LintResult = {
+                raw: '{}',
+                health: 0,
+                valid: false,
+                errors: [{
+                    id: 'cli-error',
+                    message: 'Failed to parse the JSON document',
+                    path: '/',
+                    schemaLocation: '/',
+                    position: [5, 10, 5, 10]
+                }]
+            };
+            assert.strictEqual(hasJsonParseErrors(lintResult, validMetaschema), true);
+        });
+
+        test('should detect parse errors in metaschema result', () => {
+            const lintResult: LintResult = {
+                raw: '{}',
+                health: null
+            };
+            const metaschema: MetaschemaResult = {
+                output: '{}',
+                exitCode: 1,
+                errors: [{
+                    error: 'Failed to parse the JSON document',
+                    instanceLocation: '/',
+                    keywordLocation: '/'
+                }]
+            };
+            assert.strictEqual(hasJsonParseErrors(lintResult, metaschema), true);
+        });
+
+        test('should return false when no parse errors exist', () => {
+            const lintResult: LintResult = {
+                raw: '{}',
+                health: 100,
+                valid: true,
+                errors: []
+            };
+            assert.strictEqual(hasJsonParseErrors(lintResult, failedMetaschema), false);
+        });
+    });
+
     suite('getFileInfo', () => {
         test('should return null for undefined path', () => {
             const result = getFileInfo(undefined);
@@ -362,8 +477,11 @@ suite('FileUtils Test Suite', () => {
             
             assert.strictEqual(result.exitCode, 2);
             assert.strictEqual(result.errors?.length, 1);
-            assert.strictEqual(result.errors?.[0].error, 'Property required but missing');
-            assert.deepStrictEqual(result.errors?.[0].instancePosition, [10, 5, 10, 20]);
+            const error = result.errors?.[0];
+            assert.strictEqual(error?.error, 'Property required but missing');
+            if (error && 'instancePosition' in error) {
+                assert.deepStrictEqual(error.instancePosition, [10, 5, 10, 20]);
+            }
         });
 
         test('should handle metaschema errors without position', () => {
@@ -378,7 +496,10 @@ suite('FileUtils Test Suite', () => {
             const result = parseMetaschemaResult(output, 2);
             
             assert.strictEqual(result.errors?.length, 1);
-            assert.strictEqual(result.errors?.[0].instancePosition, undefined);
+            const error = result.errors?.[0];
+            if (error && isMetaschemaError(error)) {
+                assert.strictEqual(error.instancePosition, undefined);
+            }
         });
 
         test('should handle exit code 1', () => {
@@ -450,11 +571,14 @@ suite('FileUtils Test Suite', () => {
             const result = parseMetaschemaResult(output, 2);
             
             assert.strictEqual(result.errors?.length, 1);
-            assert.strictEqual(result.errors?.[0].error, 'Validation error');
-            assert.strictEqual(result.errors?.[0].instanceLocation, '/properties/test');
-            assert.strictEqual(result.errors?.[0].keywordLocation, '/properties');
-            assert.strictEqual(result.errors?.[0].absoluteKeywordLocation, 'http://example.com/schema#/properties');
-            assert.deepStrictEqual(result.errors?.[0].instancePosition, [10, 5, 10, 20]);
+            const error = result.errors?.[0];
+            assert.strictEqual(error?.error, 'Validation error');
+            if (error && isMetaschemaError(error)) {
+                assert.strictEqual(error.instanceLocation, '/properties/test');
+                assert.strictEqual(error.keywordLocation, '/properties');
+                assert.strictEqual(error.absoluteKeywordLocation, 'http://example.com/schema#/properties');
+                assert.deepStrictEqual(error.instancePosition, [10, 5, 10, 20]);
+            }
         });
 
         test('should handle CLI error with exit code 1', () => {
@@ -467,8 +591,11 @@ suite('FileUtils Test Suite', () => {
             
             assert.strictEqual(result.exitCode, 1);
             assert.strictEqual(result.errors?.length, 1);
-            assert.strictEqual(result.errors?.[0].error, 'Could not resolve the metaschema of the schema');
-            assert.strictEqual(result.errors?.[0].absoluteKeywordLocation, 'https://example.com/unknown');
+            const error = result.errors?.[0];
+            assert.strictEqual(error?.error, 'Could not resolve the metaschema of the schema');
+            if (error && isMetaschemaError(error)) {
+                assert.strictEqual(error.absoluteKeywordLocation, 'https://example.com/unknown');
+            }
         });
 
         test('should handle CLI error with position', () => {
@@ -481,7 +608,10 @@ suite('FileUtils Test Suite', () => {
             const result = parseMetaschemaResult(output, 1);
             
             assert.strictEqual(result.errors?.length, 1);
-            assert.deepStrictEqual(result.errors?.[0].instancePosition, [5, 23, 5, 23]);
+            const error = result.errors?.[0];
+            if (error && isMetaschemaError(error)) {
+                assert.deepStrictEqual(error.instancePosition, [5, 23, 5, 23]);
+            }
         });
 
         test('should handle CLI error without position', () => {
@@ -492,8 +622,11 @@ suite('FileUtils Test Suite', () => {
             const result = parseMetaschemaResult(output, 1);
             
             assert.strictEqual(result.errors?.length, 1);
-            assert.strictEqual(result.errors?.[0].error, 'The schema file you provided does not represent a valid JSON Schema');
-            assert.strictEqual(result.errors?.[0].instancePosition, undefined);
+            const error1 = result.errors?.[0];
+            assert.strictEqual(error1?.error, 'The schema file you provided does not represent a valid JSON Schema');
+            if (error1 && isMetaschemaError(error1)) {
+                assert.strictEqual(error1.instancePosition, undefined);
+            }
         });
 
         test('should handle CLI error with location', () => {
@@ -505,7 +638,133 @@ suite('FileUtils Test Suite', () => {
             const result = parseMetaschemaResult(output, 1);
             
             assert.strictEqual(result.errors?.length, 1);
-            assert.strictEqual(result.errors?.[0].instanceLocation, '/properties/test/$ref');
+            const error = result.errors?.[0];
+            if (error && isMetaschemaError(error)) {
+                assert.strictEqual(error.instanceLocation, '/properties/test/$ref');
+            }
+        });
+    });
+
+    suite('hasJsonParseErrors', () => {
+        test('should detect parse errors in lint result', () => {
+            const lintResult = {
+                raw: '{}',
+                health: 0,
+                valid: false,
+                errors: [{
+                    id: 'json-parse-error',
+                    message: 'Failed to parse the JSON document',
+                    path: '/',
+                    schemaLocation: '/',
+                    position: [5, 10, 5, 10] as [number, number, number, number]
+                }]
+            };
+            const metaschemaResult = { output: '', exitCode: 0 };
+            
+            const result = hasJsonParseErrors(lintResult, metaschemaResult);
+            assert.strictEqual(result, true);
+        });
+
+        test('should detect parse errors in metaschema result', () => {
+            const lintResult = { raw: '', health: 100, valid: true };
+            const metaschemaResult = {
+                output: '',
+                exitCode: 1,
+                errors: [{
+                    error: 'Failed to parse the JSON document',
+                    instanceLocation: '/',
+                    keywordLocation: '/'
+                }]
+            };
+            
+            const result = hasJsonParseErrors(lintResult, metaschemaResult);
+            assert.strictEqual(result, true);
+        });
+
+        test('should return false when no parse errors', () => {
+            const lintResult = {
+                raw: '{}',
+                health: 100,
+                valid: true,
+                errors: []
+            };
+            const metaschemaResult = { output: '', exitCode: 0 };
+            
+            const result = hasJsonParseErrors(lintResult, metaschemaResult);
+            assert.strictEqual(result, false);
+        });
+
+        test('should return false for non-parse errors', () => {
+            const lintResult = {
+                raw: '{}',
+                health: 50,
+                valid: false,
+                errors: [{
+                    id: 'some-other-error',
+                    message: 'Some validation error',
+                    path: '/properties/test',
+                    schemaLocation: '/properties',
+                    position: null
+                }]
+            };
+            const metaschemaResult = { output: '', exitCode: 0 };
+            
+            const result = hasJsonParseErrors(lintResult, metaschemaResult);
+            assert.strictEqual(result, false);
+        });
+
+        test('should handle lint result without errors array', () => {
+            const lintResult = { raw: '', health: 100, valid: true };
+            const metaschemaResult = { output: '', exitCode: 0 };
+            
+            const result = hasJsonParseErrors(lintResult, metaschemaResult);
+            assert.strictEqual(result, false);
+        });
+
+        test('should handle metaschema result without errors array', () => {
+            const lintResult = { raw: '', health: 100, valid: true };
+            const metaschemaResult = { output: '', exitCode: 0 };
+            
+            const result = hasJsonParseErrors(lintResult, metaschemaResult);
+            assert.strictEqual(result, false);
+        });
+
+        test('should detect parse errors by message content', () => {
+            const lintResult = {
+                raw: '{}',
+                health: 0,
+                valid: false,
+                errors: [{
+                    id: 'some-id',
+                    message: 'Failed to parse the document',
+                    path: '/',
+                    schemaLocation: '/',
+                    position: null
+                }]
+            };
+            const metaschemaResult = { output: '', exitCode: 0 };
+            
+            const result = hasJsonParseErrors(lintResult, metaschemaResult);
+            assert.strictEqual(result, true);
+        });
+
+        test('should be case-insensitive when checking parse errors', () => {
+            const lintResult = {
+                raw: '{}',
+                health: 0,
+                valid: false,
+                errors: [{
+                    id: 'error',
+                    message: 'FAILED TO PARSE the JSON',
+                    path: '/',
+                    schemaLocation: '/',
+                    position: null
+                }]
+            };
+            const metaschemaResult = { output: '', exitCode: 0 };
+            
+            const result = hasJsonParseErrors(lintResult, metaschemaResult);
+            assert.strictEqual(result, true);
         });
     });
 });

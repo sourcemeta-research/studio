@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { PanelManager } from './panel/PanelManager';
 import { CommandExecutor } from './commands/CommandExecutor';
 import { DiagnosticManager } from './diagnostics/DiagnosticManager';
-import { getFileInfo, parseLintResult, parseMetaschemaResult, errorPositionToRange, parseCliError } from './utils/fileUtils';
+import { getFileInfo, parseLintResult, parseMetaschemaResult, errorPositionToRange, parseCliError, hasJsonParseErrors } from './utils/fileUtils';
 import { WebviewMessage, PanelState, DiagnosticType } from '../shared/types';
 
 let panelManager: PanelManager;
@@ -80,6 +80,16 @@ function handleWebviewMessage(message: WebviewMessage): void {
         const fileInfo = getFileInfo(filePath);
         
         if (!fileInfo || !panelManager.exists() || !currentPanelState) {
+            return;
+        }
+
+        if (currentPanelState.hasParseErrors) {
+            vscode.window.showErrorMessage('Cannot format schema: The file has JSON parse errors. Please fix the syntax errors first.');
+            return;
+        }
+
+        if (currentPanelState.blockedByMetaschema) {
+            vscode.window.showErrorMessage('Cannot format schema: Metaschema validation failed. Fix metaschema errors first.');
             return;
         }
 
@@ -200,7 +210,8 @@ async function updatePanelContent(): Promise<void> {
         lintResult: { raw: '', health: null },
         formatResult: { output: '', exitCode: null },
         metaschemaResult: { output: '', exitCode: null },
-        isLoading: true
+        isLoading: true,
+        hasParseErrors: false
     };
     panelManager.updateContent(loadingState);
 
@@ -208,18 +219,46 @@ async function updatePanelContent(): Promise<void> {
         diagnosticManager.clearDiagnostics(lastActiveTextEditor.document.uri);
     }
 
-    // Run all commands in parallel
+    // Run metaschema first, if metaschema reports errors, block other commands
     try {
-        const [version, lintOutput, formatResult, metaschemaRawResult] = await Promise.all([
-            commandExecutor.getVersion(),
+        const version = await commandExecutor.getVersion();
+        cachedVersion = version;
+
+        const metaschemaRawResult = fileInfo ? await commandExecutor.metaschema(fileInfo.absolutePath) : { output: 'No file selected', exitCode: null };
+        const metaschemaResult = parseMetaschemaResult(metaschemaRawResult.output, metaschemaRawResult.exitCode);
+
+        if (metaschemaResult.errors && metaschemaResult.errors.length > 0) {
+            const blockedState: PanelState = {
+                fileInfo,
+                version: cachedVersion,
+                lintResult: { raw: '', health: null, errors: [] },
+                formatResult: { output: '', exitCode: null },
+                metaschemaResult,
+                isLoading: false,
+                hasParseErrors: hasJsonParseErrors({ raw: '', health: null }, metaschemaResult),
+                blockedByMetaschema: true
+            };
+            currentPanelState = blockedState;
+            panelManager.updateContent(blockedState);
+
+            if (lastActiveTextEditor) {
+                diagnosticManager.updateMetaschemaDiagnostics(
+                    lastActiveTextEditor.document.uri,
+                    metaschemaResult.errors
+                );
+            }
+
+            return;
+        }
+
+        const [lintOutput, formatResult] = await Promise.all([
             fileInfo ? commandExecutor.lint(fileInfo.absolutePath) : Promise.resolve('No file selected'),
-            fileInfo ? commandExecutor.formatCheck(fileInfo.absolutePath) : Promise.resolve({ output: 'No file selected', exitCode: null }),
-            fileInfo ? commandExecutor.metaschema(fileInfo.absolutePath) : Promise.resolve({ output: 'No file selected', exitCode: null })
+            fileInfo ? commandExecutor.formatCheck(fileInfo.absolutePath) : Promise.resolve({ output: 'No file selected', exitCode: null })
         ]);
 
-        cachedVersion = version;
         const lintResult = parseLintResult(lintOutput);
-        const metaschemaResult = parseMetaschemaResult(metaschemaRawResult.output, metaschemaRawResult.exitCode);
+
+        const parseErrors = hasJsonParseErrors(lintResult, metaschemaResult);
 
         const finalState: PanelState = {
             fileInfo,
@@ -227,7 +266,9 @@ async function updatePanelContent(): Promise<void> {
             lintResult,
             formatResult,
             metaschemaResult,
-            isLoading: false
+            isLoading: false,
+            hasParseErrors: parseErrors,
+            blockedByMetaschema: false
         };
         currentPanelState = finalState;
         panelManager.updateContent(finalState);
@@ -256,7 +297,8 @@ async function updatePanelContent(): Promise<void> {
             lintResult: { raw: `Error: ${(error as Error).message}`, health: null, error: true },
             formatResult: { output: `Error: ${(error as Error).message}`, exitCode: null },
             metaschemaResult: { output: `Error: ${(error as Error).message}`, exitCode: null },
-            isLoading: false
+            isLoading: false,
+            hasParseErrors: true
         };
         currentPanelState = errorState;
         panelManager.updateContent(errorState);
