@@ -14,19 +14,19 @@ export function RawOutput({ output }: RawOutputProps) {
         onClick={() => setExpanded(!expanded)}
       >
         <span 
-          className="text-[var(--vscode-muted)] text-[10px] transition-transform duration-200"
+          className="text-(--vscode-muted) text-[10px] transition-transform duration-200"
           style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
         >
           ▶
         </span>
-        <span className="text-[var(--vscode-muted)] text-[10px] uppercase tracking-wider font-semibold">
+        <span className="text-(--vscode-muted) text-[10px] uppercase tracking-wider font-semibold">
           Raw Output
         </span>
       </div>
       {expanded && (
         <div className="mt-2">
-          <div className="bg-[var(--vscode-bg)] border border-[var(--vscode-border)] rounded p-3 overflow-x-auto">
-            <pre className="m-0 font-[var(--vscode-editor-font)] text-[10px] text-[var(--vscode-fg)] whitespace-pre-wrap break-words">
+          <div className="bg-(--vscode-bg) border border-(--vscode-border) rounded p-3 overflow-x-auto">
+            <pre className="m-0 font-(--vscode-editor-font) text-[10px] text-(--vscode-fg) whitespace-pre-wrap wrap-break-word">
               {output}
             </pre>
           </div>

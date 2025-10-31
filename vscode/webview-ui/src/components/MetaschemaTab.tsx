@@ -21,10 +21,10 @@ export function MetaschemaTab({ metaschemaResult }: MetaschemaTabProps) {
           <div className="flex justify-center mb-4">
             <CheckCircle size={48} style={{ color: 'var(--success)' }} strokeWidth={1.5} />
           </div>
-          <div className="text-lg font-semibold text-[var(--vscode-fg)] mb-2">
+          <div className="text-lg font-semibold text-(--vscode-fg) mb-2">
             Schema is valid according to its meta-schema!
           </div>
-          <div className="text-[13px] text-[var(--vscode-muted)]">
+          <div className="text-[13px] text-(--vscode-muted)">
             No validation errors found.
           </div>
         </div>
@@ -38,7 +38,7 @@ export function MetaschemaTab({ metaschemaResult }: MetaschemaTabProps) {
           {errors.map((error, index) => (
             <div
               key={index}
-              className="bg-[var(--vscode-selection)] border-l-[3px] rounded p-3 cursor-pointer transition-colors hover:bg-[var(--vscode-hover)]"
+              className="bg-(--vscode-selection) border-l-[3px] rounded p-3 cursor-pointer transition-colors hover:bg-(--vscode-hover)"
               style={{ 
                 cursor: error.instancePosition ? 'pointer' : 'default',
                 borderLeftColor: 'var(--error)'
@@ -46,37 +46,37 @@ export function MetaschemaTab({ metaschemaResult }: MetaschemaTabProps) {
               onClick={() => error.instancePosition && handleGoToPosition(error.instancePosition)}
             >
               <div className="mb-2">
-                <div className="text-[var(--vscode-fg)] text-[13px] font-semibold">
+                <div className="text-(--vscode-fg) text-[13px] font-semibold">
                   {error.error}
                 </div>
               </div>
               <div className="flex flex-col gap-1 text-[11px]">
                 {error.instancePosition && (
                   <div className="flex gap-1.5">
-                    <span className="text-[var(--vscode-muted)] font-semibold min-w-[80px]">
+                    <span className="text-(--vscode-muted) font-semibold min-w-20">
                       Location:
                     </span>
-                    <span className="text-[var(--vscode-fg)] font-[var(--vscode-editor-font)]">
+                    <span className="text-(--vscode-fg) font-(--vscode-editor-font)">
                       Line {error.instancePosition[0]}, Col {error.instancePosition[1]}
                     </span>
                   </div>
                 )}
                 {error.instanceLocation && (
                   <div className="flex gap-1.5">
-                    <span className="text-[var(--vscode-muted)] font-semibold min-w-[80px]">
+                    <span className="text-(--vscode-muted) font-semibold min-w-20">
                       Path:
                     </span>
-                    <span className="text-[var(--vscode-fg)] font-[var(--vscode-editor-font)] break-all">
+                    <span className="text-(--vscode-fg) font-(--vscode-editor-font) break-all">
                       {error.instanceLocation || '(root)'}
                     </span>
                   </div>
                 )}
                 {error.keywordLocation && (
                   <div className="flex gap-1.5">
-                    <span className="text-[var(--vscode-muted)] font-semibold min-w-[80px]">
+                    <span className="text-(--vscode-muted) font-semibold min-w-20">
                       Schema:
                     </span>
-                    <span className="text-[var(--vscode-fg)] font-[var(--vscode-editor-font)] break-all">
+                    <span className="text-(--vscode-fg) font-(--vscode-editor-font) break-all">
                       {error.keywordLocation}
                     </span>
                   </div>
@@ -92,8 +92,8 @@ export function MetaschemaTab({ metaschemaResult }: MetaschemaTabProps) {
     return (
       <>
         <div className="mb-5">
-          <div className="bg-[var(--vscode-bg)] border border-[var(--vscode-border)] rounded p-3 overflow-x-auto">
-            <pre className="m-0 font-[var(--vscode-editor-font)] text-xs text-[var(--vscode-fg)] whitespace-pre-wrap break-words">
+          <div className="bg-(--vscode-bg) border border-(--vscode-border) rounded p-3 overflow-x-auto">
+            <pre className="m-0 font-(--vscode-editor-font) text-xs text-(--vscode-fg) whitespace-pre-wrap wrap-break-word">
               {metaschemaResult.output}
             </pre>
           </div>
@@ -108,10 +108,10 @@ export function MetaschemaTab({ metaschemaResult }: MetaschemaTabProps) {
           <div className="flex justify-center mb-4">
             <AlertTriangle size={48} style={{ color: 'var(--fatal)' }} strokeWidth={1.5} />
           </div>
-          <div className="text-lg font-semibold text-[var(--vscode-fg)] mb-2">
+          <div className="text-lg font-semibold text-(--vscode-fg) mb-2">
             Fatal Error
           </div>
-          <div className="text-[13px] text-[var(--vscode-muted)]">
+          <div className="text-[13px] text-(--vscode-muted)">
             The metaschema command failed to execute.
           </div>
         </div>

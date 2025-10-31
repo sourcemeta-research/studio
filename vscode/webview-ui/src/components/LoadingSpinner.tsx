@@ -12,21 +12,22 @@ export function LoadingSpinner({ fileInfo }: LoadingSpinnerProps) {
     <div className="flex items-center justify-center py-20">
       <div className="flex flex-col items-center gap-4">
         <div className="relative w-12 h-12">
-          <div className="absolute inset-0 border-4 border-[var(--vscode-muted)] opacity-25 rounded-full"></div>
-          <div className="absolute inset-0 border-4 border-transparent border-t-[var(--vscode-fg)] rounded-full animate-spin"></div>
+          <div className="absolute inset-0 border-4 border-(--vscode-muted) opacity-25 rounded-full"></div>
+          <div className="absolute inset-0 border-4 border-transparent border-t-(--vscode-fg) rounded-full animate-spin"></div>
         </div>
-        <div className="text-[var(--vscode-muted)] text-sm">
+        <div className="text-(--vscode-muted) text-sm">
           Analyzing schema...
         </div>
         {isLargeSchema && (
-          <div className="mt-2 px-4 py-2 bg-[var(--vscode-selection)] rounded border-l-[3px] border-[var(--warning)] max-w-md">
+          <div className="mt-2 px-4 py-2 
+           rounded border-l-[3px] border-(--warning) max-w-md">
             <div className="flex items-start gap-2">
               <AlertTriangle size={16} style={{ color: 'var(--warning)', flexShrink: 0 }} strokeWidth={2} />
               <div>
-                <p className="text-[var(--vscode-fg)] text-xs font-semibold m-0 mb-1">
+                <p className="text-(--vscode-fg) text-xs font-semibold m-0 mb-1">
                   Large Schema ({fileInfo.lineCount?.toLocaleString()} lines)
                 </p>
-                <p className="text-[var(--vscode-muted)] text-[11px] m-0">
+                <p className="text-(--vscode-muted) text-[11px] m-0">
                   This operation may take some time to complete.
                 </p>
               </div>

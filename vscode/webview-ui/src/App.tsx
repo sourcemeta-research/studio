@@ -43,7 +43,7 @@ function App() {
 
   if (!state) {
     return (
-      <div className="flex items-center justify-center h-screen text-[var(--vscode-muted)] text-sm">
+      <div className="flex items-center justify-center h-screen text-(--vscode-muted) text-sm">
         Loading...
       </div>
     );

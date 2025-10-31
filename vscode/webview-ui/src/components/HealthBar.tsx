@@ -28,16 +28,16 @@ export function HealthBar({ lintResult, isLoading }: HealthBarProps) {
 
   return (
     <div className="mb-5">
-      <div className="text-[var(--vscode-fg)] text-xs mb-1.5 font-semibold">
+      <div className="text-(--vscode-fg) text-xs mb-1.5 font-semibold">
         Schema Health: {showUnknown ? (
-          <span className="text-[var(--vscode-muted)]">?%</span>
+          <span className="text-(--vscode-muted)">?%</span>
         ) : (
           `${health}%`
         )}
       </div>
-      <div className="w-full h-2 bg-[var(--vscode-selection)] rounded overflow-hidden">
+      <div className="w-full h-2 bg-(--vscode-selection) rounded overflow-hidden">
         {showUnknown ? (
-          <div className="h-full bg-[var(--vscode-muted)] opacity-30 w-full" />
+          <div className="h-full bg-(--vscode-muted) opacity-30 w-full" />
         ) : (
           <div 
             className="h-full rounded transition-all duration-300"

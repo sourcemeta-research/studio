@@ -9,7 +9,6 @@ export interface TabsProps {
 }
 
 export function Tabs({ activeTab, onTabChange, state }: TabsProps) {
-  // Calculate tab statuses
   const lintStatus = calculateLintStatus(state.lintResult.errors?.length || 0, state.lintResult.health, state.isLoading);
   const formatStatus = calculateFormatStatus(state.formatResult.exitCode, state.formatLoading, state.fileInfo?.isYaml);
   const metaschemaStatus = calculateMetaschemaStatus(state.metaschemaResult.exitCode, state.isLoading);
@@ -30,8 +29,8 @@ export function Tabs({ activeTab, onTabChange, state }: TabsProps) {
         px-4 py-2 cursor-pointer border-none bg-transparent
         text-[13px] border-b-2 transition-all flex items-center gap-1.5
         ${activeTab === id 
-          ? 'text-[var(--vscode-fg)] border-[var(--vscode-accent)]' 
-          : 'text-[var(--vscode-muted)] border-transparent hover:text-[var(--vscode-fg)]'
+          ? 'text-(--vscode-fg) border-(--vscode-accent)' 
+          : 'text-(--vscode-muted) border-transparent hover:text-(--vscode-fg)'
         }
       `}
       onClick={() => onTabChange(id)}
@@ -44,7 +43,7 @@ export function Tabs({ activeTab, onTabChange, state }: TabsProps) {
   );
 
   return (
-    <div className="flex border-b border-[var(--vscode-border)] mb-5">
+    <div className="flex border-b border-(--vscode-border) mb-5">
       <Tab id="lint" label="Lint" Icon={lintStatus.Icon} color={lintStatus.color} />
       <Tab id="format" label="Format" Icon={formatStatus.Icon} color={formatStatus.color} />
       <Tab id="metaschema" label="Metaschema" Icon={metaschemaStatus.Icon} color={metaschemaStatus.color} />

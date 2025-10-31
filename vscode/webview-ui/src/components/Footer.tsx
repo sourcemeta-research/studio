@@ -19,16 +19,16 @@ export function Footer({ version }: FooterProps) {
   };
 
   return (
-    <div className="mt-auto pt-5 border-t border-[var(--vscode-border)]">
+    <div className="mt-auto pt-5 border-t border-(--vscode-border)">
       <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
         <div className="flex gap-2">
           <button
             className="
               px-3 py-1.5 cursor-pointer rounded text-xs
-              border border-[var(--vscode-button-border)]
-              bg-[var(--vscode-button-secondary-bg)]
-              text-[var(--vscode-button-secondary-fg)]
-              hover:bg-[var(--vscode-button-secondary-hover)]
+              border border-(--vscode-button-border)
+              bg-(--vscode-button-secondary-bg)
+              text-(--vscode-button-secondary-fg)
+              hover:bg-(--vscode-button-secondary-hover)
               transition-colors flex items-center gap-1.5
             "
             onClick={handleStarRepo}
@@ -40,10 +40,10 @@ export function Footer({ version }: FooterProps) {
           <button
             className="
               px-3 py-1.5 cursor-pointer rounded text-xs
-              border border-[var(--vscode-button-border)]
-              bg-[var(--vscode-button-secondary-bg)]
-              text-[var(--vscode-button-secondary-fg)]
-              hover:bg-[var(--vscode-button-secondary-hover)]
+              border border-(--vscode-button-border)
+              bg-(--vscode-button-secondary-bg)
+              text-(--vscode-button-secondary-fg)
+              hover:bg-(--vscode-button-secondary-hover)
               transition-colors flex items-center gap-1.5
             "
             onClick={handleReportBug}
@@ -57,10 +57,10 @@ export function Footer({ version }: FooterProps) {
           className="
             px-2 py-1 cursor-pointer rounded
             border-none bg-transparent
-            text-[var(--vscode-muted)]
-            hover:text-[var(--vscode-fg)]
+            text-(--vscode-muted)
+            hover:text-(--vscode-fg)
             transition-colors flex items-center gap-1.5
-            flex-shrink-0
+            shrink-0
           "
           onClick={handleSourcemetaClick}
           title="Visit Sourcemeta"
@@ -73,7 +73,7 @@ export function Footer({ version }: FooterProps) {
           <span className="text-[10px] font-semibold">Sourcemeta</span>
         </button>
       </div>
-      <p className="text-[var(--vscode-muted)] text-[11px] m-0">
+      <p className="text-(--vscode-muted) text-[11px] m-0">
         {version}
       </p>
     </div>
