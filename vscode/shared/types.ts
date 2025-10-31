@@ -48,7 +48,8 @@ export type FormatResult = CommandResult;
 
 export interface PanelState {
     fileInfo: FileInfo | null;
-    version: string;
+    cliVersion: string;
+    extensionVersion: string;
     lintResult: LintResult;
     formatResult: FormatResult;
     metaschemaResult: MetaschemaResult;

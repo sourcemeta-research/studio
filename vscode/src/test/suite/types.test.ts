@@ -21,7 +21,8 @@ suite('Shared Types Test Suite', () => {
         test('should have all required properties', () => {
             const state: PanelState = {
                 fileInfo: null,
-                version: '1.0.0',
+                cliVersion: '12.2.0',
+                extensionVersion: '0.0.1',
                 lintResult: { raw: '', health: null },
                 formatResult: { output: '', exitCode: null },
                 metaschemaResult: { output: '', exitCode: null },
@@ -31,7 +32,8 @@ suite('Shared Types Test Suite', () => {
             };
 
             assert.ok(state.hasOwnProperty('fileInfo'));
-            assert.ok(state.hasOwnProperty('version'));
+            assert.ok(state.hasOwnProperty('cliVersion'));
+            assert.ok(state.hasOwnProperty('extensionVersion'));
             assert.ok(state.hasOwnProperty('lintResult'));
             assert.ok(state.hasOwnProperty('formatResult'));
             assert.ok(state.hasOwnProperty('metaschemaResult'));
@@ -43,7 +45,8 @@ suite('Shared Types Test Suite', () => {
         test('should allow optional properties to be undefined', () => {
             const state: PanelState = {
                 fileInfo: null,
-                version: '1.0.0',
+                cliVersion: '12.2.0',
+                extensionVersion: '0.0.1',
                 lintResult: { raw: '', health: null },
                 formatResult: { output: '', exitCode: null },
                 metaschemaResult: { output: '', exitCode: null }
@@ -57,7 +60,8 @@ suite('Shared Types Test Suite', () => {
         test('should represent blocked state correctly', () => {
             const blockedState: PanelState = {
                 fileInfo: { absolutePath: '/test.json', displayPath: 'test.json', fileName: 'test.json' },
-                version: '1.0.0',
+                cliVersion: '12.2.0',
+                extensionVersion: '0.0.1',
                 lintResult: { raw: '', health: null, errors: [] },
                 formatResult: { output: '', exitCode: null },
                 metaschemaResult: {
@@ -87,7 +91,8 @@ suite('Shared Types Test Suite', () => {
                     fileName: 'test.yaml',
                     isYaml: true
                 },
-                version: '1.0.0',
+                cliVersion: '12.2.0',
+                extensionVersion: '0.0.1',
                 lintResult: { raw: '', health: null },
                 formatResult: { output: '', exitCode: null },
                 metaschemaResult: { output: '', exitCode: null }

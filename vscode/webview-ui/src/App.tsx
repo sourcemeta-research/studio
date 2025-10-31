@@ -36,6 +36,13 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (state?.blockedByMetaschema) {
+      setActiveTab('metaschema');
+      vscode.setState({ activeTab: 'metaschema' });
+    }
+  }, [state?.blockedByMetaschema]);
+
   const handleTabChange = (tab: 'lint' | 'format' | 'metaschema') => {
     setActiveTab(tab);
     vscode.setState({ activeTab: tab });
@@ -73,7 +80,7 @@ function App() {
         )}
       </div>
 
-      <Footer version={state.version} />
+      <Footer cliVersion={state.cliVersion} extensionVersion={state.extensionVersion} />
     </div>
   );
 }

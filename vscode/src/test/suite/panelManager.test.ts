@@ -31,7 +31,8 @@ suite('PanelManager Test Suite', () => {
     test('should not update content if panel does not exist', () => {
         const testState: PanelState = {
             fileInfo: null,
-            version: '1.0.0',
+            cliVersion: '12.2.0',
+            extensionVersion: '0.0.1',
             lintResult: { raw: '', health: null },
             formatResult: { output: '', exitCode: null },
             metaschemaResult: { output: '', exitCode: null },

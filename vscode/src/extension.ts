@@ -1,4 +1,6 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
+import * as fs from 'fs';
 import { PanelManager } from './panel/PanelManager';
 import { CommandExecutor } from './commands/CommandExecutor';
 import { DiagnosticManager } from './diagnostics/DiagnosticManager';
@@ -9,13 +11,22 @@ let panelManager: PanelManager;
 let commandExecutor: CommandExecutor;
 let diagnosticManager: DiagnosticManager;
 let lastActiveTextEditor: vscode.TextEditor | undefined;
-let cachedVersion = 'Loading...';
+let cachedCliVersion = 'Loading...';
+let extensionVersion = 'Loading...';
 let currentPanelState: PanelState | null = null;
 
 /**
  * Extension activation
  */
 export function activate(context: vscode.ExtensionContext): void {
+    try {
+        const packageJsonPath = path.join(context.extensionPath, 'package.json');
+        const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+        extensionVersion = packageJson.version || 'Unknown';
+    } catch {
+        extensionVersion = 'Unknown';
+    }
+
     // Disable VS Code's built-in JSON validation if configured
     const config = vscode.workspace.getConfiguration('sourcemeta-studio');
     if (config.get('disableBuiltInValidation', true)) {
@@ -206,7 +217,8 @@ async function updatePanelContent(): Promise<void> {
     // Send initial loading state
     const loadingState: PanelState = {
         fileInfo,
-        version: cachedVersion,
+        cliVersion: cachedCliVersion,
+        extensionVersion,
         lintResult: { raw: '', health: null },
         formatResult: { output: '', exitCode: null },
         metaschemaResult: { output: '', exitCode: null },
@@ -222,7 +234,7 @@ async function updatePanelContent(): Promise<void> {
     // Run metaschema first, if metaschema reports errors, block other commands
     try {
         const version = await commandExecutor.getVersion();
-        cachedVersion = version;
+        cachedCliVersion = version;
 
         const metaschemaRawResult = fileInfo ? await commandExecutor.metaschema(fileInfo.absolutePath) : { output: 'No file selected', exitCode: null };
         const metaschemaResult = parseMetaschemaResult(metaschemaRawResult.output, metaschemaRawResult.exitCode);
@@ -230,7 +242,8 @@ async function updatePanelContent(): Promise<void> {
         if (metaschemaResult.errors && metaschemaResult.errors.length > 0) {
             const blockedState: PanelState = {
                 fileInfo,
-                version: cachedVersion,
+                cliVersion: cachedCliVersion,
+                extensionVersion,
                 lintResult: { raw: '', health: null, errors: [] },
                 formatResult: { output: '', exitCode: null },
                 metaschemaResult,
@@ -262,7 +275,8 @@ async function updatePanelContent(): Promise<void> {
 
         const finalState: PanelState = {
             fileInfo,
-            version: cachedVersion,
+            cliVersion: cachedCliVersion,
+            extensionVersion,
             lintResult,
             formatResult,
             metaschemaResult,
@@ -290,10 +304,11 @@ async function updatePanelContent(): Promise<void> {
             );
         }
     } catch (error) {
-        cachedVersion = `Error: ${(error as Error).message}`;
+        cachedCliVersion = `Error: ${(error as Error).message}`;
         const errorState: PanelState = {
             fileInfo,
-            version: cachedVersion,
+            cliVersion: cachedCliVersion,
+            extensionVersion,
             lintResult: { raw: `Error: ${(error as Error).message}`, health: null, error: true },
             formatResult: { output: `Error: ${(error as Error).message}`, exitCode: null },
             metaschemaResult: { output: `Error: ${(error as Error).message}`, exitCode: null },

@@ -32,7 +32,9 @@ export function HealthBar({ lintResult, isLoading, blockedByMetaschema }: Health
   return (
     <div className="mb-5">
       <div className="text-(--vscode-fg) text-xs mb-1.5 font-semibold">
-        Schema Health: {showUnknown ? (
+        Schema Health: {blockedByMetaschema ? (
+          <span className="text-(--vscode-muted)">N/A</span>
+        ) : showUnknown ? (
           <span className="text-(--vscode-muted)">?%</span>
         ) : (
           `${health}%`

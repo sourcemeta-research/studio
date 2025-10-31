@@ -2,10 +2,11 @@ import { vscode } from '../vscode-api';
 import { Star, Bug } from 'lucide-react';
 
 export interface FooterProps {
-  version: string;
+  cliVersion: string;
+  extensionVersion: string;
 }
 
-export function Footer({ version }: FooterProps) {
+export function Footer({ cliVersion, extensionVersion }: FooterProps) {
   const handleStarRepo = () => {
     vscode.postMessage({ command: 'openExternal', url: 'https://github.com/sourcemeta-research/studio' });
   };
@@ -35,7 +36,7 @@ export function Footer({ version }: FooterProps) {
             title="Star us on GitHub"
           >
             <Star size={14} strokeWidth={2} />
-            <span>Star</span>
+            <span>Star on Github</span>
           </button>
           <button
             className="
@@ -73,9 +74,10 @@ export function Footer({ version }: FooterProps) {
           <span className="text-[10px] font-semibold">Sourcemeta</span>
         </button>
       </div>
-      <p className="text-(--vscode-muted) text-[11px] m-0">
-        {version}
-      </p>
+      <div className="text-(--vscode-muted) text-[11px] m-0 space-y-0.5">
+        <p className="m-0">CLI Version: {cliVersion}</p>
+        <p className="m-0">Extension Version: {extensionVersion}</p>
+      </div>
     </div>
   );
 }
