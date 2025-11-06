@@ -31,27 +31,17 @@ jobs:
       - name: Install extension dependencies
         working-directory: ./vscode
         run: npm ci
-
       - name: Run ESLint
         working-directory: ./vscode
         run: npm run lint
-
       - name: Compile TypeScript
         working-directory: ./vscode
         run: npm run compile
 
-      # TODO: Can we unify this difference in a better way?
-      - name: Install test dependencies
-        working-directory: ./test/vscode
-        run: npm ci
-      - name: Run tests on Linux (with xvfb)
-        if: runner.os == 'Linux'
-        working-directory: ./test/vscode
-        run: xvfb-run -a npm test
-      - name: Run tests on Windows/macOS
-        if: runner.os != 'Linux'
-        working-directory: ./test/vscode
-        run: npm test
+      - if: runner.os == 'Linux'
+        run: xvfb-run --auto-servernum ${{ matrix.platform.make }} vscode-test
+      - if: runner.os != 'Linux'
+        run: ${{ matrix.platform.make }} vscode-test
 
       - name: Check for uncommitted files
         run: ./scripts/no-uncommitted-files.sh
