@@ -45,7 +45,7 @@ jobs:
         run: npm ci
       
       - name: Install webview dependencies
-        working-directory: ./vscode/webview-ui
+        working-directory: ./ui
         run: npm ci
       
       - name: Compile TypeScript
@@ -62,7 +62,7 @@ jobs:
           name: build-output
           path: |
             vscode/out/
-            vscode/webview-ui/dist/
+            ui/dist/
           retention-days: 1
 
   test:
@@ -90,7 +90,7 @@ jobs:
         run: npm ci
       
       - name: Install webview dependencies
-        working-directory: ./vscode/webview-ui
+        working-directory: ./ui
         run: npm ci
       
       - name: Compile TypeScript
