@@ -1,4 +1,4 @@
-import type { CommandResult, FileInfo } from '@shared/types';
+import type { CommandResult, FileInfo } from '../../../shared/types.ts';
 import { vscode } from '../vscode-api';
 import { RawOutput } from './RawOutput';
 import { Info, CheckCircle, AlertCircle } from 'lucide-react';

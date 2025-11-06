@@ -1,4 +1,4 @@
-import type { FileInfo as FileInfoType } from '@shared/types';
+import type { FileInfo as FileInfoType } from '../../../shared/types.ts';
 
 export interface FileInfoProps {
   fileInfo: FileInfoType | null;

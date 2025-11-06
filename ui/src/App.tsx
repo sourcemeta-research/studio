@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { PanelState } from '@shared/types';
+import type { PanelState } from '../../shared/types.ts';
 import { vscode } from './vscode-api';
 import { FileInfo } from './components/FileInfo';
 import { HealthBar } from './components/HealthBar';

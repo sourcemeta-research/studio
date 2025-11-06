@@ -1,4 +1,4 @@
-import type { PanelState } from '@shared/types';
+import type { PanelState } from '../../../shared/types.ts';
 import type { LucideIcon } from 'lucide-react';
 import { calculateLintStatus, calculateFormatStatus, calculateMetaschemaStatus } from '../utils/tabStatus';
 

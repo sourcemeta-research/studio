@@ -1,4 +1,4 @@
-import type { LintResult } from '@shared/types';
+import type { LintResult } from '../../../shared/types.ts';
 import { vscode } from '../vscode-api';
 import { RawOutput } from './RawOutput';
 import { CheckCircle, AlertCircle } from 'lucide-react';
