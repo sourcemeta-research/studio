@@ -48,7 +48,7 @@ export class PanelManager {
                 enableScripts: true,
                 retainContextWhenHidden: true,
                 localResourceRoots: [
-                    vscode.Uri.file(path.join(this.extensionPath, '..', 'ui', 'dist'))
+                    vscode.Uri.file(path.join(this.extensionPath, '..', 'build', 'ui'))
                 ]
             }
         );
@@ -100,24 +100,24 @@ export class PanelManager {
      * Get HTML content for the webview (load React build)
      */
     private getHtmlContent(webview: vscode.Webview): string {
-        const distPath = path.join(this.extensionPath, '..', 'ui', 'dist');
+        const distPath = path.join(this.extensionPath, '..', 'build', 'ui');
         const indexPath = path.join(distPath, 'index.html');
 
         let html = fs.readFileSync(indexPath, 'utf-8');
 
         const scriptUri = webview.asWebviewUri(
-            vscode.Uri.file(path.join(distPath, 'assets', 'index.js'))
+            vscode.Uri.file(path.join(distPath, 'app.js'))
         );
         const styleUri = webview.asWebviewUri(
-            vscode.Uri.file(path.join(distPath, 'assets', 'index.css'))
+            vscode.Uri.file(path.join(distPath, 'style.css'))
         );
 
         html = html.replace(
-            /src="\/assets\/index\.js"/g,
+            /src="\/app\.js"/g,
             `src="${scriptUri}"`
         );
         html = html.replace(
-            /href="\/assets\/index\.css"/g,
+            /href="\/style\.css"/g,
             `href="${styleUri}"`
         );
 

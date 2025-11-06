@@ -8,12 +8,18 @@ export default defineConfig({
     tailwindcss(),
   ],
   build: {
-    outDir: 'dist',
+    outDir: '../build/ui',
+    emptyOutDir: true,
     rollupOptions: {
       output: {
-        entryFileNames: 'assets/[name].js',
-        chunkFileNames: 'assets/[name].js',
-        assetFileNames: 'assets/[name].[ext]'
+        entryFileNames: 'app.js',
+        chunkFileNames: '[name].js',
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name === 'index.css') {
+            return 'style.css';
+          }
+          return '[name].[ext]';
+        }
       }
     }
   }

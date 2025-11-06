@@ -3,3 +3,4 @@
 /vscode/.vscode-test
 /vscode/webview-ui/node_modules
 /vscode/webview-ui/dist
+/build
