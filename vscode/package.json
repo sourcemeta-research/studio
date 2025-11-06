@@ -18,8 +18,8 @@
         "command": "sourcemeta-studio.openPanel",
         "title": "Open Sourcemeta Studio",
         "icon": {
-          "light": "../assets/logo.svg",
-          "dark": "../assets/logo.svg"
+          "light": "../assets/logo.png",
+          "dark": "../assets/logo.png"
         }
       }
     ],

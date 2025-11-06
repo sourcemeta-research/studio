@@ -14,7 +14,7 @@ export class PanelManager {
 
     constructor(extensionPath: string) {
         this.extensionPath = extensionPath;
-        this.iconPath = vscode.Uri.file(path.join(extensionPath, '..', 'assets', 'logo.svg'));
+        this.iconPath = vscode.Uri.file(path.join(extensionPath, '..', 'assets', 'logo.png'));
     }
 
     /**

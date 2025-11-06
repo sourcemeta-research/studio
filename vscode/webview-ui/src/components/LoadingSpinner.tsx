@@ -25,10 +25,7 @@ export function LoadingSpinner({ fileInfo }: LoadingSpinnerProps) {
               <AlertTriangle size={16} style={{ color: 'var(--warning)', flexShrink: 0 }} strokeWidth={2} />
               <div>
                 <p className="text-(--vscode-fg) text-xs font-semibold m-0 mb-1">
-                  Large Schema ({fileInfo.lineCount?.toLocaleString()} lines)
-                </p>
-                <p className="text-(--vscode-muted) text-[11px] m-0">
-                  This operation may take some time to complete.
+                  This schema is big and might take a while to analyse. Hang tight! ({fileInfo.lineCount?.toLocaleString()} lines)
                 </p>
               </div>
             </div>
