@@ -1,4 +1,4 @@
-/vscode/node_modules
+node_modules
 /vscode/out
 /vscode/.vscode-test
 /vscode/webview-ui/node_modules
