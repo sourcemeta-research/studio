@@ -11,7 +11,7 @@
     "Other"
   ],
   "activationEvents": [],
-  "main": "./out/src/extension.js",
+  "main": "./out/vscode/src/extension.js",
   "contributes": {
     "commands": [
       {
@@ -45,10 +45,10 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "install:all": "npm i && cd webview-ui && npm i",
+    "install:all": "npm i && cd ../ui && npm i",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "build:webview": "cd webview-ui && npm run build",
+    "build:webview": "cd ../ui && npm run build",
     "build": "npm run compile && npm run build:webview",
     "pretest": "npm run compile",
     "test": "vscode-test",

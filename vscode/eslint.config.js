@@ -33,8 +33,7 @@ module.exports = [
       'dist/**',
       '**/*.d.ts',
       'node_modules/**',
-      '.vscode-test/**',
-      'webview-ui/**'
+      '.vscode-test/**'
     ]
   }
 ];

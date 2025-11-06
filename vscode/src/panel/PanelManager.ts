@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { WebviewMessage, PanelState } from '../../shared/types';
+import { WebviewMessage, PanelState } from '../../../shared/types';
 
 /**
  * Manages the webview panel lifecycle and content
@@ -48,7 +48,7 @@ export class PanelManager {
                 enableScripts: true,
                 retainContextWhenHidden: true,
                 localResourceRoots: [
-                    vscode.Uri.file(path.join(this.extensionPath, 'webview-ui', 'dist'))
+                    vscode.Uri.file(path.join(this.extensionPath, '..', 'ui', 'dist'))
                 ]
             }
         );
@@ -100,7 +100,7 @@ export class PanelManager {
      * Get HTML content for the webview (load React build)
      */
     private getHtmlContent(webview: vscode.Webview): string {
-        const distPath = path.join(this.extensionPath, 'webview-ui', 'dist');
+        const distPath = path.join(this.extensionPath, '..', 'ui', 'dist');
         const indexPath = path.join(distPath, 'index.html');
 
         let html = fs.readFileSync(indexPath, 'utf-8');
