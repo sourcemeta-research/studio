@@ -4,7 +4,7 @@ const path = require('path');
 const buildTestDir = path.resolve(__dirname, '../../build/test/vscode');
 
 module.exports = defineConfig({
-  files: '../../build/test/vscode/test/vscode/**/*.test.js',
+  files: '../../build/test/vscode/**/*.test.js',
   extensionDevelopmentPath: '../../vscode',
   cachePath: path.join(buildTestDir, '.vscode-test'),
   launchArgs: [

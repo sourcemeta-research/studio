@@ -17,10 +17,6 @@
     "noFallthroughCasesInSwitch": true,
     "types": ["mocha", "node", "@types/vscode"]
   },
-  "include": [
-    "**/*",
-    "../../vscode/src/**/*",
-    "../../shared/**/*"
-  ],
+  "include": ["**/*"],
   "exclude": ["node_modules"]
 }

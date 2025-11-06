@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import * as path from 'path';
+import testSchema from './fixtures/test-schema.json';
 
 suite('Extension Test Suite', () => {
     vscode.window.showInformationMessage('Start all tests.');
@@ -23,7 +23,7 @@ suite('Extension Test Suite', () => {
         if (extension && !extension.isActive) {
             await extension.activate();
         }
-        
+
         const commands = await vscode.commands.getCommands(true);
         const commandExists = commands.includes('sourcemeta-studio.openPanel');
         assert.ok(commandExists, 'Command "sourcemeta-studio.openPanel" should be registered');
@@ -62,19 +62,15 @@ suite('Extension Test Suite', () => {
             await extension.activate();
         }
 
-        const testSchemaPath = path.join(__dirname, '../fixtures/test-schema.json');
-        const uri = vscode.Uri.file(testSchemaPath);
-        
-        try {
-            const document = await vscode.workspace.openTextDocument(uri);
-            await vscode.window.showTextDocument(document);
+        const document = await vscode.workspace.openTextDocument({
+            content: JSON.stringify(testSchema, null, 2),
+            language: 'json'
+        });
+        await vscode.window.showTextDocument(document);
 
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            assert.strictEqual(document.languageId, 'json', 'Document should be JSON');
-        } catch (error) {
-            console.log('Test file not found, skipping:', error);
-        }
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        assert.strictEqual(document.languageId, 'json', 'Document should be JSON');
     });
 
     test('Should read extension version from package.json', async () => {
@@ -97,7 +93,7 @@ suite('Extension Test Suite', () => {
         }
 
         await vscode.commands.executeCommand('workbench.action.closeAllEditors');
-        
+
         await new Promise(resolve => setTimeout(resolve, 500));
 
         await vscode.commands.executeCommand('sourcemeta-studio.openPanel');
