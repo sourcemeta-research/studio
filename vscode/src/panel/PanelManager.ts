@@ -14,7 +14,7 @@ export class PanelManager {
 
     constructor(extensionPath: string) {
         this.extensionPath = extensionPath;
-        this.iconPath = vscode.Uri.file(path.join(extensionPath, '..', 'assets', 'logo.png'));
+        this.iconPath = vscode.Uri.file(path.join(extensionPath, 'logo.png'));
     }
 
     /**
@@ -48,6 +48,7 @@ export class PanelManager {
                 enableScripts: true,
                 retainContextWhenHidden: true,
                 localResourceRoots: [
+                    vscode.Uri.file(this.extensionPath),
                     vscode.Uri.file(path.join(this.extensionPath, '..', 'build', 'webview'))
                 ]
             }
@@ -88,7 +89,7 @@ export class PanelManager {
         if (!this.panel) {
             return;
         }
-        
+
         // Send state update to React webview
         this.panel.webview.postMessage({
             type: 'update',
@@ -100,12 +101,16 @@ export class PanelManager {
      * Get HTML content for the webview (load React build)
      */
     private getHtmlContent(_webview: vscode.Webview): string {
-        const distPath = path.join(this.extensionPath, '..', 'build', 'webview');
-        const indexPath = path.join(distPath, 'index.html');
+        // Try production path first (inside extension directory)
+        const productionPath = path.join(this.extensionPath, 'index.html');
 
-        const html = fs.readFileSync(indexPath, 'utf-8');
+        if (fs.existsSync(productionPath)) {
+            return fs.readFileSync(productionPath, 'utf-8');
+        }
 
-        return html;
+        // Fall back to development path (outside extension directory)
+        const devPath = path.join(this.extensionPath, '..', 'build', 'webview', 'index.html');
+        return fs.readFileSync(devPath, 'utf-8');
     }
 
     /**

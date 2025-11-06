@@ -35,6 +35,7 @@ jobs:
         run: xvfb-run --auto-servernum ${{ matrix.platform.make }} ${{ matrix.target }}-test
       - if: runner.os != 'Linux'
         run: ${{ matrix.platform.make }} ${{ matrix.target }}-test
+      - run: ${{ matrix.platform.make }} ${{ matrix.target }}-package
 
       - name: Check for uncommitted files
         run: ./scripts/no-uncommitted-files.sh

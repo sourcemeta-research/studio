@@ -10,6 +10,10 @@
   "categories": [
     "Other"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sourcemeta-research/studio.git"
+  },
   "activationEvents": [],
   "main": "../build/vscode/extension.js",
   "contributes": {
@@ -18,8 +22,8 @@
         "command": "sourcemeta-studio.openPanel",
         "title": "Open Sourcemeta Studio",
         "icon": {
-          "light": "../assets/logo.png",
-          "dark": "../assets/logo.png"
+          "light": "./logo.png",
+          "dark": "./logo.png"
         }
       }
     ],
@@ -44,7 +48,6 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run package",
     "compile": "node esbuild.js",
     "watch": "node esbuild.js --watch",
     "package": "node esbuild.js --production",

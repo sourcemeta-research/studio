@@ -18,10 +18,10 @@
       "request": "launch",
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}",
-        "--extensionTestsPath=${workspaceFolder}/out/test/index"
+        "--extensionTestsPath=${workspaceFolder}/../test/vscode/index"
       ],
       "outFiles": [
-        "${workspaceFolder}/out/test/**/*.js"
+        "${workspaceFolder}/../build/vscode/**/*.js"
       ],
       "preLaunchTask": "${defaultBuildTask}"
     }
