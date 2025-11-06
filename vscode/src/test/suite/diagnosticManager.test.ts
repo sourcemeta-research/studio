@@ -1,7 +1,8 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { DiagnosticManager } from '../../diagnostics/DiagnosticManager';
-import { LintError, MetaschemaError, DiagnosticType } from '../../../../shared/types';
+import { DiagnosticType } from '../../types';
+import { LintError, MetaschemaError } from '../../../../shared/types';
 
 suite('DiagnosticManager Test Suite', () => {
     let diagnosticManager: DiagnosticManager;

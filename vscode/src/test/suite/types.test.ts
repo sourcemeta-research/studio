@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { DiagnosticType } from '../../../../shared/types';
+import { DiagnosticType } from '../../types';
 import type { PanelState, WebviewMessage } from '../../../../shared/types';
 
 suite('Shared Types Test Suite', () => {

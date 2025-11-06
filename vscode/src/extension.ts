@@ -5,7 +5,8 @@ import { PanelManager } from './panel/PanelManager';
 import { CommandExecutor } from './commands/CommandExecutor';
 import { DiagnosticManager } from './diagnostics/DiagnosticManager';
 import { getFileInfo, parseLintResult, parseMetaschemaResult, errorPositionToRange, parseCliError, hasJsonParseErrors } from './utils/fileUtils';
-import { WebviewMessage, PanelState, DiagnosticType } from '../../shared/types';
+import { WebviewMessage, PanelState } from '../../shared/types';
+import { DiagnosticType } from './types';
 
 let panelManager: PanelManager;
 let commandExecutor: CommandExecutor;

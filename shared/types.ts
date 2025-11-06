@@ -1,5 +1,6 @@
 /**
- * Shared TypeScript interfaces and types
+ * Shared types between VSCode extension and webview
+ * These types define the communication contract
  */
 
 export interface FileInfo {
@@ -40,6 +41,20 @@ export interface MetaschemaError {
     instancePosition?: [number, number, number, number]; // [lineStart, colStart, lineEnd, colEnd]
 }
 
+export interface CliError {
+    error: string;
+    line?: number;
+    column?: number;
+    filePath?: string;
+    identifier?: string;
+    location?: string;
+    rule?: string;
+    testNumber?: number;
+    uri?: string;
+    command?: string;
+    option?: string;
+}
+
 export interface MetaschemaResult extends CommandResult {
     errors?: (MetaschemaError | CliError)[];
 }
@@ -63,36 +78,4 @@ export interface WebviewMessage {
     command: 'goToPosition' | 'formatSchema' | 'openExternal';
     position?: [number, number, number, number];
     url?: string;
-}
-
-export interface CliError {
-    error: string;
-    line?: number;
-    column?: number;
-    filePath?: string;
-    identifier?: string;
-    location?: string;
-    rule?: string;
-    testNumber?: number;
-    uri?: string;
-    command?: string;
-    option?: string;
-}
-
-export const DiagnosticType = {
-    Lint: 'lint',
-    Metaschema: 'metaschema'
-} as const;
-
-export type DiagnosticType = typeof DiagnosticType[keyof typeof DiagnosticType];
-
-export interface TabStatus {
-    indicator: string;
-    cssClass: string;
-}
-
-export interface HealthBarData {
-    health: number | null;
-    color: string;
-    html: string;
 }
