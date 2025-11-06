@@ -21,7 +21,7 @@ jobs:
           - os: macos-latest
             make: make
           - os: windows-latest
-            make: nmake
+            make: make
     runs-on: ${{ matrix.platform.os }}
     steps:
       - uses: actions/checkout@v4
