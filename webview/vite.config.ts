@@ -10,7 +10,7 @@ export default defineConfig({
     viteSingleFile(),
   ],
   build: {
-    outDir: '../build/ui',
+    outDir: '../build/webview',
     emptyOutDir: true
   }
 })

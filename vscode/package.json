@@ -45,10 +45,10 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "install:all": "npm i && cd ../ui && npm i",
+    "install:all": "npm i && cd ../webview && npm i",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "build:webview": "cd ../ui && npm run build",
+    "build:webview": "cd ../webview && npm run build",
     "build": "npm run compile && npm run build:webview",
     "pretest": "npm run compile",
     "test": "vscode-test",

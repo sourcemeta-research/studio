@@ -48,7 +48,7 @@ export class PanelManager {
                 enableScripts: true,
                 retainContextWhenHidden: true,
                 localResourceRoots: [
-                    vscode.Uri.file(path.join(this.extensionPath, '..', 'build', 'ui'))
+                    vscode.Uri.file(path.join(this.extensionPath, '..', 'build', 'webview'))
                 ]
             }
         );
@@ -100,7 +100,7 @@ export class PanelManager {
      * Get HTML content for the webview (load React build)
      */
     private getHtmlContent(_webview: vscode.Webview): string {
-        const distPath = path.join(this.extensionPath, '..', 'build', 'ui');
+        const distPath = path.join(this.extensionPath, '..', 'build', 'webview');
         const indexPath = path.join(distPath, 'index.html');
 
         const html = fs.readFileSync(indexPath, 'utf-8');

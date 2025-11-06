@@ -10,9 +10,9 @@ vscode: .always
 vscode-open: .always
 	$(CODE) --extensionDevelopmentPath="$(PWD)/vscode"
 
-ui: .always
-	cd ui && $(NPM) ci
-	cd ui && $(NPM) run lint
-	cd ui && $(NPM) run build
+webview: .always
+	cd webview && $(NPM) ci
+	cd webview && $(NPM) run lint
+	cd webview && $(NPM) run build
 
 .always:
