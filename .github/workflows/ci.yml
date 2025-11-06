@@ -39,14 +39,15 @@ jobs:
       - run: ${{ matrix.platform.make }} ${{ matrix.target }}-package
 
       # Production testing
-      - shell: bash
+      - name: Install extension
+        shell: bash
         run: |
           rm -rf build/test/vscode/.vscode-test/extensions
           mkdir -p build/test/vscode/.vscode-test/extensions/sourcemeta.studio
           unzip build/dist/sourcemeta-studio-vscode.vsix 'extension/*' -d build/test/vscode/.vscode-test/extensions/sourcemeta.studio
           mv build/test/vscode/.vscode-test/extensions/sourcemeta.studio/extension/* build/test/vscode/.vscode-test/extensions/sourcemeta.studio/
           rmdir build/test/vscode/.vscode-test/extensions/sourcemeta.studio/extension
-          echo '[{"identifier":{"id":"sourcemeta.studio"},"version":"0.0.1","location":{"$mid":1,"path":"/sourcemeta.studio","scheme":"file"},"relativeLocation":"sourcemeta.studio","metadata":{"isApplicationScoped":false,"isBuiltin":false,"isSystem":false}}]' > build/test/vscode/.vscode-test/extensions/extensions.json
+          node test/vscode/generate-extensions.js build/test/vscode/.vscode-test/extensions/sourcemeta.studio > build/test/vscode/.vscode-test/extensions/extensions.json
       - if: runner.os == 'Linux'
         run: xvfb-run --auto-servernum ${{ matrix.platform.make }} ${{ matrix.target }}-test
         env:
