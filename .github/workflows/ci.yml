@@ -10,7 +10,7 @@ on:
   pull_request:
 
 jobs:
-  vscode:
+  test:
     strategy:
       fail-fast: false
       matrix:
@@ -21,27 +21,20 @@ jobs:
             make: make
           - os: windows-latest
             make: make
+        target:
+          - vscode
+
     runs-on: ${{ matrix.platform.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v6
 
       - run: ${{ matrix.platform.make }} webview
-
-      - name: Install extension dependencies
-        working-directory: ./vscode
-        run: npm ci
-      - name: Run ESLint
-        working-directory: ./vscode
-        run: npm run lint
-      - name: Compile TypeScript
-        working-directory: ./vscode
-        run: npm run compile
-
+      - run: ${{ matrix.platform.make }} ${{ matrix.target }}
       - if: runner.os == 'Linux'
-        run: xvfb-run --auto-servernum ${{ matrix.platform.make }} vscode-test
+        run: xvfb-run --auto-servernum ${{ matrix.platform.make }} ${{ matrix.target }}-test
       - if: runner.os != 'Linux'
-        run: ${{ matrix.platform.make }} vscode-test
+        run: ${{ matrix.platform.make }} ${{ matrix.target }}-test
 
       - name: Check for uncommitted files
         run: ./scripts/no-uncommitted-files.sh

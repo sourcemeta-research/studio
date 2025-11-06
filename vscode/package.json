@@ -44,12 +44,9 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "install:all": "npm i && cd ../webview && npm i",
-    "compile": "tsc -p ./",
+    "vscode:prepublish": "npm run build",
     "watch": "tsc -watch -p ./",
-    "build:webview": "cd ../webview && npm run build",
-    "build": "npm run compile && npm run build:webview",
+    "build": "tsc -p ./",
     "lint": "eslint src --ext ts"
   },
   "dependencies": {

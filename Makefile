@@ -4,7 +4,7 @@ CODE = code
 all: webview vscode vscode-test
 
 vscode: .always
-	cd vscode && $(NPM) run install:all
+	cd vscode && $(NPM) ci
 	cd vscode && $(NPM) run lint
 	cd vscode && $(NPM) run build
 
