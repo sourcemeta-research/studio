@@ -15,25 +15,24 @@ jobs:
       fail-fast: false
       matrix:
         node-version: [ '18.x', '20.x' ]
-        os:
-          - ubuntu-latest
-          - windows-latest
-          - macos-latest
-    runs-on: ${{ matrix.os }}
+        platform:
+          - os: ubuntu-latest
+            make: make
+          - os: macos-latest
+            make: make
+          - os: windows-latest
+            make: nmake
+    runs-on: ${{ matrix.platform.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
-          cache-dependency-path: vscode/package-lock.json
+
+      - run: ${{ matrix.platform.make }} webview
 
       - name: Install extension dependencies
         working-directory: ./vscode
-        run: npm ci
-
-      - name: Install webview dependencies
-        working-directory: ./webview
         run: npm ci
 
       - name: Run ESLint
@@ -43,10 +42,6 @@ jobs:
       - name: Compile TypeScript
         working-directory: ./vscode
         run: npm run compile
-
-      - name: Build webview UI
-        working-directory: ./vscode
-        run: npm run build:webview
 
       # TODO: Can we unify this difference in a better way?
       - name: Run tests on Linux (with xvfb)
