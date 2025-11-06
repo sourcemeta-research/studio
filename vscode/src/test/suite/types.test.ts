@@ -1,6 +1,6 @@
 import * as assert from 'assert';
-import { DiagnosticType } from '../../../shared/types';
-import type { PanelState, WebviewMessage } from '../../../shared/types';
+import { DiagnosticType } from '../../../../shared/types';
+import type { PanelState, WebviewMessage } from '../../../../shared/types';
 
 suite('Shared Types Test Suite', () => {
     test('DiagnosticType should have Lint type', () => {

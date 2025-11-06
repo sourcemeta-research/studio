@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import { PanelManager } from '../../panel/PanelManager';
-import { PanelState } from '../../../shared/types';
+import { PanelState } from '../../../../shared/types';
 
 suite('PanelManager Test Suite', () => {
     let panelManager: PanelManager;
