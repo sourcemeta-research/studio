@@ -99,27 +99,11 @@ export class PanelManager {
     /**
      * Get HTML content for the webview (load React build)
      */
-    private getHtmlContent(webview: vscode.Webview): string {
+    private getHtmlContent(_webview: vscode.Webview): string {
         const distPath = path.join(this.extensionPath, '..', 'build', 'ui');
         const indexPath = path.join(distPath, 'index.html');
 
-        let html = fs.readFileSync(indexPath, 'utf-8');
-
-        const scriptUri = webview.asWebviewUri(
-            vscode.Uri.file(path.join(distPath, 'app.js'))
-        );
-        const styleUri = webview.asWebviewUri(
-            vscode.Uri.file(path.join(distPath, 'style.css'))
-        );
-
-        html = html.replace(
-            /src="\/app\.js"/g,
-            `src="${scriptUri}"`
-        );
-        html = html.replace(
-            /href="\/style\.css"/g,
-            `href="${styleUri}"`
-        );
+        const html = fs.readFileSync(indexPath, 'utf-8');
 
         return html;
     }
