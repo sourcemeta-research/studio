@@ -1,6 +1,6 @@
 import * as assert from 'assert';
-import { getFileInfo, parseLintResult, parseMetaschemaResult, errorPositionToRange, parseCliError, hasJsonParseErrors } from '../../utils/fileUtils';
-import type { LintResult, MetaschemaResult, MetaschemaError } from '../../../../shared/types';
+import { getFileInfo, parseLintResult, parseMetaschemaResult, errorPositionToRange, parseCliError, hasJsonParseErrors } from '../../vscode/src/utils/fileUtils';
+import type { LintResult, MetaschemaResult, MetaschemaError } from '../../shared/types';
 
 function isMetaschemaError(error: unknown): error is MetaschemaError {
     return typeof error === 'object' && error !== null && 'instanceLocation' in error;

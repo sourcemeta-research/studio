@@ -41,13 +41,16 @@ jobs:
         run: npm run compile
 
       # TODO: Can we unify this difference in a better way?
+      - name: Install test dependencies
+        working-directory: ./test/vscode
+        run: npm ci
       - name: Run tests on Linux (with xvfb)
         if: runner.os == 'Linux'
-        working-directory: ./vscode
+        working-directory: ./test/vscode
         run: xvfb-run -a npm test
       - name: Run tests on Windows/macOS
         if: runner.os != 'Linux'
-        working-directory: ./vscode
+        working-directory: ./test/vscode
         run: npm test
 
       - name: Check for uncommitted files

@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { CommandExecutor } from '../../commands/CommandExecutor';
+import { CommandExecutor } from '../../vscode/src/commands/CommandExecutor';
 
 suite('CommandExecutor Test Suite', () => {
     let executor: CommandExecutor;

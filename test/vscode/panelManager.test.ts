@@ -1,6 +1,6 @@
 import * as assert from 'assert';
-import { PanelManager } from '../../panel/PanelManager';
-import { PanelState } from '../../../../shared/types';
+import { PanelManager } from '../../vscode/src/panel/PanelManager';
+import { PanelState } from '../../shared/types';
 
 suite('PanelManager Test Suite', () => {
     let panelManager: PanelManager;
