@@ -11,7 +11,7 @@
     "Other"
   ],
   "activationEvents": [],
-  "main": "./out/vscode/src/extension.js",
+  "main": "../build/vscode/vscode/src/extension.js",
   "contributes": {
     "commands": [
       {
