@@ -215,6 +215,24 @@ async function updatePanelContent(): Promise<void> {
     const filePath = lastActiveTextEditor?.document.uri.fsPath;
     const fileInfo = getFileInfo(filePath);
 
+    // If no file is selected, show a "no file" state without running commands
+    if (!fileInfo) {
+        const noFileState: PanelState = {
+            fileInfo: null,
+            cliVersion: cachedCliVersion || 'Unknown',
+            extensionVersion,
+            lintResult: { raw: '', health: null },
+            formatResult: { output: '', exitCode: null },
+            metaschemaResult: { output: '', exitCode: null },
+            isLoading: false,
+            hasParseErrors: false,
+            noFileSelected: true
+        };
+        currentPanelState = noFileState;
+        panelManager.updateContent(noFileState);
+        return;
+    }
+
     // Send initial loading state
     const loadingState: PanelState = {
         fileInfo,
@@ -237,7 +255,7 @@ async function updatePanelContent(): Promise<void> {
         const version = await commandExecutor.getVersion();
         cachedCliVersion = version;
 
-        const metaschemaRawResult = fileInfo ? await commandExecutor.metaschema(fileInfo.absolutePath) : { output: 'No file selected', exitCode: null };
+        const metaschemaRawResult = await commandExecutor.metaschema(fileInfo.absolutePath);
         const metaschemaResult = parseMetaschemaResult(metaschemaRawResult.output, metaschemaRawResult.exitCode);
 
         if (metaschemaResult.errors && metaschemaResult.errors.length > 0) {
@@ -266,8 +284,8 @@ async function updatePanelContent(): Promise<void> {
         }
 
         const [lintOutput, formatResult] = await Promise.all([
-            fileInfo ? commandExecutor.lint(fileInfo.absolutePath) : Promise.resolve('No file selected'),
-            fileInfo ? commandExecutor.formatCheck(fileInfo.absolutePath) : Promise.resolve({ output: 'No file selected', exitCode: null })
+            commandExecutor.lint(fileInfo.absolutePath),
+            commandExecutor.formatCheck(fileInfo.absolutePath)
         ]);
 
         const lintResult = parseLintResult(lintOutput);

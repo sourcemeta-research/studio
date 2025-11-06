@@ -1,21 +1,36 @@
 import type { CommandResult, FileInfo } from '../../../shared/types.ts';
 import { vscode } from '../vscode-api';
 import { RawOutput } from './RawOutput';
-import { Info, CheckCircle, AlertCircle } from 'lucide-react';
+import { Info, CheckCircle, AlertCircle, FileQuestion } from 'lucide-react';
 
 export interface FormatTabProps {
   formatResult: CommandResult;
   fileInfo: FileInfo | null;
   hasParseErrors?: boolean;
   blocked?: boolean;
+  noFileSelected?: boolean;
 }
 
-export function FormatTab({ formatResult, fileInfo, hasParseErrors, blocked }: FormatTabProps) {
+export function FormatTab({ formatResult, fileInfo, hasParseErrors, blocked, noFileSelected }: FormatTabProps) {
   const handleFormatSchema = () => {
     vscode.postMessage({ command: 'formatSchema' });
   };
 
   const isYaml = fileInfo?.isYaml || false;
+
+  if (noFileSelected) {
+    return (
+      <div className="text-center py-10 px-5">
+        <div className="flex justify-center mb-4">
+          <FileQuestion size={48} className="text-(--vscode-muted)" strokeWidth={1.5} />
+        </div>
+        <div className="text-lg font-semibold text-(--vscode-fg) mb-2">No Schema File Selected</div>
+        <div className="text-[13px] text-(--vscode-muted) max-w-md mx-auto">
+          Open a JSON schema file to check formatting.
+        </div>
+      </div>
+    );
+  }
 
   if (hasParseErrors) {
     return (

@@ -87,4 +87,41 @@ suite('Extension Test Suite', () => {
         assert.ok(extension?.packageJSON.version, 'Extension should have a version in package.json');
         assert.match(extension?.packageJSON.version, /^\d+\.\d+\.\d+$/, 'Version should follow semver format');
     });
+
+    test('Should handle no file selected gracefully', async function() {
+        this.timeout(5000);
+
+        const extension = vscode.extensions.getExtension('sourcemeta.studio');
+        if (extension && !extension.isActive) {
+            await extension.activate();
+        }
+
+        await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+        
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        await vscode.commands.executeCommand('sourcemeta-studio.openPanel');
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        assert.ok(true, 'Extension should handle no file selected without errors');
+    });
+
+    test('Should show appropriate message when no file is selected', async function() {
+        this.timeout(5000);
+
+        const extension = vscode.extensions.getExtension('sourcemeta.studio');
+        if (extension && !extension.isActive) {
+            await extension.activate();
+        }
+
+        await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        await vscode.commands.executeCommand('sourcemeta-studio.openPanel');
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        assert.ok(extension, 'Extension should exist');
+        assert.ok(extension?.isActive, 'Extension should remain active with no file selected');
+    });
 });

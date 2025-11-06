@@ -4,14 +4,15 @@ export interface HealthBarProps {
   lintResult: LintResult;
   isLoading?: boolean;
   blockedByMetaschema?: boolean;
+  noFileSelected?: boolean;
 }
 
-export function HealthBar({ lintResult, isLoading, blockedByMetaschema }: HealthBarProps) {
+export function HealthBar({ lintResult, isLoading, blockedByMetaschema, noFileSelected }: HealthBarProps) {
   const errorCount = lintResult.errors?.length || 0;
   
   let health: number;
 
-  if (blockedByMetaschema) {
+  if (noFileSelected || blockedByMetaschema) {
     health = 0;
   } else if (lintResult.health !== null && lintResult.health !== undefined) {
     health = lintResult.health;
@@ -27,12 +28,14 @@ export function HealthBar({ lintResult, isLoading, blockedByMetaschema }: Health
     return 'var(--error)';
   };
 
-  const showUnknown = !blockedByMetaschema && (isLoading || (lintResult.health === null && lintResult.errors === undefined));
+  const showUnknown = !blockedByMetaschema && !noFileSelected && (isLoading || (lintResult.health === null && lintResult.errors === undefined));
 
   return (
     <div className="mb-5">
       <div className="text-(--vscode-fg) text-xs mb-1.5 font-semibold">
-        Schema Health: {blockedByMetaschema ? (
+        Schema Health: {noFileSelected ? (
+          <span className="text-(--vscode-muted)">N/A</span>
+        ) : blockedByMetaschema ? (
           <span className="text-(--vscode-muted)">N/A</span>
         ) : showUnknown ? (
           <span className="text-(--vscode-muted)">?%</span>
@@ -41,7 +44,7 @@ export function HealthBar({ lintResult, isLoading, blockedByMetaschema }: Health
         )}
       </div>
       <div className="w-full h-2 bg-(--vscode-selection) rounded overflow-hidden">
-        {showUnknown ? (
+        {showUnknown || noFileSelected ? (
           <div className="h-full bg-(--vscode-muted) opacity-30 w-full" />
         ) : (
           <div 

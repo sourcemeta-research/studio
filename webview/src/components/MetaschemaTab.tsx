@@ -1,23 +1,38 @@
 import type { MetaschemaResult, MetaschemaError } from '../../../shared/types.ts';
 import { vscode } from '../vscode-api';
 import { RawOutput } from './RawOutput';
-import { CheckCircle, AlertTriangle } from 'lucide-react';
+import { CheckCircle, AlertTriangle, FileQuestion } from 'lucide-react';
 
 export interface MetaschemaTabProps {
   metaschemaResult: MetaschemaResult;
+  noFileSelected?: boolean;
 }
 
 function isMetaschemaError(error: unknown): error is MetaschemaError {
   return typeof error === 'object' && error !== null && 'instancePosition' in error;
 }
 
-export function MetaschemaTab({ metaschemaResult }: MetaschemaTabProps) {
+export function MetaschemaTab({ metaschemaResult, noFileSelected }: MetaschemaTabProps) {
   const handleGoToPosition = (position: [number, number, number, number]) => {
     vscode.postMessage({ command: 'goToPosition', position });
   };
 
   const errors = metaschemaResult.errors || [];
   const metaschemaErrors = errors.filter(isMetaschemaError);
+
+  if (noFileSelected) {
+    return (
+      <div className="text-center py-10 px-5">
+        <div className="flex justify-center mb-4">
+          <FileQuestion size={48} className="text-(--vscode-muted)" strokeWidth={1.5} />
+        </div>
+        <div className="text-lg font-semibold text-(--vscode-fg) mb-2">No Schema File Selected</div>
+        <div className="text-[13px] text-(--vscode-muted) max-w-md mx-auto">
+          Open a JSON or YAML schema file to validate against its meta-schema.
+        </div>
+      </div>
+    );
+  }
 
   if (metaschemaResult.exitCode === 0) {
     return (

@@ -45,6 +45,24 @@ suite('PanelManager Test Suite', () => {
         );
     });
 
+    test('should handle no file selected state', () => {
+        const noFileState: PanelState = {
+            fileInfo: null,
+            cliVersion: '12.2.0',
+            extensionVersion: '0.0.1',
+            lintResult: { raw: '', health: null },
+            formatResult: { output: '', exitCode: null },
+            metaschemaResult: { output: '', exitCode: null },
+            isLoading: false,
+            noFileSelected: true
+        };
+
+        assert.doesNotThrow(
+            () => panelManager.updateContent(noFileState),
+            'Should handle no file selected state'
+        );
+    });
+
     test('should have setMessageHandler method', () => {
         assert.ok(
             typeof panelManager.setMessageHandler === 'function',

@@ -72,6 +72,7 @@ export interface PanelState {
     formatLoading?: boolean;
     hasParseErrors?: boolean;
     blockedByMetaschema?: boolean;
+    noFileSelected?: boolean;
 }
 
 export interface WebviewMessage {
