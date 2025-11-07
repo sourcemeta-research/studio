@@ -1,9 +1,10 @@
 {
-  "name": "vscode-studio",
+  "name": "studio",
   "displayName": "Sourcemeta Studio",
   "publisher": "sourcemeta",
   "description": "JSON Schema inspection, formatting, and linting tools",
   "version": "0.0.1",
+  "icon": "logo.png",
   "engines": {
     "vscode": "^1.74.0"
   },
