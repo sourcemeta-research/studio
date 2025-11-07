@@ -32,6 +32,17 @@ Sourcemeta Studio leverages the full power of the Sourcemeta JSON Schema CLI to 
 > Schema](https://www.oreilly.com/library/view/unifying-business-data/9781098144999/).
 
 
+## Installation
+
+You can install Sourcemeta Studio directly from the [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=sourcemeta.sourcemeta-studio).
+
+Alternatively, you can open this link directly in Visual Studio Code by using the command palette (Ctrl+P or Cmd+P on macOS) and entering:
+
+```
+ext install sourcemeta.sourcemeta-studio
+```
+
+
 ## Version Control
 
 We aim to fully support _every_ version of JSON Schema and combinations between them.
