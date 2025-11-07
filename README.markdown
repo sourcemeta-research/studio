@@ -43,6 +43,6 @@ validation, and automatic formatting directly into your editor.
 :speech_balloon: Support
 ------------------------
 
-- **Issues**: [GitHub Issues](https://github.com/sourcemeta-research/studio/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/sourcemeta-research/studio/discussions)
+- **Issues**: [GitHub Issues](https://github.com/sourcemeta/studio/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/sourcemeta/studio/discussions)
 - **Email**: hello@sourcemeta.com

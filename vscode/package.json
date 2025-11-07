@@ -13,7 +13,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sourcemeta-research/studio.git"
+    "url": "git+https://github.com/sourcemeta/studio.git"
   },
   "activationEvents": [],
   "main": "../build/vscode/extension.js",

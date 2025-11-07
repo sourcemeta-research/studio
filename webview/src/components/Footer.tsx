@@ -8,11 +8,11 @@ export interface FooterProps {
 
 export function Footer({ cliVersion, extensionVersion }: FooterProps) {
   const handleStarRepo = () => {
-    vscode.postMessage({ command: 'openExternal', url: 'https://github.com/sourcemeta-research/studio' });
+    vscode.postMessage({ command: 'openExternal', url: 'https://github.com/sourcemeta/studio' });
   };
 
   const handleReportBug = () => {
-    vscode.postMessage({ command: 'openExternal', url: 'https://github.com/sourcemeta-research/studio/issues/new' });
+    vscode.postMessage({ command: 'openExternal', url: 'https://github.com/sourcemeta/studio/issues/new' });
   };
 
   const handleSourcemetaClick = () => {
@@ -66,9 +66,9 @@ export function Footer({ cliVersion, extensionVersion }: FooterProps) {
           onClick={handleSourcemetaClick}
           title="Visit Sourcemeta"
         >
-          <img 
-            src="https://www.sourcemeta.com/logo.svg" 
-            alt="Sourcemeta Logo" 
+          <img
+            src="https://www.sourcemeta.com/logo.svg"
+            alt="Sourcemeta Logo"
             className="w-4 h-4"
           />
           <span className="text-[10px] font-semibold">Sourcemeta</span>
