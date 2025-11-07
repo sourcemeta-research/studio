@@ -1,5 +1,5 @@
 {
-  "name": "vscode-studio",
+  "name": "sourcemeta-studio",
   "displayName": "Sourcemeta Studio",
   "publisher": "sourcemeta",
   "description": "JSON Schema inspection, formatting, and linting tools",
