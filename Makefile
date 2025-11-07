@@ -17,6 +17,8 @@ vscode: .always
 	cd vscode && $(NPM) ci
 	cd vscode && $(NPM) run lint
 	cd vscode && $(NPM) run build
+	$(INSTALL) -m 0664 README.markdown build/vscode/README.markdown
+	$(INSTALL) -m 0664 screenshot.png build/vscode/screenshot.png
 	$(INSTALL) -m 0664 LICENSE build/vscode/LICENSE
 	$(INSTALL) -m 0664 build/webview/index.html build/vscode/index.html
 	$(INSTALL) -m 0664 vscode/logo.png build/vscode/logo.png

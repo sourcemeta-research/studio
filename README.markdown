@@ -7,7 +7,7 @@
 
 Sourcemeta Studio brings professional JSON Schema tooling directly into your editor. It provides real-time linting, formatting, metaschema validation, and comprehensive error diagnostics with precise position tracking—all within a beautiful, integrated webview interface. Whether you're authoring schemas for APIs, validating data models, or maintaining schema repositories, Sourcemeta Studio ensures quality and consistency without leaving VS Code.
 
-![Sourcemeta Studio Example](./assets/example.png)
+![Sourcemeta Studio Example](./screenshot.png)
 
 ## Features
 
