@@ -2,8 +2,20 @@ name: CD
 
 on:
   push:
+    branches:
+      - main
     tags:
       - "v*.*.*"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_type }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  packages: write
+  # See https://docs.npmjs.com/generating-provenance-statements#about-npm-provenance
+  id-token: write
 
 jobs:
   publish:
@@ -15,16 +27,37 @@ jobs:
       - name: Verify package version matches tag
         run: |
           TAG_VERSION="${GITHUB_REF#refs/tags/v}"
-          PACKAGE_VERSION=$(jq -r '.version' vscode/package.json)
+          PACKAGE_VERSION="$(jq -r '.version' vscode/package.json)"
           if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
-            echo "ERROR: Tag version ($TAG_VERSION) does not match package.json version ($PACKAGE_VERSION)"
+            echo "ERROR: Tag version ($TAG_VERSION) does not match package.json version ($PACKAGE_VERSION)" 1>&2
             exit 1
           fi
-          echo "Version check passed: $TAG_VERSION"
 
       - run: make
 
+      - run: gh config set prompt disabled
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Perform Continuous Release
+        run: |
+          gh release delete continuous --cleanup-tag --yes || true
+          gh release create continuous --prerelease --draft=false --title continuous --target "$GITHUB_SHA" --generate-notes
+          gh release upload --clobber continuous build/dist/sourcemeta-studio-vscode.vsix
+        if: github.ref_type == 'branch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Perform Tag Release
+        run: |
+          gh release create ${{ github.ref_name }} --draft=false --title ${{ github.ref_name }} --target "$GITHUB_SHA" --generate-notes
+          gh release upload --clobber ${{ github.ref_name }} build/dist/sourcemeta-studio-vscode.vsix
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: Publish to VS Code Marketplace
         run: npx vsce publish --packagePath build/dist/sourcemeta-studio-vscode.vsix
+        if: github.ref_type == 'tag'
         env:
           VSCE_PAT: ${{ secrets.VISUAL_STUDIO_MARKETPLACE_TOKEN }}
