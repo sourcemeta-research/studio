@@ -1,4 +1,5 @@
 import { spawn } from 'child_process';
+import { join } from 'path';
 import { CommandResult } from '../../../protocol/types';
 
 /**
@@ -6,9 +7,11 @@ import { CommandResult } from '../../../protocol/types';
  */
 export class CommandExecutor {
     private readonly extensionPath: string;
+    private readonly cliPath: string;
 
     constructor(extensionPath: string) {
         this.extensionPath = extensionPath;
+        this.cliPath = join(extensionPath, 'node_modules', '@sourcemeta', 'jsonschema', 'cli.js');
     }
 
     /**
@@ -16,10 +19,9 @@ export class CommandExecutor {
      */
     private async executeCommand(args: string[]): Promise<CommandResult> {
         return new Promise((resolve, reject) => {
-            const npxPath = process.platform === 'win32' ? 'npx.cmd' : 'npx';
-            const child = spawn(npxPath, args, {
+            const child = spawn(process.execPath, [this.cliPath, ...args], {
                 cwd: this.extensionPath,
-                shell: true
+                shell: false
             });
 
             let stdout = '';
@@ -52,7 +54,7 @@ export class CommandExecutor {
      */
     async getVersion(): Promise<string> {
         try {
-            const result = await this.executeCommand(['jsonschema', 'version']);
+            const result = await this.executeCommand(['version']);
             return result.exitCode === 0 ? result.output.trim() : `Error: ${result.output}`;
         } catch (error) {
             return `Error: ${(error as Error).message}`;
@@ -64,7 +66,7 @@ export class CommandExecutor {
      */
     async lint(filePath: string): Promise<string> {
         try {
-            const result = await this.executeCommand(['jsonschema', 'lint', '--json', filePath]);
+            const result = await this.executeCommand(['lint', '--json', filePath]);
             return result.output;
         } catch (error) {
             throw error;
@@ -76,7 +78,7 @@ export class CommandExecutor {
      */
     async formatCheck(filePath: string): Promise<CommandResult> {
         try {
-            return await this.executeCommand(['jsonschema', 'fmt', '--check', '--json', filePath]);
+            return await this.executeCommand(['fmt', '--check', '--json', filePath]);
         } catch (error) {
             throw error;
         }
@@ -86,7 +88,7 @@ export class CommandExecutor {
      * Run format command on a file
      */
     async format(filePath: string): Promise<void> {
-        const result = await this.executeCommand(['jsonschema', 'fmt', '--json', filePath]);
+        const result = await this.executeCommand(['fmt', '--json', filePath]);
         if (result.exitCode !== 0) {
             try {
                 const errorObj = JSON.parse(result.output);
@@ -105,7 +107,7 @@ export class CommandExecutor {
      */
     async metaschema(filePath: string, useHttp: boolean = true): Promise<CommandResult> {
         try {
-            const args = ['jsonschema', 'metaschema', '--json'];
+            const args = ['metaschema', '--json'];
             if (useHttp) {
                 args.push('--http');
             }
