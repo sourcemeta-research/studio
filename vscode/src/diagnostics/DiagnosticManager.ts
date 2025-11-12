@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { DiagnosticType } from '../types';
-import { LintError, CliError, MetaschemaError } from '../../../shared/types';
+import { LintError, CliError, MetaschemaError } from '../../../protocol/types';
 import { errorPositionToRange } from '../utils/fileUtils';
 
 /**

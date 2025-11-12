@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { FileInfo, LintResult, MetaschemaResult, CliError } from '../../../shared/types';
+import { FileInfo, LintResult, MetaschemaResult, CliError } from '../../../protocol/types';
 
 /**
  * Parse generic CLI error response from JSON output

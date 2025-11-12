@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { WebviewMessage, PanelState } from '../../../shared/types';
+import { PanelState, WebviewToExtensionMessage, ExtensionToWebviewMessage } from '../../../protocol/types';
 
 /**
  * Manages the webview panel lifecycle and content
@@ -10,7 +10,7 @@ export class PanelManager {
     private panel: vscode.WebviewPanel | undefined;
     private readonly iconPath: vscode.Uri;
     private readonly extensionPath: string;
-    private messageHandler?: (message: WebviewMessage) => void;
+    private messageHandler?: (message: WebviewToExtensionMessage) => void;
 
     constructor(extensionPath: string) {
         this.extensionPath = extensionPath;
@@ -20,7 +20,7 @@ export class PanelManager {
     /**
      * Set the message handler for webview messages
      */
-    setMessageHandler(handler: (message: WebviewMessage) => void): void {
+    setMessageHandler(handler: (message: WebviewToExtensionMessage) => void): void {
         this.messageHandler = handler;
     }
 
@@ -90,11 +90,11 @@ export class PanelManager {
             return;
         }
 
-        // Send state update to React webview
-        this.panel.webview.postMessage({
+        const message: ExtensionToWebviewMessage = {
             type: 'update',
             state: state
-        });
+        };
+        this.panel.webview.postMessage(message);
     }
 
     /**

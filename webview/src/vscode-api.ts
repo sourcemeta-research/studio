@@ -1,4 +1,6 @@
-export type TabType = 'lint' | 'format' | 'metaschema';
+import type { TabType, WebviewState, WebviewToExtensionMessage } from '../../protocol/types';
+
+export type { TabType };
 
 interface VSCodeAPI {
   postMessage(message: unknown): void;
@@ -15,7 +17,7 @@ declare global {
 class VSCodeAPIWrapper {
   private readonly vsCodeApi = window.acquireVsCodeApi();
 
-  private postMessage(message: unknown): void {
+  private postMessage(message: WebviewToExtensionMessage): void {
     this.vsCodeApi.postMessage(message);
   }
 
@@ -32,12 +34,12 @@ class VSCodeAPIWrapper {
   }
 
   public getActiveTab(): TabType | undefined {
-    const state = this.vsCodeApi.getState() as { activeTab?: TabType } | undefined;
+    const state = this.vsCodeApi.getState() as WebviewState | undefined;
     return state?.activeTab;
   }
 
   public setActiveTab(tab: TabType): void {
-    this.vsCodeApi.setState({ activeTab: tab });
+    this.vsCodeApi.setState({ activeTab: tab } satisfies WebviewState);
   }
 }
 

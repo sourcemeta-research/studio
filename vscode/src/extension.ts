@@ -5,7 +5,7 @@ import { PanelManager } from './panel/PanelManager';
 import { CommandExecutor } from './commands/CommandExecutor';
 import { DiagnosticManager } from './diagnostics/DiagnosticManager';
 import { getFileInfo, parseLintResult, parseMetaschemaResult, errorPositionToRange, parseCliError, hasJsonParseErrors } from './utils/fileUtils';
-import { WebviewMessage, PanelState } from '../../shared/types';
+import { PanelState, WebviewToExtensionMessage } from '../../protocol/types';
 import { DiagnosticType } from './types';
 
 let panelManager: PanelManager;
@@ -42,7 +42,7 @@ export function activate(context: vscode.ExtensionContext): void {
         context.subscriptions.push(collection);
     });
 
-    panelManager.setMessageHandler((message: WebviewMessage) => {
+    panelManager.setMessageHandler((message: WebviewToExtensionMessage) => {
         handleWebviewMessage(message);
     });
 
@@ -73,7 +73,7 @@ export function activate(context: vscode.ExtensionContext): void {
 /**
  * Handle messages from the webview
  */
-function handleWebviewMessage(message: WebviewMessage): void {
+function handleWebviewMessage(message: WebviewToExtensionMessage): void {
     if (message.command === 'goToPosition' && lastActiveTextEditor && message.position) {
         const range = errorPositionToRange(message.position);
 

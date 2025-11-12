@@ -1,4 +1,4 @@
-import type { MetaschemaResult, MetaschemaError } from '../../../shared/types.ts';
+import type { MetaschemaResult, MetaschemaError } from '../../../protocol/types';
 import { vscode } from '../vscode-api';
 import { RawOutput } from './RawOutput';
 import { CheckCircle, AlertTriangle, FileQuestion } from 'lucide-react';
