@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { FileInfo, LintResult, MetaschemaResult, CliError } from '../../../protocol/types';
+import { FileInfo, LintResult, MetaschemaResult, CliError, Position } from '../../../protocol/types';
 
 /**
  * Parse generic CLI error response from JSON output
@@ -208,12 +208,12 @@ export function parseMetaschemaResult(output: string, exitCode: number | null): 
             
             const parsed = JSON.parse(jsonStr);
             if (Array.isArray(parsed)) {
-                result.errors = parsed.map((error: { 
-                    error?: string; 
-                    instanceLocation?: string; 
-                    keywordLocation?: string; 
+                result.errors = parsed.map((error: {
+                    error?: string;
+                    instanceLocation?: string;
+                    keywordLocation?: string;
                     absoluteKeywordLocation?: string;
-                    instancePosition?: [number, number, number, number];
+                    instancePosition?: Position;
                 }) => ({
                     error: error.error || 'Validation error',
                     instanceLocation: error.instanceLocation || '',
@@ -260,7 +260,7 @@ export function arrayToPosition(arr: [number, number]): vscode.Position {
  * Convert error position array to VS Code range
  * Position array is 1-based and inclusive, VS Code is 0-based and end-exclusive
  */
-export function errorPositionToRange(position: [number, number, number, number]): vscode.Range {
+export function errorPositionToRange(position: Position): vscode.Range {
     const [lineStart, columnStart, lineEnd, columnEnd] = position;
     return new vscode.Range(
         new vscode.Position(lineStart - 1, columnStart - 1),

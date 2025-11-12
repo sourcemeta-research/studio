@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { DiagnosticType } from '../types';
-import { LintError, CliError, MetaschemaError } from '../../../protocol/types';
+import { LintError, CliError, MetaschemaError, Position } from '../../../protocol/types';
 import { errorPositionToRange } from '../utils/fileUtils';
 
 /**
@@ -24,8 +24,8 @@ export class DiagnosticManager {
         type: DiagnosticType
     ): void {
         const diagnostics = errors
-            .filter((error): error is LintError & { position: [number, number, number, number] } => 
-                error.position !== null) // Skip errors without positions for YAML files
+            .filter((error): error is LintError & { position: Position } =>
+                error.position !== null)
             .map(error => {
             const range = errorPositionToRange(error.position);
 
@@ -103,12 +103,11 @@ export class DiagnosticManager {
         }
 
         const diagnostics = errors
-            .filter((error): error is MetaschemaError => {
+            .filter((error): error is MetaschemaError & { instancePosition: Position } => {
                 return 'instancePosition' in error && error.instancePosition !== undefined;
             })
             .map(error => {
-                const position = error.instancePosition as [number, number, number, number];
-                const range = errorPositionToRange(position);
+                const range = errorPositionToRange(error.instancePosition);
 
                 const diagnostic = new vscode.Diagnostic(
                     range,

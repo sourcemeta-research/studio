@@ -1,4 +1,4 @@
-import type { MetaschemaResult, MetaschemaError } from '../../../protocol/types';
+import type { MetaschemaResult, MetaschemaError, Position } from '../../../protocol/types';
 import { vscode } from '../vscode-api';
 import { RawOutput } from './RawOutput';
 import { CheckCircle, AlertTriangle, FileQuestion } from 'lucide-react';
@@ -13,7 +13,7 @@ function isMetaschemaError(error: unknown): error is MetaschemaError {
 }
 
 export function MetaschemaTab({ metaschemaResult, noFileSelected }: MetaschemaTabProps) {
-  const handleGoToPosition = (position: [number, number, number, number]) => {
+  const handleGoToPosition = (position: Position) => {
     vscode.goToPosition(position);
   };
 
@@ -124,7 +124,7 @@ export function MetaschemaTab({ metaschemaResult, noFileSelected }: MetaschemaTa
   } else if (metaschemaResult.exitCode === 1) {
     const error = errors.length > 0 ? errors[0] : null;
 
-    const errorPosition: [number, number, number, number] | null = 
+    const errorPosition: Position | null =
       error && 'instancePosition' in error && error.instancePosition
         ? error.instancePosition
         : null;

@@ -1,4 +1,4 @@
-import type { TabType, WebviewState, WebviewToExtensionMessage } from '../../protocol/types';
+import type { TabType, WebviewState, WebviewToExtensionMessage, Position } from '../../protocol/types';
 
 export type { TabType };
 
@@ -29,7 +29,7 @@ class VSCodeAPIWrapper {
     this.postMessage({ command: 'formatSchema' });
   }
 
-  public goToPosition(position: [number, number, number, number]): void {
+  public goToPosition(position: Position): void {
     this.postMessage({ command: 'goToPosition', position });
   }
 

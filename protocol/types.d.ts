@@ -4,6 +4,7 @@
  */
 
 import type {
+  Position,
   LintResult,
   FormatResult,
   MetaschemaResult
@@ -24,6 +25,7 @@ export interface FileInfo {
 }
 
 export type {
+  Position,
   LintError,
   LintResult,
   CommandResult,
@@ -51,7 +53,7 @@ export type WebviewCommand = 'goToPosition' | 'formatSchema' | 'openExternal';
 
 export interface WebviewToExtensionMessage {
   command: WebviewCommand;
-  position?: [number, number, number, number];
+  position?: Position;
   url?: string;
 }
 
