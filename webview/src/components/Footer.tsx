@@ -8,15 +8,15 @@ export interface FooterProps {
 
 export function Footer({ cliVersion, extensionVersion }: FooterProps) {
   const handleStarRepo = () => {
-    vscode.postMessage({ command: 'openExternal', url: 'https://github.com/sourcemeta/studio' });
+    vscode.openExternal('https://github.com/sourcemeta/studio');
   };
 
   const handleReportBug = () => {
-    vscode.postMessage({ command: 'openExternal', url: 'https://github.com/sourcemeta/studio/issues/new' });
+    vscode.openExternal('https://github.com/sourcemeta/studio/issues/new');
   };
 
   const handleSourcemetaClick = () => {
-    vscode.postMessage({ command: 'openExternal', url: 'https://www.sourcemeta.com/' });
+    vscode.openExternal('https://www.sourcemeta.com/');
   };
 
   return (
