@@ -9,9 +9,10 @@ export interface FormatTabProps {
   hasParseErrors?: boolean;
   blocked?: boolean;
   noFileSelected?: boolean;
+  formatError?: string;
 }
 
-export function FormatTab({ formatResult, fileInfo, hasParseErrors, blocked, noFileSelected }: FormatTabProps) {
+export function FormatTab({ formatResult, fileInfo, hasParseErrors, blocked, noFileSelected, formatError }: FormatTabProps) {
   const handleFormatSchema = () => {
     vscode.formatSchema();
   };
@@ -28,6 +29,23 @@ export function FormatTab({ formatResult, fileInfo, hasParseErrors, blocked, noF
         <div className="text-[13px] text-(--vscode-muted) max-w-md mx-auto">
           Open a JSON schema file to check formatting.
         </div>
+      </div>
+    );
+  }
+
+  if (formatError) {
+    return (
+      <div className="text-center py-10 px-5">
+        <div className="flex justify-center mb-4">
+          <AlertCircle size={48} className="text-(--error)" strokeWidth={1.5} />
+        </div>
+        <div className="text-lg font-semibold text-(--vscode-fg) mb-2">
+          Format Command Failed
+        </div>
+        <div className="text-[13px] text-(--vscode-muted) max-w-md mx-auto mb-4">
+          {formatError}
+        </div>
+        <RawOutput output={formatResult.output} />
       </div>
     );
   }
