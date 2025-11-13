@@ -6,13 +6,14 @@ import { CheckCircle, AlertTriangle, FileQuestion } from 'lucide-react';
 export interface MetaschemaTabProps {
   metaschemaResult: MetaschemaResult;
   noFileSelected?: boolean;
+  metaschemaError?: string;
 }
 
 function isMetaschemaError(error: unknown): error is MetaschemaError {
   return typeof error === 'object' && error !== null && 'instancePosition' in error;
 }
 
-export function MetaschemaTab({ metaschemaResult, noFileSelected }: MetaschemaTabProps) {
+export function MetaschemaTab({ metaschemaResult, noFileSelected, metaschemaError }: MetaschemaTabProps) {
   const handleGoToPosition = (position: Position) => {
     vscode.goToPosition(position);
   };
@@ -30,6 +31,21 @@ export function MetaschemaTab({ metaschemaResult, noFileSelected }: MetaschemaTa
         <div className="text-[13px] text-(--vscode-muted) max-w-md mx-auto">
           Open a JSON or YAML schema file to validate against its meta-schema.
         </div>
+      </div>
+    );
+  }
+
+  if (metaschemaError) {
+    return (
+      <div className="text-center py-10 px-5">
+        <div className="flex justify-center mb-4">
+          <AlertTriangle size={48} className="text-(--error)" strokeWidth={1.5} />
+        </div>
+        <div className="text-lg font-semibold text-(--vscode-fg) mb-2">Metaschema Command Failed</div>
+        <div className="text-[13px] text-(--vscode-muted) max-w-md mx-auto mb-4">
+          {metaschemaError}
+        </div>
+        <RawOutput output={metaschemaResult.output} />
       </div>
     );
   }

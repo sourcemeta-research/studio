@@ -47,6 +47,9 @@ export interface PanelState {
   hasParseErrors?: boolean;
   blockedByMetaschema?: boolean;
   noFileSelected?: boolean;
+  lintError?: string;
+  formatError?: string;
+  metaschemaError?: string;
 }
 
 export type WebviewCommand = 'goToPosition' | 'formatSchema' | 'openExternal';

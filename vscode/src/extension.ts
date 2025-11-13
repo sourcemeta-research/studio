@@ -135,11 +135,11 @@ function handleWebviewMessage(message: WebviewToExtensionMessage): void {
                 }
             }
             
-            vscode.window.showErrorMessage(`Format failed: ${errorMessage}`);
             if (currentPanelState) {
                 const updatedState = {
                     ...currentPanelState,
                     formatResult: { output: `Error: ${errorMessage}`, exitCode: null },
+                    formatError: errorMessage,
                     formatLoading: false
                 };
                 currentPanelState = updatedState;
@@ -323,16 +323,20 @@ async function updatePanelContent(): Promise<void> {
             );
         }
     } catch (error) {
-        cachedCliVersion = `Error: ${(error as Error).message}`;
+        const errorMessage = (error as Error).message;
+        cachedCliVersion = `Error: ${errorMessage}`;
         const errorState: PanelState = {
             fileInfo,
             cliVersion: cachedCliVersion,
             extensionVersion,
-            lintResult: { raw: `Error: ${(error as Error).message}`, health: null, error: true },
-            formatResult: { output: `Error: ${(error as Error).message}`, exitCode: null },
-            metaschemaResult: { output: `Error: ${(error as Error).message}`, exitCode: null },
+            lintResult: { raw: `Error: ${errorMessage}`, health: null, error: true },
+            formatResult: { output: `Error: ${errorMessage}`, exitCode: null },
+            metaschemaResult: { output: `Error: ${errorMessage}`, exitCode: null },
             isLoading: false,
-            hasParseErrors: true
+            hasParseErrors: true,
+            lintError: errorMessage,
+            formatError: errorMessage,
+            metaschemaError: errorMessage
         };
         currentPanelState = errorState;
         panelManager.updateContent(errorState);

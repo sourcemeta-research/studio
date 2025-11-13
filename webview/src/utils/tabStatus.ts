@@ -13,10 +13,14 @@ export function calculateLintStatus(
   errorCount: number,
   health: number | null,
   isLoading?: boolean,
-  noFileSelected?: boolean
+  noFileSelected?: boolean,
+  lintError?: string
 ): TabStatusResult {
   if (noFileSelected) {
     return { Icon: null, color: 'var(--vscode-muted)' };
+  }
+  if (lintError) {
+    return { Icon: X, color: 'var(--error)' };
   }
   if (isLoading) {
     return { Icon: HelpCircle, color: 'var(--vscode-muted)' };
@@ -46,10 +50,14 @@ export function calculateFormatStatus(
   exitCode: number | null,
   formatLoading?: boolean,
   isYaml?: boolean,
-  noFileSelected?: boolean
+  noFileSelected?: boolean,
+  formatError?: string
 ): TabStatusResult {
   if (noFileSelected) {
     return { Icon: null, color: 'var(--vscode-muted)' };
+  }
+  if (formatError) {
+    return { Icon: X, color: 'var(--error)' };
   }
   if (formatLoading || exitCode === null || exitCode === undefined) {
     return { Icon: HelpCircle, color: 'var(--vscode-muted)' };
@@ -70,10 +78,14 @@ export function calculateFormatStatus(
 export function calculateMetaschemaStatus(
   exitCode: number | null,
   isLoading?: boolean,
-  noFileSelected?: boolean
+  noFileSelected?: boolean,
+  metaschemaError?: string
 ): TabStatusResult {
   if (noFileSelected) {
     return { Icon: null, color: 'var(--vscode-muted)' };
+  }
+  if (metaschemaError) {
+    return { Icon: X, color: 'var(--error)' };
   }
   if (isLoading || exitCode === null || exitCode === undefined) {
     return { Icon: HelpCircle, color: 'var(--vscode-muted)' };
