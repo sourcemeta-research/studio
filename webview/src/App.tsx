@@ -20,6 +20,8 @@ function App() {
       setActiveTab(savedTab);
     }
 
+    vscode.notifyReady();
+
     // Listen for messages from the extension
     const handleMessage = (event: MessageEvent) => {
       const message = event.data;

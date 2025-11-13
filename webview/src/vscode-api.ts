@@ -41,6 +41,10 @@ class VSCodeAPIWrapper {
   public setActiveTab(tab: TabType): void {
     this.vsCodeApi.setState({ activeTab: tab } satisfies WebviewState);
   }
+
+  public notifyReady(): void {
+    this.postMessage({ command: 'ready' });
+  }
 }
 
 export const vscode = new VSCodeAPIWrapper();
