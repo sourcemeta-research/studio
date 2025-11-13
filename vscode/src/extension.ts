@@ -47,8 +47,11 @@ export function activate(context: vscode.ExtensionContext): void {
     });
 
     const openPanelCommand = vscode.commands.registerCommand('sourcemeta-studio.openPanel', () => {
+        const panelAlreadyExists = panelManager.exists();
         panelManager.createOrReveal(context);
-        updatePanelContent();
+        if (panelAlreadyExists) {
+            updatePanelContent();
+        }
     });
 
     const activeEditorChangeListener = vscode.window.onDidChangeActiveTextEditor((editor) => {
@@ -74,7 +77,9 @@ export function activate(context: vscode.ExtensionContext): void {
  * Handle messages from the webview
  */
 function handleWebviewMessage(message: WebviewToExtensionMessage): void {
-    if (message.command === 'goToPosition' && lastActiveTextEditor && message.position) {
+    if (message.command === 'ready') {
+        updatePanelContent();
+    } else if (message.command === 'goToPosition' && lastActiveTextEditor && message.position) {
         const range = errorPositionToRange(message.position);
 
         vscode.window.showTextDocument(lastActiveTextEditor.document, {

@@ -49,7 +49,7 @@ export interface PanelState {
   noFileSelected?: boolean;
 }
 
-export type WebviewCommand = 'goToPosition' | 'formatSchema' | 'openExternal';
+export type WebviewCommand = 'goToPosition' | 'formatSchema' | 'openExternal' | 'ready';
 
 export interface WebviewToExtensionMessage {
   command: WebviewCommand;
