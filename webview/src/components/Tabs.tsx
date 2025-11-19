@@ -17,9 +17,9 @@ interface TabProps {
 }
 
 export function Tabs({ activeTab, onTabChange, state }: TabsProps) {
-  const lintStatus = calculateLintStatus(state.lintResult.errors?.length || 0, state.lintResult.health, state.isLoading, state.noFileSelected);
-  const formatStatus = calculateFormatStatus(state.formatResult.exitCode, state.formatLoading, state.fileInfo?.isYaml, state.noFileSelected);
-  const metaschemaStatus = calculateMetaschemaStatus(state.metaschemaResult.exitCode, state.isLoading, state.noFileSelected);
+  const lintStatus = calculateLintStatus(state.lintResult.errors?.length || 0, state.lintResult.health, state.isLoading, state.noFileSelected, state.lintError);
+  const formatStatus = calculateFormatStatus(state.formatResult.exitCode, state.formatLoading, state.fileInfo?.isYaml, state.noFileSelected, state.formatError);
+  const metaschemaStatus = calculateMetaschemaStatus(state.metaschemaResult.exitCode, state.isLoading, state.noFileSelected, state.metaschemaError);
   const lintDisabled = !!state.blockedByMetaschema;
 
   const Tab = ({ 

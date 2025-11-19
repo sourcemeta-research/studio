@@ -73,9 +73,9 @@ function App() {
           <LoadingSpinner fileInfo={state.fileInfo} />
         ) : (
           <>
-            {activeTab === 'lint' && <LintTab lintResult={state.lintResult} blocked={!!state.blockedByMetaschema} noFileSelected={state.noFileSelected} />}
-            {activeTab === 'format' && <FormatTab formatResult={state.formatResult} fileInfo={state.fileInfo} hasParseErrors={state.hasParseErrors} blocked={!!state.blockedByMetaschema} noFileSelected={state.noFileSelected} />}
-            {activeTab === 'metaschema' && <MetaschemaTab metaschemaResult={state.metaschemaResult} noFileSelected={state.noFileSelected} />}
+            {activeTab === 'lint' && <LintTab lintResult={state.lintResult} blocked={!!state.blockedByMetaschema} noFileSelected={state.noFileSelected} lintError={state.lintError} />}
+            {activeTab === 'format' && <FormatTab formatResult={state.formatResult} fileInfo={state.fileInfo} hasParseErrors={state.hasParseErrors} blocked={!!state.blockedByMetaschema} noFileSelected={state.noFileSelected} formatError={state.formatError} />}
+            {activeTab === 'metaschema' && <MetaschemaTab metaschemaResult={state.metaschemaResult} noFileSelected={state.noFileSelected} metaschemaError={state.metaschemaError} />}
           </>
         )}
       </div>
