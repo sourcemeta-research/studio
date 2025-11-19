@@ -1,14 +1,21 @@
-Sourcemeta Studio
-=================
+# Sourcemeta Studio
 
 Professional JSON Schema tooling that brings real-time linting, metaschema
 validation, and automatic formatting directly into your editor.
 
-***
+---
 
 **[Install from the Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=sourcemeta.sourcemeta-studio)**
 
-***
+## Getting Started
+
+After installation, open a JSON or YAML file and click the Sourcemeta Studio icon in the editor title bar:
+
+![Extension Icon Location](./image.png)
+
+Alternatively, use the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and search for "Open Sourcemeta Studio".
+
+---
 
 ![Sourcemeta Studio Example](./screenshot.png)
 
@@ -21,8 +28,7 @@ validation, and automatic formatting directly into your editor.
 > Data Products with JSON
 > Schema](https://www.oreilly.com/library/view/unifying-business-data/9781098144999/).
 
-:sparkles: Features
--------------------
+## :sparkles: Features
 
 - **Real-time Linting**: Detect anti-patterns, validate references, and ensure
   best practices
@@ -40,8 +46,7 @@ validation, and automatic formatting directly into your editor.
   [`jsonschema.json`](https://github.com/sourcemeta/jsonschema/blob/main/docs/configuration.markdown)
   manifests
 
-:speech_balloon: Support
-------------------------
+## :speech_balloon: Support
 
 - **Issues**: [GitHub Issues](https://github.com/sourcemeta/studio/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/sourcemeta/studio/discussions)
