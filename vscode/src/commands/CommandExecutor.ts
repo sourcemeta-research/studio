@@ -21,7 +21,8 @@ export class CommandExecutor {
         return new Promise((resolve, reject) => {
             const child = spawn(process.execPath, [this.cliPath, ...args], {
                 cwd: this.extensionPath,
-                shell: false
+                shell: false,
+                windowsHide: true
             });
 
             let stdout = '';
