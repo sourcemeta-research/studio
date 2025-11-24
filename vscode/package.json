@@ -56,7 +56,7 @@
     "lint": "eslint src --ext ts"
   },
   "dependencies": {
-    "@sourcemeta/jsonschema": "^12.4.0"
+    "@sourcemeta/jsonschema": "^12.7.1"
   },
   "devDependencies": {
     "@types/node": "18.x",
