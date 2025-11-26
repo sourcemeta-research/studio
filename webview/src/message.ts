@@ -1,7 +1,5 @@
 import type { TabType, WebviewState, WebviewToExtensionMessage, Position } from '../../protocol/types';
 
-export type { TabType };
-
 interface VSCodeAPI {
   postMessage(message: unknown): void;
   getState(): unknown;
@@ -14,33 +12,29 @@ declare global {
   }
 }
 
-class VSCodeAPIWrapper {
-  private readonly vsCodeApi = window.acquireVsCodeApi();
+const vsCodeApi = window.acquireVsCodeApi();
 
-  private postMessage(message: WebviewToExtensionMessage): void {
-    this.vsCodeApi.postMessage(message);
-  }
-
-  public openExternal(url: string): void {
-    this.postMessage({ command: 'openExternal', url });
-  }
-
-  public formatSchema(): void {
-    this.postMessage({ command: 'formatSchema' });
-  }
-
-  public goToPosition(position: Position): void {
-    this.postMessage({ command: 'goToPosition', position });
-  }
-
-  public getActiveTab(): TabType | undefined {
-    const state = this.vsCodeApi.getState() as WebviewState | undefined;
-    return state?.activeTab;
-  }
-
-  public setActiveTab(tab: TabType): void {
-    this.vsCodeApi.setState({ activeTab: tab } satisfies WebviewState);
-  }
+function postMessage(message: WebviewToExtensionMessage): void {
+  vsCodeApi.postMessage(message);
 }
 
-export const vscode = new VSCodeAPIWrapper();
+export function openExternal(url: string): void {
+  postMessage({ command: 'openExternal', url });
+}
+
+export function formatSchema(): void {
+  postMessage({ command: 'formatSchema' });
+}
+
+export function goToPosition(position: Position): void {
+  postMessage({ command: 'goToPosition', position });
+}
+
+export function getActiveTab(): TabType | undefined {
+  const state = vsCodeApi.getState() as WebviewState | undefined;
+  return state?.activeTab;
+}
+
+export function setActiveTab(tab: TabType): void {
+  vsCodeApi.setState({ activeTab: tab } satisfies WebviewState);
+}
