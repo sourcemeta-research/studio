@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { PanelState } from '../../protocol/types';
-import { vscode, type TabType } from './vscode-api';
+import { vscode, type TabType } from './message';
 import { FileInfo } from './components/FileInfo';
 import { HealthBar } from './components/HealthBar';
 import { Tabs } from './components/Tabs';

@@ -1,4 +1,4 @@
-import { vscode } from '../vscode-api';
+import { vscode } from '../message';
 import { Star, Bug } from 'lucide-react';
 
 export interface FooterProps {

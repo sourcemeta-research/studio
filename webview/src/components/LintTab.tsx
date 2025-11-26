@@ -1,5 +1,5 @@
 import type { LintResult, Position } from '../../../protocol/types';
-import { vscode } from '../vscode-api';
+import { vscode } from '../message';
 import { RawOutput } from './RawOutput';
 import { CheckCircle, AlertCircle, FileQuestion } from 'lucide-react';
 
