@@ -59,7 +59,7 @@
     "@sourcemeta/jsonschema": "^12.7.1"
   },
   "devDependencies": {
-    "@types/node": "18.x",
+    "@types/node": "24.x",
     "@types/vscode": "^1.74.0",
     "@typescript-eslint/eslint-plugin": "^8.46.2",
     "@typescript-eslint/parser": "^8.46.2",
