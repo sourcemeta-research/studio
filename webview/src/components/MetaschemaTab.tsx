@@ -5,7 +5,7 @@ import { CheckCircle, AlertTriangle, FileQuestion } from 'lucide-react';
 
 export interface MetaschemaTabProps {
   metaschemaResult: MetaschemaResult;
-  noFileSelected?: boolean;
+  noFileSelected?: boolean | undefined;
 }
 
 function isMetaschemaError(error: unknown): error is MetaschemaError {

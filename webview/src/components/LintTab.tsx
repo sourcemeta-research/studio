@@ -5,8 +5,8 @@ import { CheckCircle, AlertCircle, FileQuestion } from 'lucide-react';
 
 export interface LintTabProps {
   lintResult: LintResult;
-  blocked?: boolean;
-  noFileSelected?: boolean;
+  blocked?: boolean | undefined;
+  noFileSelected?: boolean | undefined;
 }
 
 export function LintTab({ lintResult, blocked, noFileSelected }: LintTabProps) {

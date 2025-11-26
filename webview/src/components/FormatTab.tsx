@@ -6,9 +6,9 @@ import { Info, CheckCircle, AlertCircle, FileQuestion } from 'lucide-react';
 export interface FormatTabProps {
   formatResult: CommandResult;
   fileInfo: FileInfo | null;
-  hasParseErrors?: boolean;
-  blocked?: boolean;
-  noFileSelected?: boolean;
+  hasParseErrors?: boolean | undefined;
+  blocked?: boolean | undefined;
+  noFileSelected?: boolean | undefined;
 }
 
 export function FormatTab({ formatResult, fileInfo, hasParseErrors, blocked, noFileSelected }: FormatTabProps) {

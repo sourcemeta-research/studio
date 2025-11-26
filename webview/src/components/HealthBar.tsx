@@ -2,9 +2,9 @@ import type { LintResult } from '../../../protocol/types';
 
 export interface HealthBarProps {
   lintResult: LintResult;
-  isLoading?: boolean;
-  blockedByMetaschema?: boolean;
-  noFileSelected?: boolean;
+  isLoading?: boolean | undefined;
+  blockedByMetaschema?: boolean | undefined;
+  noFileSelected?: boolean | undefined;
 }
 
 export function HealthBar({ lintResult, isLoading, blockedByMetaschema, noFileSelected }: HealthBarProps) {
