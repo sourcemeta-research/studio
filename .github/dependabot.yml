@@ -2,15 +2,15 @@
 
 version: 2
 updates:
-  - package-ecosystem: ""
+  - package-ecosystem: "npm"
     directory: "/webview"
     schedule:
       interval: "weekly"
-  - package-ecosystem: ""
+  - package-ecosystem: "npm"
     directory: "/vscode"
     schedule:
       interval: "weekly"
-  - package-ecosystem: ""
+  - package-ecosystem: "npm"
     directory: "/test/vscode"
     schedule:
       interval: "weekly"
