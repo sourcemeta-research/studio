@@ -1,5 +1,5 @@
 import type { MetaschemaResult, MetaschemaError, Position } from '../../../protocol/types';
-import { vscode } from '../message';
+import { goToPosition } from '../message';
 import { RawOutput } from './RawOutput';
 import { CheckCircle, AlertTriangle, FileQuestion } from 'lucide-react';
 
@@ -14,7 +14,7 @@ function isMetaschemaError(error: unknown): error is MetaschemaError {
 
 export function MetaschemaTab({ metaschemaResult, noFileSelected }: MetaschemaTabProps) {
   const handleGoToPosition = (position: Position) => {
-    vscode.goToPosition(position);
+    goToPosition(position);
   };
 
   const errors = metaschemaResult.errors || [];

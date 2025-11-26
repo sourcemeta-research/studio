@@ -1,5 +1,5 @@
 import type { CommandResult, FileInfo } from '../../../protocol/types';
-import { vscode } from '../message';
+import { formatSchema } from '../message';
 import { RawOutput } from './RawOutput';
 import { Info, CheckCircle, AlertCircle, FileQuestion } from 'lucide-react';
 
@@ -13,7 +13,7 @@ export interface FormatTabProps {
 
 export function FormatTab({ formatResult, fileInfo, hasParseErrors, blocked, noFileSelected }: FormatTabProps) {
   const handleFormatSchema = () => {
-    vscode.formatSchema();
+    formatSchema();
   };
 
   const isYaml = fileInfo?.isYaml || false;

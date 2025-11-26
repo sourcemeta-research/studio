@@ -1,4 +1,4 @@
-import { vscode } from '../message';
+import { openExternal } from '../message';
 import { Star, Bug } from 'lucide-react';
 
 export interface FooterProps {
@@ -8,15 +8,15 @@ export interface FooterProps {
 
 export function Footer({ cliVersion, extensionVersion }: FooterProps) {
   const handleStarRepo = () => {
-    vscode.openExternal('https://github.com/sourcemeta/studio');
+    openExternal('https://github.com/sourcemeta/studio');
   };
 
   const handleReportBug = () => {
-    vscode.openExternal('https://github.com/sourcemeta/studio/issues/new');
+    openExternal('https://github.com/sourcemeta/studio/issues/new');
   };
 
   const handleSourcemetaClick = () => {
-    vscode.openExternal('https://www.sourcemeta.com/');
+    openExternal('https://www.sourcemeta.com/');
   };
 
   return (
