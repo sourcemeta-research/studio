@@ -21,8 +21,8 @@ validation, and automatic formatting directly into your editor.
 > Data Products with JSON
 > Schema](https://www.oreilly.com/library/view/unifying-business-data/9781098144999/).
 
-:sparkles: Features
--------------------
+Features
+--------
 
 - **Real-time Linting**: Detect anti-patterns, validate references, and ensure
   best practices
@@ -40,8 +40,8 @@ validation, and automatic formatting directly into your editor.
   [`jsonschema.json`](https://github.com/sourcemeta/jsonschema/blob/main/docs/configuration.markdown)
   manifests
 
-:speech_balloon: Support
-------------------------
+Support
+-------
 
 - **Issues**: [GitHub Issues](https://github.com/sourcemeta/studio/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/sourcemeta/studio/discussions)
