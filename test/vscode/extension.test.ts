@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
+import * as path from 'path';
 import testSchema from './fixtures/test-schema.json';
 
 suite('Extension Test Suite', () => {
@@ -119,5 +120,29 @@ suite('Extension Test Suite', () => {
 
         assert.ok(extension, 'Extension should exist');
         assert.ok(extension?.isActive, 'Extension should remain active with no file selected');
+    });
+
+    test('Should handle schema with HTTP $ref without errors', async function() {
+        this.timeout(30000);
+
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
+        if (extension && !extension.isActive) {
+            await extension.activate();
+        }
+
+        const fixtureDir = path.join(__dirname, '..', '..', '..', 'test', 'vscode', 'fixtures');
+        const schemaPath = path.join(fixtureDir, 'geojson-ref-schema.json');
+
+        const document = await vscode.workspace.openTextDocument(vscode.Uri.file(schemaPath));
+        await vscode.window.showTextDocument(document);
+
+        await vscode.commands.executeCommand('sourcemeta-studio.openPanel');
+
+        await new Promise(resolve => setTimeout(resolve, 10000));
+
+        const diagnostics = vscode.languages.getDiagnostics(document.uri);
+        assert.strictEqual(diagnostics.length, 0, 'Schema with HTTP $ref should have no diagnostic errors');
+
+        assert.ok(extension?.isActive, 'Extension should remain active after processing HTTP $ref');
     });
 });
