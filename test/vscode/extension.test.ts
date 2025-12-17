@@ -145,4 +145,32 @@ suite('Extension Test Suite', () => {
 
         assert.ok(extension?.isActive, 'Extension should remain active after processing HTTP $ref');
     });
+
+    test('Should produce lint diagnostics for schema with lint issues', async function() {
+        this.timeout(15000);
+
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
+        if (extension && !extension.isActive) {
+            await extension.activate();
+        }
+
+        const fixtureDir = path.join(__dirname, '..', '..', '..', 'test', 'vscode', 'fixtures');
+        const schemaPath = path.join(fixtureDir, 'test-schema.json');
+
+        const document = await vscode.workspace.openTextDocument(vscode.Uri.file(schemaPath));
+        await vscode.window.showTextDocument(document);
+
+        await vscode.commands.executeCommand('sourcemeta-studio.openPanel');
+
+        await new Promise(resolve => setTimeout(resolve, 5000));
+
+        const diagnostics = vscode.languages.getDiagnostics(document.uri);
+        assert.ok(diagnostics.length > 0);
+
+        const hasLintDiagnostic = diagnostics.some(diagnostic =>
+            diagnostic.message.includes('description') ||
+            diagnostic.source === 'Sourcemeta Lint');
+
+        assert.ok(hasLintDiagnostic);
+    });
 });

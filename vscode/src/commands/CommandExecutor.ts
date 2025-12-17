@@ -11,7 +11,7 @@ export class CommandExecutor {
 
     constructor(extensionPath: string) {
         this.extensionPath = extensionPath;
-        this.cliPath = join(extensionPath, 'node_modules', '@sourcemeta', 'jsonschema', 'cli.js');
+        this.cliPath = join(extensionPath, 'node_modules', '@sourcemeta', 'jsonschema', 'npm', 'cli.js');
     }
 
     /**
