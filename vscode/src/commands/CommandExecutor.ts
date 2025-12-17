@@ -66,9 +66,14 @@ export class CommandExecutor {
     /**
      * Run lint command on a file
      */
-    async lint(filePath: string): Promise<string> {
+    async lint(filePath: string, useHttp: boolean = true): Promise<string> {
         try {
-            const result = await this.executeCommand(['lint', '--json', filePath]);
+            const args = ['lint', '--json'];
+            if (useHttp) {
+                args.push('--http');
+            }
+            args.push(filePath);
+            const result = await this.executeCommand(args);
             return result.output;
         } catch (error) {
             throw error;
@@ -78,9 +83,14 @@ export class CommandExecutor {
     /**
      * Run format check command on a file
      */
-    async formatCheck(filePath: string): Promise<CommandResult> {
+    async formatCheck(filePath: string, useHttp: boolean = true): Promise<CommandResult> {
         try {
-            return await this.executeCommand(['fmt', '--check', '--json', filePath]);
+            const args = ['fmt', '--check', '--json'];
+            if (useHttp) {
+                args.push('--http');
+            }
+            args.push(filePath);
+            return await this.executeCommand(args);
         } catch (error) {
             throw error;
         }
@@ -89,8 +99,13 @@ export class CommandExecutor {
     /**
      * Run format command on a file
      */
-    async format(filePath: string): Promise<void> {
-        const result = await this.executeCommand(['fmt', '--json', filePath]);
+    async format(filePath: string, useHttp: boolean = true): Promise<void> {
+        const args = ['fmt', '--json'];
+        if (useHttp) {
+            args.push('--http');
+        }
+        args.push(filePath);
+        const result = await this.executeCommand(args);
         if (result.exitCode !== 0) {
             try {
                 const errorObj = JSON.parse(result.output);

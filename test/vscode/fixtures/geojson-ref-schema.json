@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/test-geojson-ref",
+  "title": "Test Schema with HTTP Reference",
+  "type": "object",
+  "properties": {
+    "location": {
+      "$ref": "https://schemas.sourcemeta.com/geojson/v1.0.0/geojson.json"
+    }
+  }
+}
