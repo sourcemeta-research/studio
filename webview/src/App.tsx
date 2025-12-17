@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { PanelState, TabType } from '../../protocol/types';
-import { getActiveTab, setActiveTab as setActiveTabInState } from './message';
+import { getActiveTab, setActiveTab as setActiveTabInState, notifyReady } from './message';
 import { FileInfo } from './components/FileInfo';
 import { HealthBar } from './components/HealthBar';
 import { Tabs } from './components/Tabs';
@@ -29,6 +29,9 @@ function App() {
     };
 
     window.addEventListener('message', handleMessage);
+
+    // Notify the extension that the webview is ready
+    notifyReady();
 
     return () => {
       window.removeEventListener('message', handleMessage);

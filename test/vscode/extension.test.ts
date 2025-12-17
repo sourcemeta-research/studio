@@ -52,7 +52,8 @@ suite('Extension Test Suite', () => {
 
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        assert.ok(true, 'Command executed without error');
+        const ready = await vscode.commands.executeCommand('sourcemeta-studio.isWebviewReady') as boolean;
+        assert.ok(ready);
     });
 
     test('Should handle JSON file opening', async function() {
@@ -168,8 +169,7 @@ suite('Extension Test Suite', () => {
         assert.ok(diagnostics.length > 0);
 
         const hasLintDiagnostic = diagnostics.some(diagnostic =>
-            diagnostic.message.includes('description') ||
-            diagnostic.source === 'Sourcemeta Lint');
+            diagnostic.source === 'Sourcemeta Studio (Lint)');
 
         assert.ok(hasLintDiagnostic);
     });

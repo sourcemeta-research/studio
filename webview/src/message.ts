@@ -38,3 +38,7 @@ export function getActiveTab(): TabType | undefined {
 export function setActiveTab(tab: TabType): void {
   vsCodeApi.setState({ activeTab: tab } satisfies WebviewState);
 }
+
+export function notifyReady(): void {
+  postMessage({ command: 'ready' });
+}

@@ -15,6 +15,7 @@ let lastActiveTextEditor: vscode.TextEditor | undefined;
 let cachedCliVersion = 'Loading...';
 let extensionVersion = 'Loading...';
 let currentPanelState: PanelState | null = null;
+let webviewReady = false;
 
 /**
  * Extension activation
@@ -47,8 +48,13 @@ export function activate(context: vscode.ExtensionContext): void {
     });
 
     const openPanelCommand = vscode.commands.registerCommand('sourcemeta-studio.openPanel', () => {
+        webviewReady = false;
         panelManager.createOrReveal(context);
         updatePanelContent();
+    });
+
+    const isWebviewReadyCommand = vscode.commands.registerCommand('sourcemeta-studio.isWebviewReady', () => {
+        return webviewReady;
     });
 
     const activeEditorChangeListener = vscode.window.onDidChangeActiveTextEditor((editor) => {
@@ -65,6 +71,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
     context.subscriptions.push(
         openPanelCommand,
+        isWebviewReadyCommand,
         activeEditorChangeListener,
         documentSaveListener
     );
@@ -74,6 +81,12 @@ export function activate(context: vscode.ExtensionContext): void {
  * Handle messages from the webview
  */
 function handleWebviewMessage(message: WebviewToExtensionMessage): void {
+    if (message.command === 'ready') {
+        webviewReady = true;
+        console.log('[Sourcemeta Studio] Webview ready');
+        return;
+    }
+
     if (message.command === 'goToPosition' && lastActiveTextEditor && message.position) {
         const range = errorPositionToRange(message.position);
 
