@@ -183,7 +183,7 @@ suite('Extension Test Suite', () => {
         }
 
         const fixtureDir = path.join(__dirname, '..', '..', '..', 'test', 'vscode', 'fixtures');
-        const schemaPath = path.join(fixtureDir, 'geojson-ref-schema.json');
+        const schemaPath = path.join(fixtureDir, 'invalid-metaschema.json');
 
         const document = await vscode.workspace.openTextDocument(vscode.Uri.file(schemaPath));
         await vscode.window.showTextDocument(document);
@@ -200,10 +200,10 @@ suite('Extension Test Suite', () => {
         assert.strictEqual(vscodeJsonDiagnostics.length, 0, 
             'VS Code built-in JSON validation should be disabled');
 
-        const nonSourcemetaDiagnostics = diagnostics.filter(diagnostic =>
-            diagnostic.source && !diagnostic.source.startsWith('Sourcemeta Studio'));
+        const sourcemetaDiagnostics = diagnostics.filter(diagnostic =>
+            diagnostic.source && diagnostic.source.startsWith('Sourcemeta Studio'));
 
-        assert.strictEqual(nonSourcemetaDiagnostics.length, 0, 
-            'Only Sourcemeta Studio diagnostics should be present');
+        assert.ok(sourcemetaDiagnostics.length > 0,
+            'Sourcemeta Studio should still report metaschema errors');
     });
 });
