@@ -1,5 +1,6 @@
 import { openExternal } from '../message';
 import { Star, Bug } from 'lucide-react';
+import sourcemetaLogo from '../../../vscode/logo.png';
 
 export interface FooterProps {
   cliVersion: string;
@@ -67,7 +68,7 @@ export function Footer({ cliVersion, extensionVersion }: FooterProps) {
           title="Visit Sourcemeta"
         >
           <img
-            src="https://www.sourcemeta.com/logo.svg"
+            src={sourcemetaLogo}
             alt="Sourcemeta Logo"
             className="w-4 h-4"
           />
