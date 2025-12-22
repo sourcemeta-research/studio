@@ -8,10 +8,12 @@ export class CommandExecutor {
     /**
      * Execute a command with given arguments
      */
-    private async executeCommand(args: string[]): Promise<CommandResult> {
+    private async executeCommand(args: string[], parseJson: boolean = true): Promise<CommandResult> {
         try {
-            const result = await spawn(args);
-            const output = result.stdout || result.stderr || 'No output';
+            const result = await spawn(args, { json: parseJson });
+            const output = typeof result.stdout === 'string' 
+                ? result.stdout 
+                : JSON.stringify(result.stdout);
             return {
                 output: output.trim(),
                 exitCode: result.code
@@ -26,7 +28,7 @@ export class CommandExecutor {
      */
     async getVersion(): Promise<string> {
         try {
-            const result = await this.executeCommand(['version']);
+            const result = await this.executeCommand(['version'], false);
             return result.exitCode === 0 ? result.output.trim() : `Error: ${result.output}`;
         } catch (error) {
             return `Error: ${(error as Error).message}`;
