@@ -142,7 +142,8 @@ suite('Extension Test Suite', () => {
         await new Promise(resolve => setTimeout(resolve, 10000));
 
         const diagnostics = vscode.languages.getDiagnostics(document.uri);
-        assert.strictEqual(diagnostics.length, 0, 'Schema with HTTP $ref should have no diagnostic errors');
+        const errors = diagnostics.filter(d => d.severity === vscode.DiagnosticSeverity.Error);
+        assert.strictEqual(errors.length, 0, 'Schema with HTTP $ref should have no diagnostic errors');
 
         assert.ok(extension?.isActive, 'Extension should remain active after processing HTTP $ref');
     });

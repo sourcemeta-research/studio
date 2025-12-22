@@ -14,7 +14,7 @@ async function main() {
     sourcesContent: false,
     platform: 'node',
     outfile: path.join(__dirname, '../build/vscode/extension.js'),
-    external: ['vscode'],
+    external: ['vscode', '@sourcemeta/jsonschema'],
     logLevel: 'silent',
     plugins: [
       {

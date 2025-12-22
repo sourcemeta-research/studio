@@ -1,54 +1,24 @@
-import { spawn } from 'child_process';
-import { join } from 'path';
+import { spawn } from '@sourcemeta/jsonschema';
 import { CommandResult } from '../../../protocol/types';
 
 /**
  * Execute a CLI command and return the result
  */
 export class CommandExecutor {
-    private readonly extensionPath: string;
-    private readonly cliPath: string;
-
-    constructor(extensionPath: string) {
-        this.extensionPath = extensionPath;
-        this.cliPath = join(extensionPath, 'node_modules', '@sourcemeta', 'jsonschema', 'npm', 'cli.js');
-    }
-
     /**
      * Execute a command with given arguments
      */
     private async executeCommand(args: string[]): Promise<CommandResult> {
-        return new Promise((resolve, reject) => {
-            const child = spawn(process.execPath, [this.cliPath, ...args], {
-                cwd: this.extensionPath,
-                shell: false,
-                // Do not open a command prompt on spawning
-                windowsHide: true
-            });
-
-            let stdout = '';
-            let stderr = '';
-
-            child.stdout.on('data', (data) => {
-                stdout += data.toString();
-            });
-
-            child.stderr.on('data', (data) => {
-                stderr += data.toString();
-            });
-
-            child.on('close', (code) => {
-                const output = stdout || stderr || 'No output';
-                resolve({
-                    output: output.trim(),
-                    exitCode: code
-                });
-            });
-
-            child.on('error', (error) => {
-                reject(error);
-            });
-        });
+        try {
+            const result = await spawn(args);
+            const output = result.stdout || result.stderr || 'No output';
+            return {
+                output: output.trim(),
+                exitCode: result.code
+            };
+        } catch (error) {
+            throw error;
+        }
     }
 
     /**

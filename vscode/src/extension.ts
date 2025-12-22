@@ -36,7 +36,7 @@ export function activate(context: vscode.ExtensionContext): void {
     }
 
     panelManager = new PanelManager(context.extensionPath);
-    commandExecutor = new CommandExecutor(context.extensionPath);
+    commandExecutor = new CommandExecutor();
     diagnosticManager = new DiagnosticManager();
 
     diagnosticManager.getCollections().forEach(collection => {
