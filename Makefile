@@ -25,6 +25,7 @@ vscode: .always
 	$(INSTALL) -m 0664 vscode/package.json build/vscode/package.json
 	$(JQ) '.main = "./extension.js"' vscode/package.json > build/vscode/package.json
 	$(INSTALL) -m 0664 vscode/package-lock.json build/vscode/package-lock.json
+	cd build/vscode && $(NPM) ci
 
 vscode-test: .always
 	cd test/vscode && $(NPM) ci
