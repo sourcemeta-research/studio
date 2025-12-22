@@ -8,14 +8,14 @@ export class CommandExecutor {
     /**
      * Execute a command with given arguments
      */
-    private async executeCommand(args: string[], parseJson: boolean = true): Promise<CommandResult> {
+    private async executeCommand(args: string[], json: boolean = true): Promise<CommandResult> {
         try {
-            const result = await spawn(args, { json: parseJson });
-            const output = typeof result.stdout === 'string' 
-                ? result.stdout 
-                : JSON.stringify(result.stdout);
+            const result = await spawn(args, { json });
+            const output = json && typeof result.stdout !== 'string'
+                ? JSON.stringify(result.stdout)
+                : (result.stdout || result.stderr || 'No output');
             return {
-                output: output.trim(),
+                output: typeof output === 'string' ? output.trim() : JSON.stringify(output).trim(),
                 exitCode: result.code
             };
         } catch (error) {
@@ -40,12 +40,12 @@ export class CommandExecutor {
      */
     async lint(filePath: string, useHttp: boolean = true): Promise<string> {
         try {
-            const args = ['lint', '--json'];
+            const args = ['lint'];
             if (useHttp) {
                 args.push('--http');
             }
             args.push(filePath);
-            const result = await this.executeCommand(args);
+            const result = await this.executeCommand(args, true);
             return result.output;
         } catch (error) {
             throw error;
@@ -57,12 +57,12 @@ export class CommandExecutor {
      */
     async formatCheck(filePath: string, useHttp: boolean = true): Promise<CommandResult> {
         try {
-            const args = ['fmt', '--check', '--json'];
+            const args = ['fmt', '--check'];
             if (useHttp) {
                 args.push('--http');
             }
             args.push(filePath);
-            return await this.executeCommand(args);
+            return await this.executeCommand(args, true);
         } catch (error) {
             throw error;
         }
@@ -72,12 +72,12 @@ export class CommandExecutor {
      * Run format command on a file
      */
     async format(filePath: string, useHttp: boolean = true): Promise<void> {
-        const args = ['fmt', '--json'];
+        const args = ['fmt'];
         if (useHttp) {
             args.push('--http');
         }
         args.push(filePath);
-        const result = await this.executeCommand(args);
+        const result = await this.executeCommand(args, true);
         if (result.exitCode !== 0) {
             try {
                 const errorObj = JSON.parse(result.output);
@@ -96,12 +96,12 @@ export class CommandExecutor {
      */
     async metaschema(filePath: string, useHttp: boolean = true): Promise<CommandResult> {
         try {
-            const args = ['metaschema', '--json'];
+            const args = ['metaschema'];
             if (useHttp) {
                 args.push('--http');
             }
             args.push(filePath);
-            return await this.executeCommand(args);
+            return await this.executeCommand(args, true);
         } catch (error) {
             throw error;
         }
