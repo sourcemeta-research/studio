@@ -32,7 +32,11 @@ export function activate(context: vscode.ExtensionContext): void {
     // Disable VS Code's built-in JSON validation if configured
     const config = vscode.workspace.getConfiguration('sourcemeta-studio');
     if (config.get('disableBuiltInValidation', true)) {
-        vscode.workspace.getConfiguration('json').update('validate.enable', false, vscode.ConfigurationTarget.Workspace);
+        // Use Global config if no workspace is open, otherwise use Workspace
+        const target = vscode.workspace.workspaceFolders 
+            ? vscode.ConfigurationTarget.Workspace 
+            : vscode.ConfigurationTarget.Global;
+        vscode.workspace.getConfiguration('json').update('validate.enable', false, target);
     }
 
     panelManager = new PanelManager(context.extensionPath);
