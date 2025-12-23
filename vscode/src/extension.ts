@@ -20,7 +20,7 @@ let webviewReady = false;
 /**
  * Extension activation
  */
-export function activate(context: vscode.ExtensionContext): void {
+export async function activate(context: vscode.ExtensionContext): Promise<void> {
     try {
         const packageJsonPath = path.join(context.extensionPath, 'package.json');
         const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
@@ -32,7 +32,14 @@ export function activate(context: vscode.ExtensionContext): void {
     // Disable VS Code's built-in JSON validation if configured
     const config = vscode.workspace.getConfiguration('sourcemeta-studio');
     if (config.get('disableBuiltInValidation', true)) {
-        vscode.workspace.getConfiguration('json').update('validate.enable', false, vscode.ConfigurationTarget.Workspace);
+        // Only disable validation if a workspace is open to avoid changing global user settings
+        if (vscode.workspace.workspaceFolders) {
+            await vscode.workspace.getConfiguration('json').update(
+                'validate.enable', 
+                false, 
+                vscode.ConfigurationTarget.Workspace
+            );
+        }
     }
 
     panelManager = new PanelManager(context.extensionPath);

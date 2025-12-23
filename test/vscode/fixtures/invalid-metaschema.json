@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/test-invalid",
+  "title": "Test Schema with Invalid 2020-12 Keyword",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": "not-a-boolean"
+}

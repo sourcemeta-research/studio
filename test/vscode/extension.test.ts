@@ -173,4 +173,37 @@ suite('Extension Test Suite', () => {
 
         assert.ok(hasLintDiagnostic);
     });
+
+    test('Should disable VS Code built-in JSON validation', async function() {
+        this.timeout(15000);
+
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
+        if (extension && !extension.isActive) {
+            await extension.activate();
+        }
+
+        const fixtureDir = path.join(__dirname, '..', '..', '..', 'test', 'vscode', 'fixtures');
+        const schemaPath = path.join(fixtureDir, 'invalid-metaschema.json');
+
+        const document = await vscode.workspace.openTextDocument(vscode.Uri.file(schemaPath));
+        await vscode.window.showTextDocument(document);
+
+        await vscode.commands.executeCommand('sourcemeta-studio.openPanel');
+
+        await new Promise(resolve => setTimeout(resolve, 5000));
+
+        const diagnostics = vscode.languages.getDiagnostics(document.uri);
+
+        const vscodeJsonDiagnostics = diagnostics.filter(diagnostic =>
+            diagnostic.source === 'json' || diagnostic.source === 'JSON');
+
+        assert.strictEqual(vscodeJsonDiagnostics.length, 0, 
+            'VS Code built-in JSON validation should be disabled');
+
+        const sourcemetaDiagnostics = diagnostics.filter(diagnostic =>
+            diagnostic.source && diagnostic.source.startsWith('Sourcemeta Studio'));
+
+        assert.ok(sourcemetaDiagnostics.length > 0,
+            'Sourcemeta Studio should still report metaschema errors');
+    });
 });
