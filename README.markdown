@@ -12,15 +12,9 @@ validation, and automatic formatting directly into your editor.
 
 ![Sourcemeta Studio Example](./screenshot.png)
 
-Opening Sourcemeta Studio
+After installing the Sourcemeta Studio extension, issues are not displayed automatically when you open a JSON or YAML file. To view them, open the file and click the Sourcemeta Studio icon in the editor title bar to manually open the Sourcemeta Studio panel for the active file.
 
-After installing the Sourcemeta Studio extension, issues are not shown automatically when opening a JSON file.
-You must open the Sourcemeta Studio panel manually.
-
-Open any JSON or YAML file, then click the Sourcemeta Studio icon in the editor title bar. This opens the Sourcemeta Studio panel for the active file.
-
-![For Reference](./sourcemeta-studio-icon.png)
-
+![For Reference](./instructions.png)
 
 > [!TIP]
 > Do you want to level up your JSON Schema skills? Check out
