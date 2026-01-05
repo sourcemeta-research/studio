@@ -209,49 +209,48 @@ suite('Extension Test Suite', () => {
     });
 
     test("Lint diagnostics should be ordered by line number", async function () {
-    this.timeout(15000);
+        this.timeout(15000);
 
-    const extension = vscode.extensions.getExtension(
-      "sourcemeta.sourcemeta-studio"
-    );
-    if (extension && !extension.isActive) {
-      await extension.activate();
-    }
-    const fixtureDir = path.join(
-      __dirname,
-      "..",
-      "..",
-      "..",
-      "test",
-      "vscode",
-      "fixtures"
-    );
-    const schemaPath = path.join(fixtureDir, "lint-order.schema.json");
+        const extension = vscode.extensions.getExtension(
+            "sourcemeta.sourcemeta-studio"
+        );
+        if (extension && !extension.isActive) {
+            await extension.activate();
+        }
+        const fixtureDir = path.join(
+            __dirname,
+            "..",
+            "..",
+            "..",
+            "test",
+            "vscode",
+            "fixtures"
+        );
+        const schemaPath = path.join(fixtureDir, "lint-order.schema.json");
 
-    const document = await vscode.workspace.openTextDocument(
-      vscode.Uri.file(schemaPath)
-    );
-    await vscode.window.showTextDocument(document);
+        const document = await vscode.workspace.openTextDocument(
+            vscode.Uri.file(schemaPath)
+        );
+        await vscode.window.showTextDocument(document);
 
-    await vscode.commands.executeCommand("sourcemeta-studio.openPanel");
+        await vscode.commands.executeCommand("sourcemeta-studio.openPanel");
 
-    // wait for lint + diagnostics
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+        await new Promise((resolve) => setTimeout(resolve, 5000));
 
-    const diagnostics = vscode.languages
-      .getDiagnostics(document.uri)
-      .filter((d) => d.source === "Sourcemeta Studio (Lint)");
+        const diagnostics = vscode.languages
+        .getDiagnostics(document.uri)
+        .filter((d) => d.source === "Sourcemeta Studio (Lint)");
 
-    assert.ok(diagnostics.length > 1, "Expected multiple lint diagnostics");
+        assert.ok(diagnostics.length > 1, "Expected multiple lint diagnostics");
 
-    const lineNumbers = diagnostics.map((d) => d.range.start.line);
+        const lineNumbers = diagnostics.map((d) => d.range.start.line);
 
-    const sorted = [...lineNumbers].sort((a, b) => a - b);
+        const sorted = [...lineNumbers].sort((a, b) => a - b);
 
-    assert.deepStrictEqual(
-      lineNumbers,
-      sorted,
-      "Lint diagnostics should be sorted by line number"
-    );
-  });
+        assert.deepStrictEqual(
+            lineNumbers,
+            sorted,
+            "Lint diagnostics should be sorted by line number"
+        );
+      });
 });
