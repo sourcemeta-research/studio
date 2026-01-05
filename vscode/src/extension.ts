@@ -334,9 +334,9 @@ async function updatePanelContent(): Promise<void> {
         const lintResult = parseLintResult(lintOutput);
 
         if (lintResult.errors && lintResult.errors.length > 0) {
-      // TODO: Consider moving lint diagnostic ordering to the jsonschema CLI
-      lintResult.errors = sortLintErrorsByLocation(lintResult.errors);
-    }
+            // TODO: Consider moving lint diagnostic ordering to the jsonschema CLI
+            lintResult.errors = sortLintErrorsByLocation(lintResult.errors);
+        }
 
         const parseErrors = hasJsonParseErrors(lintResult, metaschemaResult);
 
