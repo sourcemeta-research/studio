@@ -3,13 +3,19 @@
   "displayName": "Sourcemeta JSON Schema Studio",
   "publisher": "sourcemeta",
   "description": "JSON Schema inspection, formatting, and linting tools",
-  "version": "0.0.8",
+  "version": "1.0.0",
   "icon": "logo.png",
   "engines": {
     "vscode": "^1.74.0"
   },
   "categories": [
-    "Other"
+    "Linters",
+    "Formatters",
+    "Programming Languages",
+    "AI",
+    "Data Science",
+    "Testing",
+    "Visualization"
   ],
   "repository": {
     "type": "git",
