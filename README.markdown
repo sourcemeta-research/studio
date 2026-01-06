@@ -1,20 +1,20 @@
-Sourcemeta Studio
-=================
+Sourcemeta JSON Schema Studio
+=============================
 
 Professional JSON Schema tooling that brings real-time linting, metaschema
 validation, and automatic formatting directly into your editor.
 
 ***
 
-**[Install in Visual Studio Code](vscode:extension/sourcemeta.sourcemeta-studio)**
+**[Install in Visual Studio Code](vscode:extension/sourcemeta.sourcemeta-jsonschema-studio)**
 
 ***
 
-![Sourcemeta Studio Example](./screenshot.png)
+![Sourcemeta JSON Schema Studio Example](./screenshot.png)
 
-After installing the Sourcemeta Studio extension, issues are not displayed automatically when you open a JSON or YAML file. To view them, open the file and click the Sourcemeta Studio icon in the editor title bar to manually open the Sourcemeta Studio panel for the active file.
+After installing the Sourcemeta JSON Schema Studio extension, issues are not displayed automatically when you open a JSON or YAML file. To view them, open the file and click the Sourcemeta JSON Schema Studio icon in the editor title bar to manually open the Sourcemeta JSON Schema Studio panel for the active file.
 
-![Sourcemeta Studio Instructions](./instructions.png)
+![Sourcemeta JSON Schema Studio Instructions](./instructions.png)
 
 > [!TIP]
 > Do you want to level up your JSON Schema skills? Check out
@@ -28,7 +28,7 @@ After installing the Sourcemeta Studio extension, issues are not displayed autom
 Publisher & Verification Status
 -------------------------------
 
-Sourcemeta Studio is published and maintained by the **official Sourcemeta
+Sourcemeta JSON Schema Studio is published and maintained by the **official Sourcemeta
 organization**, the team behind open-source JSON Schema tooling used in
 production by developers and companies worldwide.
 

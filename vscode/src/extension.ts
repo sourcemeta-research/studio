@@ -30,7 +30,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }
 
     // Disable VS Code's built-in JSON validation if configured
-    const config = vscode.workspace.getConfiguration('sourcemeta-studio');
+    const config = vscode.workspace.getConfiguration('sourcemeta-jsonschema-studio');
     if (config.get('disableBuiltInValidation', true)) {
         // Only disable validation if a workspace is open to avoid changing global user settings
         if (vscode.workspace.workspaceFolders) {
@@ -54,13 +54,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         handleWebviewMessage(message);
     });
 
-    const openPanelCommand = vscode.commands.registerCommand('sourcemeta-studio.openPanel', () => {
+    const openPanelCommand = vscode.commands.registerCommand('sourcemeta-jsonschema-studio.openPanel', () => {
         webviewReady = false;
         panelManager.createOrReveal(context);
         updatePanelContent();
     });
 
-    const isWebviewReadyCommand = vscode.commands.registerCommand('sourcemeta-studio.isWebviewReady', () => {
+    const isWebviewReadyCommand = vscode.commands.registerCommand('sourcemeta-jsonschema-studio.isWebviewReady', () => {
         return webviewReady;
     });
 
@@ -90,7 +90,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 function handleWebviewMessage(message: WebviewToExtensionMessage): void {
     if (message.command === 'ready') {
         webviewReady = true;
-        console.log('[Sourcemeta Studio] Webview ready');
+        console.log('[Sourcemeta JSON Schema Studio] Webview ready');
         return;
     }
 

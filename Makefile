@@ -35,7 +35,7 @@ vscode-test: .always
 vscode-package: .always
 	$(MKDIR) -p build/dist
 	cd build/vscode && $(NPM) ci
-	cd build/vscode && $(NPX) --yes vsce package --out ../dist/sourcemeta-studio-vscode.vsix
+	cd build/vscode && $(NPX) --yes vsce package --out ../dist/sourcemeta-jsonschema-studio-vscode.vsix
 	$(UNZIP) -l build/dist/*.vsix
 
 vscode-open: vscode

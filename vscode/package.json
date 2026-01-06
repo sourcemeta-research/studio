@@ -1,6 +1,6 @@
 {
-  "name": "sourcemeta-studio",
-  "displayName": "Sourcemeta Studio",
+  "name": "sourcemeta-jsonschema-studio",
+  "displayName": "Sourcemeta JSON Schema Studio",
   "publisher": "sourcemeta",
   "description": "JSON Schema inspection, formatting, and linting tools",
   "version": "0.0.8",
@@ -20,8 +20,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "sourcemeta-studio.openPanel",
-        "title": "Open Sourcemeta Studio",
+        "command": "sourcemeta-jsonschema-studio.openPanel",
+        "title": "Open Sourcemeta JSON Schema Studio",
         "icon": {
           "light": "./logo.png",
           "dark": "./logo.png"
@@ -31,19 +31,19 @@
     "menus": {
       "editor/title": [
         {
-          "command": "sourcemeta-studio.openPanel",
+          "command": "sourcemeta-jsonschema-studio.openPanel",
           "group": "navigation",
           "when": "editorFocus"
         }
       ]
     },
     "configuration": {
-      "title": "Sourcemeta Studio",
+      "title": "Sourcemeta JSON Schema Studio",
       "properties": {
-        "sourcemeta-studio.disableBuiltInValidation": {
+        "sourcemeta-jsonschema-studio.disableBuiltInValidation": {
           "type": "boolean",
           "default": true,
-          "description": "Disable VS Code's built-in JSON schema validation to prevent conflicts with Sourcemeta Studio"
+          "description": "Disable VS Code's built-in JSON schema validation to prevent conflicts with Sourcemeta JSON Schema Studio"
         }
       }
     }

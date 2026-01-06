@@ -44,18 +44,18 @@ jobs:
         run: >
           ./build/test/vscode/.vscode-test/vscode-*/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code
           --extensions-dir build/test/vscode/.vscode-test/extensions
-          --install-extension build/dist/sourcemeta-studio-vscode.vsix
+          --install-extension build/dist/sourcemeta-jsonschema-studio-vscode.vsix
       - name: Install VSIX extension
         if: runner.os == 'Linux'
         run: >
           ./build/test/vscode/.vscode-test/vscode-*/bin/code
           --extensions-dir build/test/vscode/.vscode-test/extensions
-          --install-extension build/dist/sourcemeta-studio-vscode.vsix
+          --install-extension build/dist/sourcemeta-jsonschema-studio-vscode.vsix
       - name: Install VSIX extension
         if: runner.os == 'Windows'
         run: |
           $VSCODE_DIR = Get-ChildItem -Path build/test/vscode/.vscode-test -Directory -Filter 'vscode-*' | Select-Object -First 1
-          & "$VSCODE_DIR\bin\code.cmd" --extensions-dir build/test/vscode/.vscode-test/extensions --install-extension build/dist/sourcemeta-studio-vscode.vsix
+          & "$VSCODE_DIR\bin\code.cmd" --extensions-dir build/test/vscode/.vscode-test/extensions --install-extension build/dist/sourcemeta-jsonschema-studio-vscode.vsix
         shell: pwsh
 
       - if: runner.os == 'Linux'

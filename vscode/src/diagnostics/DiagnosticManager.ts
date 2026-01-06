@@ -11,8 +11,8 @@ export class DiagnosticManager {
     private metaschemaDiagnostics: vscode.DiagnosticCollection;
 
     constructor() {
-        this.lintDiagnostics = vscode.languages.createDiagnosticCollection('sourcemeta-studio-lint');
-        this.metaschemaDiagnostics = vscode.languages.createDiagnosticCollection('sourcemeta-studio-metaschema');
+        this.lintDiagnostics = vscode.languages.createDiagnosticCollection('sourcemeta-jsonschema-studio-lint');
+        this.metaschemaDiagnostics = vscode.languages.createDiagnosticCollection('sourcemeta-jsonschema-studio-metaschema');
     }
 
     /**
@@ -39,8 +39,8 @@ export class DiagnosticManager {
 
             // Set the source
             diagnostic.source = type === DiagnosticType.Lint 
-                ? 'Sourcemeta Studio (Lint)' 
-                : 'Sourcemeta Studio (Metaschema)';
+                ? 'Sourcemeta JSON Schema Studio (Lint)' 
+                : 'Sourcemeta JSON Schema Studio (Metaschema)';
 
             if (error.id) {
                 diagnostic.code = {
@@ -115,7 +115,7 @@ export class DiagnosticManager {
                     vscode.DiagnosticSeverity.Error
                 );
 
-                diagnostic.source = 'Sourcemeta Studio (Metaschema)';
+                diagnostic.source = 'Sourcemeta JSON Schema Studio (Metaschema)';
 
                 if (error.instanceLocation) {
                     diagnostic.code = error.instanceLocation;
