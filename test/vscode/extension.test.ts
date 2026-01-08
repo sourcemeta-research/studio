@@ -7,12 +7,12 @@ suite('Extension Test Suite', () => {
     vscode.window.showInformationMessage('Start all tests.');
 
     test('Extension should be present', () => {
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-jsonschema-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
         assert.ok(extension, 'Extension should be installed');
     });
 
     test('Should activate extension', async () => {
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-jsonschema-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
         if (extension) {
             await extension.activate();
             assert.ok(extension.isActive, 'Extension should be active');
@@ -20,18 +20,18 @@ suite('Extension Test Suite', () => {
     });
 
     test('Should register openPanel command', async () => {
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-jsonschema-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
         if (extension && !extension.isActive) {
             await extension.activate();
         }
 
         const commands = await vscode.commands.getCommands(true);
-        const commandExists = commands.includes('sourcemeta-jsonschema-studio.openPanel');
-        assert.ok(commandExists, 'Command "sourcemeta-jsonschema-studio.openPanel" should be registered');
+        const commandExists = commands.includes('sourcemeta-studio.openPanel');
+        assert.ok(commandExists, 'Command "sourcemeta-studio.openPanel" should be registered');
     });
 
     test('Should create diagnostic collections', async () => {
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-jsonschema-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
         if (extension && !extension.isActive) {
             await extension.activate();
         }
@@ -43,12 +43,12 @@ suite('Extension Test Suite', () => {
     test('Should open panel when command is executed', async function() {
         this.timeout(5000);
 
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-jsonschema-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
         if (extension && !extension.isActive) {
             await extension.activate();
         }
 
-        await vscode.commands.executeCommand('sourcemeta-jsonschema-studio.openPanel');
+        await vscode.commands.executeCommand('sourcemeta-studio.openPanel');
 
         await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -76,7 +76,7 @@ suite('Extension Test Suite', () => {
     });
 
     test('Should read extension version from package.json', async () => {
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-jsonschema-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
         if (extension && !extension.isActive) {
             await extension.activate();
         }
@@ -89,7 +89,7 @@ suite('Extension Test Suite', () => {
     test('Should handle no file selected gracefully', async function() {
         this.timeout(5000);
 
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-jsonschema-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
         if (extension && !extension.isActive) {
             await extension.activate();
         }
@@ -98,7 +98,7 @@ suite('Extension Test Suite', () => {
 
         await new Promise(resolve => setTimeout(resolve, 500));
 
-        await vscode.commands.executeCommand('sourcemeta-jsonschema-studio.openPanel');
+        await vscode.commands.executeCommand('sourcemeta-studio.openPanel');
 
         await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -108,7 +108,7 @@ suite('Extension Test Suite', () => {
     test('Should show appropriate message when no file is selected', async function() {
         this.timeout(5000);
 
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-jsonschema-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
         if (extension && !extension.isActive) {
             await extension.activate();
         }
@@ -116,7 +116,7 @@ suite('Extension Test Suite', () => {
         await vscode.commands.executeCommand('workbench.action.closeAllEditors');
         await new Promise(resolve => setTimeout(resolve, 500));
 
-        await vscode.commands.executeCommand('sourcemeta-jsonschema-studio.openPanel');
+        await vscode.commands.executeCommand('sourcemeta-studio.openPanel');
         await new Promise(resolve => setTimeout(resolve, 1000));
 
         assert.ok(extension, 'Extension should exist');
@@ -126,7 +126,7 @@ suite('Extension Test Suite', () => {
     test('Should handle schema with HTTP $ref without errors', async function() {
         this.timeout(30000);
 
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-jsonschema-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
         if (extension && !extension.isActive) {
             await extension.activate();
         }
@@ -137,7 +137,7 @@ suite('Extension Test Suite', () => {
         const document = await vscode.workspace.openTextDocument(vscode.Uri.file(schemaPath));
         await vscode.window.showTextDocument(document);
 
-        await vscode.commands.executeCommand('sourcemeta-jsonschema-studio.openPanel');
+        await vscode.commands.executeCommand('sourcemeta-studio.openPanel');
 
         await new Promise(resolve => setTimeout(resolve, 10000));
 
@@ -151,7 +151,7 @@ suite('Extension Test Suite', () => {
     test('Should produce lint diagnostics for schema with lint issues', async function() {
         this.timeout(15000);
 
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-jsonschema-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
         if (extension && !extension.isActive) {
             await extension.activate();
         }
@@ -162,7 +162,7 @@ suite('Extension Test Suite', () => {
         const document = await vscode.workspace.openTextDocument(vscode.Uri.file(schemaPath));
         await vscode.window.showTextDocument(document);
 
-        await vscode.commands.executeCommand('sourcemeta-jsonschema-studio.openPanel');
+        await vscode.commands.executeCommand('sourcemeta-studio.openPanel');
 
         await new Promise(resolve => setTimeout(resolve, 5000));
 
@@ -178,7 +178,7 @@ suite('Extension Test Suite', () => {
     test('Should disable VS Code built-in JSON validation', async function() {
         this.timeout(15000);
 
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-jsonschema-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
         if (extension && !extension.isActive) {
             await extension.activate();
         }
@@ -189,7 +189,7 @@ suite('Extension Test Suite', () => {
         const document = await vscode.workspace.openTextDocument(vscode.Uri.file(schemaPath));
         await vscode.window.showTextDocument(document);
 
-        await vscode.commands.executeCommand('sourcemeta-jsonschema-studio.openPanel');
+        await vscode.commands.executeCommand('sourcemeta-studio.openPanel');
 
         await new Promise(resolve => setTimeout(resolve, 5000));
 

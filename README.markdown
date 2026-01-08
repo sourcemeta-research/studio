@@ -6,7 +6,7 @@ validation, and automatic formatting directly into your editor.
 
 ***
 
-**[Install in Visual Studio Code](vscode:extension/sourcemeta.sourcemeta-jsonschema-studio)**
+**[Install in Visual Studio Code](vscode:extension/sourcemeta.sourcemeta-studio)**
 
 ***
 

@@ -44,7 +44,7 @@ jobs:
         run: |
           gh release delete continuous --cleanup-tag --yes || true
           gh release create continuous --prerelease --draft=false --title continuous --target "$GITHUB_SHA" --generate-notes
-          gh release upload --clobber continuous build/dist/sourcemeta-jsonschema-studio-vscode.vsix
+          gh release upload --clobber continuous build/dist/sourcemeta-studio-vscode.vsix
         if: github.ref_type == 'branch'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -52,13 +52,13 @@ jobs:
       - name: Perform Tag Release
         run: |
           gh release create ${{ github.ref_name }} --draft=false --title ${{ github.ref_name }} --target "$GITHUB_SHA" --generate-notes
-          gh release upload --clobber ${{ github.ref_name }} build/dist/sourcemeta-jsonschema-studio-vscode.vsix
+          gh release upload --clobber ${{ github.ref_name }} build/dist/sourcemeta-studio-vscode.vsix
         if: github.ref_type == 'tag'
         env:
           GH_TOKEN: ${{ github.token }}
 
       - name: Publish to VS Code Marketplace
-        run: npx vsce publish --packagePath build/dist/sourcemeta-jsonschema-studio-vscode.vsix
+        run: npx vsce publish --packagePath build/dist/sourcemeta-studio-vscode.vsix
         if: github.ref_type == 'tag'
         env:
           VSCE_PAT: ${{ secrets.VISUAL_STUDIO_MARKETPLACE_TOKEN }}

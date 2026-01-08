@@ -11,8 +11,8 @@ export class DiagnosticManager {
     private metaschemaDiagnostics: vscode.DiagnosticCollection;
 
     constructor() {
-        this.lintDiagnostics = vscode.languages.createDiagnosticCollection('sourcemeta-jsonschema-studio-lint');
-        this.metaschemaDiagnostics = vscode.languages.createDiagnosticCollection('sourcemeta-jsonschema-studio-metaschema');
+        this.lintDiagnostics = vscode.languages.createDiagnosticCollection('sourcemeta-studio-lint');
+        this.metaschemaDiagnostics = vscode.languages.createDiagnosticCollection('sourcemeta-studio-metaschema');
     }
 
     /**
