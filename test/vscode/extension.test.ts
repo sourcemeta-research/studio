@@ -52,7 +52,7 @@ suite('Extension Test Suite', () => {
 
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        const ready = await vscode.commands.executeCommand('sourcemeta-jsonschema-studio.isWebviewReady') as boolean;
+        const ready = await vscode.commands.executeCommand('sourcemeta-studio.isWebviewReady') as boolean;
         assert.ok(ready);
     });
 
