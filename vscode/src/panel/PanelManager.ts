@@ -39,7 +39,7 @@ export class PanelManager {
 
         this.panel = vscode.window.createWebviewPanel(
             'sourcemetaStudio',
-            'Sourcemeta Studio',
+            'Sourcemeta JSON Schema Studio',
             {
                 viewColumn: columnToShowIn,
                 preserveFocus: false

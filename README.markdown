@@ -1,20 +1,20 @@
-Sourcemeta Studio
-=================
+Sourcemeta JSON Schema Studio
+=============================
 
 Professional JSON Schema tooling that brings real-time linting, metaschema
 validation, and automatic formatting directly into your editor.
 
 ***
 
-**[Install from the Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=sourcemeta.sourcemeta-studio)**
+**[Install in Visual Studio Code](vscode:extension/sourcemeta.sourcemeta-studio)**
 
 ***
 
-![Sourcemeta Studio Example](./screenshot.png)
+![Sourcemeta JSON Schema Studio Example](./screenshot.png)
 
-After installing the Sourcemeta Studio extension, issues are not displayed automatically when you open a JSON or YAML file. To view them, open the file and click the Sourcemeta Studio icon in the editor title bar to manually open the Sourcemeta Studio panel for the active file.
+After installing the Sourcemeta JSON Schema Studio extension, issues are not displayed automatically when you open a JSON or YAML file. To view them, open the file and click the Sourcemeta JSON Schema Studio icon in the editor title bar to manually open the Sourcemeta JSON Schema Studio panel for the active file.
 
-![Sourcemeta Studio Instructions](./instructions.png)
+![Sourcemeta JSON Schema Studio Instructions](./instructions.png)
 
 > [!TIP]
 > Do you want to level up your JSON Schema skills? Check out
@@ -24,6 +24,23 @@ After installing the Sourcemeta Studio extension, issues are not displayed autom
 > course, and our O'Reilly book [Unifying Business, Data, and Code: Designing
 > Data Products with JSON
 > Schema](https://www.oreilly.com/library/view/unifying-business-data/9781098144999/).
+
+Publisher & Verification Status
+-------------------------------
+
+Sourcemeta JSON Schema Studio is published and maintained by the **official Sourcemeta
+organization**, the team behind open-source JSON Schema tooling used in
+production by developers and companies worldwide.
+
+At the time of writing, the Visual Studio Code Marketplace **Verified Publisher**
+badge has not yet been applied to this extension. Publisher verification is a
+Microsoft-managed, administrative process that is independent of an
+extension’s code quality, security posture, or maintenance status, and can take
+time even for established open-source organizations.
+
+This extension is actively maintained by the Sourcemeta team, and all releases
+are built from the same public repositories that power Sourcemeta’s other
+open-source projects.
 
 Features
 --------

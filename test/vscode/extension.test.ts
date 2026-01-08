@@ -59,7 +59,7 @@ suite('Extension Test Suite', () => {
     test('Should handle JSON file opening', async function() {
         this.timeout(5000);
 
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-jsonschema-studio');
         if (extension && !extension.isActive) {
             await extension.activate();
         }
@@ -170,7 +170,7 @@ suite('Extension Test Suite', () => {
         assert.ok(diagnostics.length > 0);
 
         const hasLintDiagnostic = diagnostics.some(diagnostic =>
-            diagnostic.source === 'Sourcemeta Studio (Lint)');
+            diagnostic.source === 'Sourcemeta JSON Schema Studio (Lint)');
 
         assert.ok(hasLintDiagnostic);
     });
@@ -202,9 +202,9 @@ suite('Extension Test Suite', () => {
             'VS Code built-in JSON validation should be disabled');
 
         const sourcemetaDiagnostics = diagnostics.filter(diagnostic =>
-            diagnostic.source && diagnostic.source.startsWith('Sourcemeta Studio'));
+            diagnostic.source && diagnostic.source.startsWith('Sourcemeta JSON Schema Studio'));
 
         assert.ok(sourcemetaDiagnostics.length > 0,
-            'Sourcemeta Studio should still report metaschema errors');
+            'Sourcemeta JSON Schema Studio should still report metaschema errors');
     });
 });
