@@ -90,7 +90,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 function handleWebviewMessage(message: WebviewToExtensionMessage): void {
     if (message.command === 'ready') {
         webviewReady = true;
-        console.log('[Sourcemeta JSON Schema Studio] Webview ready');
+        console.log('[Sourcemeta Studio] Webview ready');
         return;
     }
 

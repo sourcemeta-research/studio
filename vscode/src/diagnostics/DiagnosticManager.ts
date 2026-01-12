@@ -39,8 +39,8 @@ export class DiagnosticManager {
 
             // Set the source
             diagnostic.source = type === DiagnosticType.Lint 
-                ? 'Sourcemeta JSON Schema Studio (Lint)' 
-                : 'Sourcemeta JSON Schema Studio (Metaschema)';
+                ? 'Sourcemeta Studio (Lint)' 
+                : 'Sourcemeta Studio (Metaschema)';
 
             if (error.id) {
                 diagnostic.code = {
@@ -115,7 +115,7 @@ export class DiagnosticManager {
                     vscode.DiagnosticSeverity.Error
                 );
 
-                diagnostic.source = 'Sourcemeta JSON Schema Studio (Metaschema)';
+                diagnostic.source = 'Sourcemeta Studio (Metaschema)';
 
                 if (error.instanceLocation) {
                     diagnostic.code = error.instanceLocation;

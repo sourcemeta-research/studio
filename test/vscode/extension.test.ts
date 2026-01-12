@@ -59,7 +59,7 @@ suite('Extension Test Suite', () => {
     test('Should handle JSON file opening', async function() {
         this.timeout(5000);
 
-        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-jsonschema-studio');
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
         if (extension && !extension.isActive) {
             await extension.activate();
         }
