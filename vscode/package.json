@@ -8,6 +8,7 @@
   "engines": {
     "vscode": "^1.74.0"
   },
+  "homepage": "https://www.sourcemeta.com/",
   "categories": [
     "Linters",
     "Formatters",
@@ -54,6 +55,25 @@
       }
     }
   },
+  "keywords": [
+    "json",
+    "json schema",
+    "schema",
+    "validation",
+    "validator",
+    "lint",
+    "linter",
+    "linting",
+    "formatter",
+    "formatting",
+    "openapi",
+    "api",
+    "vscode",
+    "data",
+    "schema validation",
+    "json lint"
+  ],
+  "qna": "marketplace",
   "scripts": {
     "compile": "node esbuild.js",
     "watch": "node esbuild.js --watch",
