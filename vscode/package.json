@@ -2,8 +2,7 @@
   "name": "sourcemeta-studio",
   "displayName": "Sourcemeta JSON Schema Studio",
   "publisher": "sourcemeta",
-  "description": "JSON Schema inspection, formatting, and linting tools by 
-  a member of the JSON Schema Technical Steering Committee",
+  "description": "JSON Schema inspection, formatting, and linting tools by a member of the JSON Schema Technical Steering Committee",
   "version": "1.0.0",
   "icon": "logo.png",
   "engines": {
@@ -29,7 +28,7 @@
     "commands": [
       {
         "command": "sourcemeta-studio.openPanel",
-        "title": "Open Schema Studio",
+        "title": "Open Sourcemeta Studio",
         "icon": {
           "light": "./logo.png",
           "dark": "./logo.png"
