@@ -1,4 +1,4 @@
-Sourcemeta JSON Schema Studio
+Sourcemeta Studio
 =============================
 
 Professional JSON Schema tooling that brings real-time linting, metaschema

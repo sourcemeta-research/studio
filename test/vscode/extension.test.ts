@@ -170,7 +170,7 @@ suite('Extension Test Suite', () => {
         assert.ok(diagnostics.length > 0);
 
         const hasLintDiagnostic = diagnostics.some(diagnostic =>
-            diagnostic.source === 'Sourcemeta JSON Schema Studio (Lint)');
+            diagnostic.source === 'Sourcemeta Studio (Lint)');
 
         assert.ok(hasLintDiagnostic);
     });
@@ -202,9 +202,9 @@ suite('Extension Test Suite', () => {
             'VS Code built-in JSON validation should be disabled');
 
         const sourcemetaDiagnostics = diagnostics.filter(diagnostic =>
-            diagnostic.source && diagnostic.source.startsWith('Sourcemeta JSON Schema Studio'));
+            diagnostic.source && diagnostic.source.startsWith('Sourcemeta Studio'));
 
         assert.ok(sourcemetaDiagnostics.length > 0,
-            'Sourcemeta JSON Schema Studio should still report metaschema errors');
+            'Sourcemeta Studio should still report metaschema errors');
     });
 });
