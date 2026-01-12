@@ -10,11 +10,11 @@ validation, and automatic formatting directly into your editor.
 
 ***
 
-![Sourcemeta JSON Schema Studio Example](./screenshot.png)
+![Sourcemeta Studio Example](./screenshot.png)
 
-After installing the Sourcemeta JSON Schema Studio extension, issues are not displayed automatically when you open a JSON or YAML file. To view them, open the file and click the Sourcemeta JSON Schema Studio icon in the editor title bar to manually open the Sourcemeta JSON Schema Studio panel for the active file.
+After installing the Sourcemeta Studio extension, issues are not displayed automatically when you open a JSON or YAML file. To view them, open the file and click the Sourcemeta Studio icon in the editor title bar to manually open the Sourcemeta Studio panel for the active file.
 
-![Sourcemeta JSON Schema Studio Instructions](./instructions.png)
+![Sourcemeta Studio Instructions](./instructions.png)
 
 > [!TIP]
 > Do you want to level up your JSON Schema skills? Check out
@@ -28,7 +28,7 @@ After installing the Sourcemeta JSON Schema Studio extension, issues are not dis
 Publisher & Verification Status
 -------------------------------
 
-Sourcemeta JSON Schema Studio is published and maintained by the **official Sourcemeta
+Sourcemeta Studio is published and maintained by the **official Sourcemeta
 organization**, the team behind open-source JSON Schema tooling used in
 production by developers and companies worldwide.
 
