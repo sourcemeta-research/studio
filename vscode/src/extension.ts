@@ -228,26 +228,6 @@ function handleDocumentSave(document: vscode.TextDocument): void {
 }
 
 /**
- * Sort the Linting Errors by line location
- */
-function sortLintErrorsByLocation(errors: LintError[]): LintError[] {
-  return [...errors].sort((a, b) => {
-    if (!a.position && !b.position) return 0;
-    if (!a.position) return 1;
-    if (!b.position) return -1;
-
-    const [aLine, aColumn] = a.position;
-    const [bLine, bColumn] = b.position;
-
-    if (aLine !== bLine) {
-      return aLine - bLine;
-    }
-
-    return aColumn - bColumn;
-  });
-}
-
-/**
  * Update the panel content with current file analysis
  */
 async function updatePanelContent(): Promise<void> {
@@ -332,11 +312,6 @@ async function updatePanelContent(): Promise<void> {
         ]);
 
         const lintResult = parseLintResult(lintOutput);
-
-        if (lintResult.errors && lintResult.errors.length > 0) {
-            // TODO: Consider moving lint diagnostic ordering to the jsonschema CLI
-            lintResult.errors = sortLintErrorsByLocation(lintResult.errors);
-        }
 
         const parseErrors = hasJsonParseErrors(lintResult, metaschemaResult);
 
