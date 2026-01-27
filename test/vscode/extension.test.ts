@@ -198,7 +198,7 @@ suite('Extension Test Suite', () => {
         const vscodeJsonDiagnostics = diagnostics.filter(diagnostic =>
             diagnostic.source === 'json' || diagnostic.source === 'JSON');
 
-        assert.strictEqual(vscodeJsonDiagnostics.length, 0, 
+        assert.strictEqual(vscodeJsonDiagnostics.length, 0,
             'VS Code built-in JSON validation should be disabled');
 
         const sourcemetaDiagnostics = diagnostics.filter(diagnostic =>
@@ -207,4 +207,50 @@ suite('Extension Test Suite', () => {
         assert.ok(sourcemetaDiagnostics.length > 0,
             'Sourcemeta Studio should still report metaschema errors');
     });
+
+    test("Lint diagnostics should be ordered by line number", async function () {
+        this.timeout(15000);
+
+        const extension = vscode.extensions.getExtension(
+            "sourcemeta.sourcemeta-studio"
+        );
+        if (extension && !extension.isActive) {
+            await extension.activate();
+        }
+        const fixtureDir = path.join(
+            __dirname,
+            "..",
+            "..",
+            "..",
+            "test",
+            "vscode",
+            "fixtures"
+        );
+        const schemaPath = path.join(fixtureDir, "lint-order.schema.json");
+
+        const document = await vscode.workspace.openTextDocument(
+            vscode.Uri.file(schemaPath)
+        );
+        await vscode.window.showTextDocument(document);
+
+        await vscode.commands.executeCommand("sourcemeta-studio.openPanel");
+
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+
+        const diagnostics = vscode.languages
+        .getDiagnostics(document.uri)
+        .filter((d) => d.source === "Sourcemeta Studio (Lint)");
+
+        assert.ok(diagnostics.length > 1, "Expected multiple lint diagnostics");
+
+        const lineNumbers = diagnostics.map((d) => d.range.start.line);
+
+        const sorted = [...lineNumbers].sort((a, b) => a - b);
+
+        assert.deepStrictEqual(
+            lineNumbers,
+            sorted,
+            "Lint diagnostics should be sorted by line number"
+        );
+      });
 });

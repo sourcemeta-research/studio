@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+
+  "type": "object",
+
+  "properties": {
+    "role": {
+      "enum": ["admin", "user"],
+      "type": "string"
+    },
+
+    "preferences": {
+      "type": "object",
+      "properties": {
+        "theme": {
+          "enum": ["dark", "light"],
+          "type": "string"
+        }
+      }
+    }
+  },
+
+  "required": ["id", "role"]
+}

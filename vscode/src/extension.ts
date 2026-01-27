@@ -35,8 +35,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         // Only disable validation if a workspace is open to avoid changing global user settings
         if (vscode.workspace.workspaceFolders) {
             await vscode.workspace.getConfiguration('json').update(
-                'validate.enable', 
-                false, 
+                'validate.enable',
+                false,
                 vscode.ConfigurationTarget.Workspace
             );
         }
@@ -105,7 +105,7 @@ function handleWebviewMessage(message: WebviewToExtensionMessage): void {
         }
         vscode.window.showTextDocument(lastActiveTextEditor.document, showOptions).then((editor) => {
             editor.selection = new vscode.Selection(range.start, range.end);
-            
+
             editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
         });
     } else if (message.command === 'openExternal' && message.url) {
@@ -113,7 +113,7 @@ function handleWebviewMessage(message: WebviewToExtensionMessage): void {
     } else if (message.command === 'formatSchema' && lastActiveTextEditor) {
         const filePath = lastActiveTextEditor.document.uri.fsPath;
         const fileInfo = getFileInfo(filePath);
-        
+
         if (!fileInfo || !panelManager.exists() || !currentPanelState) {
             return;
         }
@@ -138,14 +138,14 @@ function handleWebviewMessage(message: WebviewToExtensionMessage): void {
             if (lastActiveTextEditor) {
                 await vscode.window.showTextDocument(lastActiveTextEditor.document, lastActiveTextEditor.viewColumn);
             }
-            
+
             // Wait for Huge schemas to reload after formatting
             await new Promise(resolve => setTimeout(resolve, 300));
 
             await updatePanelContent();
         }).catch((error) => {
             let errorMessage = error.message;
-            
+
             // Try to parse JSON error from CLI
             const cliError = parseCliError(error.message);
             if (cliError) {
@@ -157,7 +157,7 @@ function handleWebviewMessage(message: WebviewToExtensionMessage): void {
                     }
                 }
             }
-            
+
             vscode.window.showErrorMessage(`Format failed: ${errorMessage}`);
             if (currentPanelState) {
                 const updatedState = {
@@ -217,7 +217,7 @@ function handleActiveEditorChange(editor: vscode.TextEditor | undefined): void {
  * Handle document save events
  */
 function handleDocumentSave(document: vscode.TextDocument): void {
-    if (panelManager.exists() && lastActiveTextEditor && 
+    if (panelManager.exists() && lastActiveTextEditor &&
         document.uri.fsPath === lastActiveTextEditor.document.uri.fsPath) {
         const fileInfo = getFileInfo(document.uri.fsPath);
         // Only refresh if it's a JSON/YAML file
