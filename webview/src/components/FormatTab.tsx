@@ -7,11 +7,10 @@ export interface FormatTabProps {
   formatResult: CommandResult;
   fileInfo: FileInfo | null;
   hasParseErrors?: boolean | undefined;
-  blocked?: boolean | undefined;
   noFileSelected?: boolean | undefined;
 }
 
-export function FormatTab({ formatResult, fileInfo, hasParseErrors, blocked, noFileSelected }: FormatTabProps) {
+export function FormatTab({ formatResult, fileInfo, hasParseErrors, noFileSelected }: FormatTabProps) {
   const handleFormatSchema = () => {
     formatSchema();
   };
@@ -44,22 +43,6 @@ export function FormatTab({ formatResult, fileInfo, hasParseErrors, blocked, noF
         <div className="text-[13px] text-(--vscode-muted) max-w-md mx-auto">
           The schema file has JSON parse errors. Please fix the syntax errors first before attempting to format.
           Check the Lint and Metaschema tabs for detailed error information.
-        </div>
-      </div>
-    );
-  }
-
-  if (blocked) {
-    return (
-      <div className="text-center py-10 px-5">
-        <div className="flex justify-center mb-4">
-          <AlertCircle size={48} className="text-(--error)" strokeWidth={1.5} />
-        </div>
-        <div className="text-lg font-semibold text-(--vscode-fg) mb-2">
-          Cannot Format Schema
-        </div>
-        <div className="text-[13px] text-(--vscode-muted) max-w-md mx-auto">
-          Metaschema validation failed. Fix the metaschema errors first before attempting to format.
         </div>
       </div>
     );

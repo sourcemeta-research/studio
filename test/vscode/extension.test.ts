@@ -198,7 +198,7 @@ suite('Extension Test Suite', () => {
         const vscodeJsonDiagnostics = diagnostics.filter(diagnostic =>
             diagnostic.source === 'json' || diagnostic.source === 'JSON');
 
-        assert.strictEqual(vscodeJsonDiagnostics.length, 0, 
+        assert.strictEqual(vscodeJsonDiagnostics.length, 0,
             'VS Code built-in JSON validation should be disabled');
 
         const sourcemetaDiagnostics = diagnostics.filter(diagnostic =>
@@ -206,5 +206,38 @@ suite('Extension Test Suite', () => {
 
         assert.ok(sourcemetaDiagnostics.length > 0,
             'Sourcemeta Studio should still report metaschema errors');
+    });
+
+    test('Should run linter even when metaschema validation fails', async function() {
+        this.timeout(15000);
+
+        const extension = vscode.extensions.getExtension('sourcemeta.sourcemeta-studio');
+        if (extension && !extension.isActive) {
+            await extension.activate();
+        }
+
+        const fixtureDir = path.join(__dirname, '..', '..', '..', 'test', 'vscode', 'fixtures');
+        const schemaPath = path.join(fixtureDir, 'invalid-metaschema.json');
+
+        const document = await vscode.workspace.openTextDocument(vscode.Uri.file(schemaPath));
+        await vscode.window.showTextDocument(document);
+
+        await vscode.commands.executeCommand('sourcemeta-studio.openPanel');
+
+        await new Promise(resolve => setTimeout(resolve, 5000));
+
+        const diagnostics = vscode.languages.getDiagnostics(document.uri);
+
+        const metaschemaDiagnostics = diagnostics.filter(diagnostic =>
+            diagnostic.source === 'Sourcemeta Studio (Metaschema)');
+
+        const lintDiagnostics = diagnostics.filter(diagnostic =>
+            diagnostic.source === 'Sourcemeta Studio (Lint)');
+
+        assert.ok(metaschemaDiagnostics.length > 0,
+            'Should have metaschema errors for invalid schema');
+
+        assert.ok(lintDiagnostics.length > 0,
+            'Should still have lint diagnostics even when metaschema fails');
     });
 });

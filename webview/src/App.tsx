@@ -38,13 +38,6 @@ function App() {
     };
   }, []);
 
-  useEffect(() => {
-    if (state?.blockedByMetaschema) {
-      setActiveTab('metaschema');
-      setActiveTabInState('metaschema');
-    }
-  }, [state?.blockedByMetaschema]);
-
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
     setActiveTabInState(tab);
@@ -61,10 +54,9 @@ function App() {
   return (
     <div className="flex flex-col h-screen p-5">
       <FileInfo fileInfo={state.fileInfo} />
-      <HealthBar 
-        lintResult={state.lintResult} 
-        isLoading={state.isLoading} 
-        blockedByMetaschema={state.blockedByMetaschema}
+      <HealthBar
+        lintResult={state.lintResult}
+        isLoading={state.isLoading}
         noFileSelected={state.noFileSelected}
       />
       <Tabs activeTab={activeTab} onTabChange={handleTabChange} state={state} />
@@ -76,8 +68,8 @@ function App() {
           <LoadingSpinner fileInfo={state.fileInfo} />
         ) : (
           <>
-            {activeTab === 'lint' && <LintTab lintResult={state.lintResult} blocked={!!state.blockedByMetaschema} noFileSelected={state.noFileSelected} />}
-            {activeTab === 'format' && <FormatTab formatResult={state.formatResult} fileInfo={state.fileInfo} hasParseErrors={state.hasParseErrors} blocked={!!state.blockedByMetaschema} noFileSelected={state.noFileSelected} />}
+            {activeTab === 'lint' && <LintTab lintResult={state.lintResult} noFileSelected={state.noFileSelected} />}
+            {activeTab === 'format' && <FormatTab formatResult={state.formatResult} fileInfo={state.fileInfo} hasParseErrors={state.hasParseErrors} noFileSelected={state.noFileSelected} />}
             {activeTab === 'metaschema' && <MetaschemaTab metaschemaResult={state.metaschemaResult} noFileSelected={state.noFileSelected} />}
           </>
         )}

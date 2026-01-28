@@ -45,7 +45,6 @@ export interface PanelState {
   isLoading?: boolean;
   formatLoading?: boolean;
   hasParseErrors?: boolean;
-  blockedByMetaschema?: boolean;
   noFileSelected?: boolean;
 }
 

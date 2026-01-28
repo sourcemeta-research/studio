@@ -20,7 +20,6 @@ export function Tabs({ activeTab, onTabChange, state }: TabsProps) {
   const lintStatus = calculateLintStatus(state.lintResult.errors?.length || 0, state.lintResult.health, state.isLoading, state.noFileSelected);
   const formatStatus = calculateFormatStatus(state.formatResult.exitCode, state.formatLoading, state.fileInfo?.isYaml, state.noFileSelected);
   const metaschemaStatus = calculateMetaschemaStatus(state.metaschemaResult.exitCode, state.isLoading, state.noFileSelected);
-  const lintDisabled = !!state.blockedByMetaschema;
 
   const Tab = ({ 
     id, 
@@ -50,8 +49,8 @@ export function Tabs({ activeTab, onTabChange, state }: TabsProps) {
 
   return (
     <div className="flex border-b border-(--vscode-border) mb-5">
-      <Tab id="lint" label="Lint" Icon={lintStatus.Icon} color={lintStatus.color} disabled={lintDisabled} />
-      <Tab id="format" label="Format" Icon={formatStatus.Icon} color={formatStatus.color} disabled={lintDisabled} />
+      <Tab id="lint" label="Lint" Icon={lintStatus.Icon} color={lintStatus.color} />
+      <Tab id="format" label="Format" Icon={formatStatus.Icon} color={formatStatus.color} />
       <Tab id="metaschema" label="Metaschema" Icon={metaschemaStatus.Icon} color={metaschemaStatus.color} />
     </div>
   );

@@ -1,15 +1,14 @@
 import type { LintResult, Position } from '../../../protocol/types';
 import { goToPosition } from '../message';
 import { RawOutput } from './RawOutput';
-import { CheckCircle, AlertCircle, FileQuestion } from 'lucide-react';
+import { CheckCircle, FileQuestion } from 'lucide-react';
 
 export interface LintTabProps {
   lintResult: LintResult;
-  blocked?: boolean | undefined;
   noFileSelected?: boolean | undefined;
 }
 
-export function LintTab({ lintResult, blocked, noFileSelected }: LintTabProps) {
+export function LintTab({ lintResult, noFileSelected }: LintTabProps) {
   const handleGoToPosition = (position: Position) => {
     goToPosition(position);
   };
@@ -25,21 +24,6 @@ export function LintTab({ lintResult, blocked, noFileSelected }: LintTabProps) {
         <div className="text-lg font-semibold text-(--vscode-fg) mb-2">No Schema File Selected</div>
         <div className="text-[13px] text-(--vscode-muted) max-w-md mx-auto">
           Open a JSON or YAML schema file to see linting results.
-        </div>
-      </div>
-    );
-  }
-
-  if (blocked) {
-    return (
-      <div className="text-center py-10 px-5">
-        <div className="flex justify-center mb-4">
-          <AlertCircle size={48} className="text-(--error)" strokeWidth={1.5} />
-        </div>
-        <div className="text-lg font-semibold text-(--vscode-fg) mb-2">Cannot Lint Schema</div>
-        <div className="text-[13px] text-(--vscode-muted) max-w-md mx-auto">
-          Metaschema validation failed. Fix the metaschema errors first before running lint.
-          Check the Metaschema tab for more details.
         </div>
       </div>
     );

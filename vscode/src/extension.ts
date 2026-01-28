@@ -123,11 +123,6 @@ function handleWebviewMessage(message: WebviewToExtensionMessage): void {
             return;
         }
 
-        if (currentPanelState.blockedByMetaschema) {
-            vscode.window.showErrorMessage('Cannot format schema: Metaschema validation failed. Fix metaschema errors first.');
-            return;
-        }
-
         // Send format loading state only, preserve existing lint/metaschema state
         panelManager.updateContent({
             ...currentPanelState,
@@ -273,44 +268,17 @@ async function updatePanelContent(): Promise<void> {
         diagnosticManager.clearDiagnostics(lastActiveTextEditor.document.uri);
     }
 
-    // Run metaschema first, if metaschema reports errors, block other commands
     try {
         const version = await commandExecutor.getVersion();
         cachedCliVersion = version;
 
-        const metaschemaRawResult = await commandExecutor.metaschema(fileInfo.absolutePath);
-        const metaschemaResult = parseMetaschemaResult(metaschemaRawResult.output, metaschemaRawResult.exitCode);
-
-        if (metaschemaResult.errors && metaschemaResult.errors.length > 0) {
-            const blockedState: PanelState = {
-                fileInfo,
-                cliVersion: cachedCliVersion,
-                extensionVersion,
-                lintResult: { raw: '', health: null, errors: [] },
-                formatResult: { output: '', exitCode: null },
-                metaschemaResult,
-                isLoading: false,
-                hasParseErrors: hasJsonParseErrors({ raw: '', health: null }, metaschemaResult),
-                blockedByMetaschema: true
-            };
-            currentPanelState = blockedState;
-            panelManager.updateContent(blockedState);
-
-            if (lastActiveTextEditor) {
-                diagnosticManager.updateMetaschemaDiagnostics(
-                    lastActiveTextEditor.document.uri,
-                    metaschemaResult.errors
-                );
-            }
-
-            return;
-        }
-
-        const [lintOutput, formatResult] = await Promise.all([
+        const [metaschemaRawResult, lintOutput, formatResult] = await Promise.all([
+            commandExecutor.metaschema(fileInfo.absolutePath),
             commandExecutor.lint(fileInfo.absolutePath),
             commandExecutor.formatCheck(fileInfo.absolutePath)
         ]);
 
+        const metaschemaResult = parseMetaschemaResult(metaschemaRawResult.output, metaschemaRawResult.exitCode);
         const lintResult = parseLintResult(lintOutput);
 
         const parseErrors = hasJsonParseErrors(lintResult, metaschemaResult);
@@ -323,8 +291,7 @@ async function updatePanelContent(): Promise<void> {
             formatResult,
             metaschemaResult,
             isLoading: false,
-            hasParseErrors: parseErrors,
-            blockedByMetaschema: false
+            hasParseErrors: parseErrors
         };
         currentPanelState = finalState;
         panelManager.updateContent(finalState);
