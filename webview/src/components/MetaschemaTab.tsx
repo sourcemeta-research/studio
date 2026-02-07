@@ -2,7 +2,7 @@ import type { MetaschemaResult, MetaschemaError, Position } from '../../../proto
 import { goToPosition } from '../message';
 import { RawOutput } from './RawOutput';
 import { CheckCircle, AlertTriangle, FileQuestion } from 'lucide-react';
-import { MetaschemaChain } from './MetaschemaChain';
+import { MetaschemaStackTrace } from './MetaschemaStackTrace';
 
 export interface MetaschemaTabProps {
   metaschemaResult: MetaschemaResult;
@@ -56,7 +56,7 @@ export function MetaschemaTab({ metaschemaResult, noFileSelected }: MetaschemaTa
     return (
       <div>
         <div className="flex flex-col gap-3 mb-5">
-          <MetaschemaChain errors={metaschemaErrors}/>
+          <MetaschemaStackTrace errors={metaschemaErrors}/>
         </div>
         <RawOutput output={metaschemaResult.output} />
       </div>
